@@ -1,0 +1,182 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    color: #212121;
+  }
+  
+  .navbar {
+    background-color: #2E7D32;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar li {
+    cursor: pointer;
+  }
+  
+  .logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .hero {
+    text-align: center;
+    background-color: #EEEEEE;
+    padding: 3rem 1rem;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-button {
+    background-color: #FFD54F;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  
+  .hero-button:hover {
+    background-color: #FFC107;
+  }
+  
+  .sobre, .receitas, .dicas-contato {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  .receitas h2, .sobre h2, .dicas h2, .contato h2 {
+    color: #2E7D32;
+    margin-bottom: 1rem;
+  }
+  
+  .card-container {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    background-color: #fff;
+  }
+  
+  .card:hover {
+    transform: scale(1.02);
+  }
+  
+  .card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .card h3 {
+    margin: 16px;
+    color: #2E7D32;
+  }
+  
+  .card p {
+    margin: 0 16px 16px 16px;
+  }
+  
+  .card a button {
+    margin: 0 16px 16px;
+    background-color: #FFD54F;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .card a button:hover {
+    background-color: #FFC107;
+  }
+  
+  .ver-mais {
+    display: block;
+    margin: 2rem auto 0 auto;
+    background-color: #2E7D32;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .ver-mais:hover {
+    background-color: #1B5E20;
+  }
+  
+  .dicas-contato {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  
+  .dicas, .contato {
+    flex: 1 1 300px;
+  }
+  
+  .dicas ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .dicas li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .contato input, .contato textarea {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  
+  .contato button {
+    background-color: #2E7D32;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .contato button:hover {
+    background-color: #1B5E20;
+  }
+  
+  footer {
+    background-color: #f0f0f0;
+    padding: 2rem;
+    text-align: center;
+    color: #555;
+    margin-top: 3rem;
+    font-size: 0.9rem;
+  }
+  
