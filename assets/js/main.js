@@ -3,49 +3,49 @@ const receitas = [
   {
     "nome": "Tacacá",
     "descricao": "Caldo quente de tucupi com goma de mandioca, jambu e camarão.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/tacaca.png",
+    "imagem": "assets/imgs/tacaca.png",
     "link": "https://pt.wikipedia.org/wiki/Tacac%C3%A1"
   },
   {
     "nome": "X-Caboquinho",
     "descricao": "Sanduíche regional com tucumã, banana frita e queijo coalho.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/xcaboquinho.png",
+    "imagem": "assets/imgs/xcaboquinho.png",
     "link": "https://pt.wikipedia.org/wiki/X-caboquinho"
   },
   {
     "nome": "Pato no Tucupi",
     "descricao": "Pato cozido no tucupi com jambu, prato típico do norte.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/patotucupi.png",
+    "imagem": "assets/imgs/patotucupi.png",
     "link": "https://pt.wikipedia.org/wiki/Pato_no_tucupi"
   },
   {
     "nome": "Pirarucu de Casaca",
     "descricao": "Pirarucu desfiado, arroz, farofa e vegetais, prato tradicional do Amazonas.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/pirarucucasaca.jpg",
+    "imagem": "assets/imgs/pirarucucasaca.jpg",
     "link": "https://pt.wikipedia.org/wiki/Pirarucu_de_Casaca"
   },
   {
     "nome": "Curau",
     "descricao": "Sobremesa feita com milho verde, leite, açúcar e canela.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/curau.jpg",
+    "imagem": "assets/imgs/curau.jpg",
     "link": "https://pt.wikipedia.org/wiki/Curau"
   },
   {
     "nome": "Moqueca",
     "descricao": "Prato cremoso de peixe cozido com leite de coco, azeite de dendê, pimentões e tomates.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/moqueca.jpg",
+    "imagem": "assets/imgs/moqueca.jpg",
     "link": "https://pt.wikipedia.org/wiki/Moqueca"
   },
   {
     "nome": "Bobó de Camarão",
     "descricao": "Camarões cozidos em um creme de mandioca com leite de coco e azeite de dendê.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/bobocamarao.jpg",
+    "imagem": "assets/imgs/bobocamarao.jpg",
     "link": "https://pt.wikipedia.org/wiki/Bob%C3%B3_de_camar%C3%A3o"
   },
   {
     "nome": "Canjica",
     "descricao": "Prato doce feito com milho branco cozido com leite, açúcar e especiarias.",
-    "imagem": "/raizes_da_amazonia/public/assets/imgs/canjica.jpg",
+    "imagem": "assets/imgs/canjica.jpg",
     "link": "https://pt.wikipedia.org/wiki/Canjica"
   }
 ];
