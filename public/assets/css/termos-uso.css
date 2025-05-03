@@ -19,6 +19,7 @@ body {
   font-size: 2.5rem;
   color: #1f4025;
   margin-bottom: 1.5rem;
+  word-wrap: break-word;
 }
 
 .privacidade-container h2 {
@@ -26,6 +27,8 @@ body {
   color: #1f4025;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
+  word-wrap: break-word;
+
 }
 
 .privacidade-container p {
