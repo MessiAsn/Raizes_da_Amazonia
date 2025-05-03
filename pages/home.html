@@ -3,48 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sabores do Amazonas</title>
+  <title>Raízes da Amazônia</title>
   <link rel="stylesheet" href="/raizes_da_amazonia/pages/home.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+25&display=swap" rel="stylesheet">
 </head>
 <body>
 
   <nav class="navbar">
-    <div class="logo">SABORES DO AMAZONAS</div>
-    <ul>
-      <li>Sobre o Projeto</li>
-      <li>Receitas</li>
-      <li>Dicas Culinárias</li>
-      <li>Contato</li>
-    </ul>
+    <div class="container">
+      <div class="logo">RAÍZES DA AMAZÔNIA</div>
+      <ul>
+        <li><a href="#sobre">Sobre o Projeto</a></li>
+        <li><a href="#receitas">Receitas</a></li>
+        <li><a href="#dicas">Dicas Culinárias</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </div>
   </nav>
 
   <header class="hero">
-    <h1>Receitas Regionais Brasileiras</h1>
-    <button class="hero-button">Ver Receitas</button>
+    <div class="hero-content">
+      <h1>Receitas Regionais Brasileiras</h1>
+      <button class="hero-button">Ver Receitas</button>
+    </div>
   </header>
 
-  <section class="sobre">
+  <section class="sobre" id="sobre">
     <h2>Sobre o Projeto</h2>
-    <p>O Sabores do Amazonas foi criado para divulgar as receitas tradicionais do país...</p>
+    <p>O <strong style="color: #1f4025;">Raízes da Amazônia</strong> nasceu com o objetivo de preservar e compartilhar as receitas tradicionais do Brasil, com um foco especial na rica e diversificada culinária da Amazônia. Este projeto vai além de um simples repositório de receitas. Em cada prato, não apenas encontramos ingredientes autênticos e naturais, mas também a história e a cultura de comunidades que, ao longo de gerações, mantiveram viva a tradição de cozinhar com o que a terra oferece.</p>    
+    <p>Seja <strong style="color: #1f4025;">BEM VINDO(A)</strong> ao <strong style="color: #1f4025;">Raízes da Amazônia</strong> — um espaço dedicado a você que deseja conhecer, aprender e se apaixonar pela culinária da Amazônia. Aqui, cada ingrediente tem um significado, cada prato é uma memória e, mais do que tudo, cada sabor é uma verdadeira viagem pela imensidão da floresta amazônica. Convidamos você a explorar as delícias da nossa terra e a fazer parte dessa jornada de preservação, valorização e celebração da gastronomia amazônica.</p>
   </section>
+  
 
-  <section class="receitas">
+  <section class="receitas" id="receitas">
     <h2>Receitas</h2>
-    <div class="card-container" id="receitas"></div>
+    <div class="card-container"></div>
     <button class="ver-mais">Ver Mais</button>
   </section>
 
   <section class="dicas-contato">
-    <div class="dicas">
+    <div class="dicas card-section" id="dicas">
       <h2>Dicas culinárias</h2>
-      <ul>
-        <li>✔️ Prefira ingredientes regionais frescos</li>
-        <li>✔️ Tucupi precisa ser fervido</li>
-        <li>✔️ Jaraqui: escamas crocantes</li>
-        <li>✔️ Goma: descansar 2h</li>
-      </ul>
+      <div class="dicas-scroll">
+        <ul>
+          <li>Prefira ingredientes regionais frescos para um sabor mais autêntico</li>
+          <li>Tucupi precisa ser fervido antes de ser utilizado em receitas, para eliminar toxinas</li>
+          <li>Jaraqui: para um prato mais saboroso, garanta que as escamas fiquem crocantes na fritura</li>
+          <li>A goma de tapioca deve descansar por 2 horas para garantir a textura perfeita</li>
+          <li>Use óleo de babaçu para dar um toque especial e amazônico às suas receitas</li>
+          <li>Para o prato de maniçoba, escolha folhas frescas e cozinhe por longas horas para alcançar o sabor ideal</li>
+          <li>O peixe fresco é essencial para garantir que o sabor do prato não seja mascarado por ingredientes congelados</li>
+          <li>Ao preparar açaí, adicione farinha de tapioca e mel para um sabor tradicional da Amazônia</li>
+          <li>Dê um toque especial ao prato com o uso de pimenta de cheiro, típica do Amazônia</li>
+          <li>Prepare o molho de peixe com açaí para um prato tipicamente regional e surpreendente</li>
+        </ul>
+        
+      </div>
     </div>
-    <div class="contato">
+
+    <div class="contato card-section" id="contato">
       <h2>Contate-nos</h2>
       <input type="text" placeholder="Digite seu nome" />
       <input type="email" placeholder="Digite seu email" />
@@ -54,10 +72,10 @@
   </section>
 
   <footer>
-    <p>Política de Privacidade | Termos de Uso</p>
-    <p>© 2025 Sabores do Amazonas. Todos os direitos reservados</p>
+    <p><a href="../pages/termos/politica-privacidade.html">Política de Privacidade</a> | <a href="../pages/termos/termos-uso.html">Termos de Uso</a></p>
+    <p>© 2025 Raízes da Amazônia. Todos os direitos reservados</p>
   </footer>
 
-  <script src="/script.js"></script>
+  <script src="../js/main.js"></script>
 </body>
 </html>
