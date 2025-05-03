@@ -1,0 +1,61 @@
+html {
+  --font-size: 1rem;
+  font-size: var(--font-size);
+  transition: font-size 0.3s ease;
+}
+
+  
+h1 {
+    font-size: calc(2 * var(--font-size));
+}
+  
+p {
+    font-size: var(--font-size);
+}
+
+:root {
+    --font-size: 1rem;
+}
+  
+body {
+    font-size: var(--font-size);
+}
+
+.accessibilidade-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #ffffffcc; /* fundo branco semi-transparente */
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(6px);
+}
+
+/* Botões bonitos */
+.accessibilidade-container button[data-font-size] {
+  font-family: 'Source Serif Pro', serif;
+  background-color: #1f4025;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.accessibilidade-container button[data-font-size]:hover {
+  background-color: #2e5b37;
+  transform: scale(1.05);
+}
+
+.accessibilidade-container button[data-font-size]:focus {
+  outline: 3px solid #9ccfa7;
+  outline-offset: 2px;
+}

@@ -1,5 +1,6 @@
 html {
   scroll-behavior: smooth;
+  font-size: var(--font-size, 16px);
 }
 
 body {
@@ -7,9 +8,10 @@ body {
   font-family: "Source Serif Pro", serif;
   background-color: #efebe6;
   color: #212121;
-  font-size: 100%; /* Tamanho base da fonte */
+
 }
 
+/* Navbar */
 .navbar {
   background-color: #1f4025;
   font-family: "Jersey 25";
@@ -37,7 +39,9 @@ body {
 .navbar li a {
   color: white;
   text-decoration: none;
-  font-size: 1.5rem;
+  font-size: calc(1.5 * var(--font-size, 16px));
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .navbar li a:hover {
@@ -45,9 +49,12 @@ body {
 }
 
 .logo {
-  font-size: 4.5rem;
+  font-size: calc(4.5 * var(--font-size, 16px));
+  word-break: break-word;
+  max-width: 100%;
 }
 
+/* Hero */
 .hero {
   background-image: url("../imgs/fundo.png");
   background-size: cover;
@@ -64,8 +71,10 @@ body {
 }
 
 .hero h1 {
-  font-size: 4.5rem;
+  font-size: calc(3 * var(--font-size, 16px));
   margin-bottom: 1rem;
+  max-width: 100%;
+  word-break: break-word;
 }
 
 .hero-button {
@@ -75,12 +84,14 @@ body {
   font-weight: bold;
   cursor: pointer;
   border-radius: 8px;
+  font-size: var(--font-size, 16px);
 }
 
 .hero-button:hover {
   background-color: #ffc107;
 }
 
+/* Seções principais */
 .sobre,
 .receitas,
 .dicas-contato {
@@ -95,9 +106,11 @@ body {
 .contato h2 {
   color: #1f4025;
   margin-bottom: 1rem;
+  font-size: calc(2 * var(--font-size, 16px));
+  word-break: break-word;
 }
 
-/* Layout da estrutura */
+/* Cards */
 .card-container {
   display: grid;
   gap: 1.5rem;
@@ -114,9 +127,9 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
   background-color: #fff;
-  height: auto; /* Ajuste para altura automática */
-  min-height: 320px; /* Altura mínima */
-  padding-bottom: 16px; /* Adiciona espaço no rodapé */
+  height: auto;
+  min-height: 320px;
+  padding-bottom: 16px;
 }
 
 .card img {
@@ -128,12 +141,14 @@ body {
 .card h3 {
   margin: 12px 16px 8px;
   color: #2e7d32;
-  font-size: 1.1rem;
+  font-size: calc(1.1 * var(--font-size, 16px));
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .card p {
   margin: 0 16px 12px 16px;
-  font-size: 0.95rem;
+  font-size: calc(0.95 * var(--font-size, 16px));
   flex-grow: 1;
 }
 
@@ -145,14 +160,16 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  width: calc(100% - 32px); /* Ajusta a largura do botão */
-  flex-grow: 0; /* Não permite que o botão cresça ou encolha */
+  width: calc(100% - 32px);
+  flex-grow: 0;
+  font-size: var(--font-size, 16px);
 }
 
 .card a button:hover {
   background-color: #ffc107;
 }
 
+/* Botão ver mais */
 .ver-mais {
   display: block;
   margin: 2rem auto 0 auto;
@@ -163,13 +180,14 @@ body {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: var(--font-size, 16px);
 }
 
 .ver-mais:hover {
   background-color: #1b5e20;
 }
 
-/* Seções de dicas e contato */
+/* Dicas e contato */
 .dicas-contato {
   display: flex;
   flex-wrap: wrap;
@@ -183,6 +201,10 @@ body {
 }
 
 .card-section {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
   background-color: #ffffff;
   border-radius: 12px;
   background: linear-gradient(white, #f9f9f9);
@@ -199,14 +221,14 @@ body {
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  font-size: 1.1rem;
+  font-size: calc(1.1 * var(--font-size, 16px));
   color: #2e7d32;
   font-family: "Source Serif Pro", serif;
   transition: all 0.3s ease;
 }
 
 .dicas li span {
-  font-size: 1.5rem;
+  font-size: calc(1.5 * var(--font-size, 16px));
   margin-right: 10px;
 }
 
@@ -219,7 +241,7 @@ body {
 
 .dicas li::before {
   content: "✔️";
-  font-size: 1.5rem;
+  font-size: calc(1.5 * var(--font-size, 16px));
   margin-right: 10px;
   color: #2e7d32;
 }
@@ -237,7 +259,7 @@ body {
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 1rem;
+  font-size: var(--font-size, 16px);
 }
 
 .contato button {
@@ -247,6 +269,7 @@ body {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-size: var(--font-size, 16px);
 }
 
 .contato button:hover {
@@ -260,7 +283,7 @@ footer {
   text-align: center;
   color: #ffffff;
   margin-top: 3rem;
-  font-size: 0.9rem;
+  font-size: calc(0.9 * var(--font-size, 16px));
 }
 
 footer p a {
@@ -268,7 +291,7 @@ footer p a {
   color: #ffffff;
 }
 
-/* Responsividade para telas pequenas */
+/* Responsividade */
 @media (max-width: 768px) {
   .navbar .container {
     flex-direction: column;
@@ -283,7 +306,7 @@ footer p a {
   }
 
   .logo {
-    font-size: 2.5rem;
+    font-size: calc(2.5 * var(--font-size, 16px));
     margin-bottom: 1rem;
   }
 
@@ -292,7 +315,7 @@ footer p a {
   }
 
   .hero h1 {
-    font-size: 2rem;
+    font-size: calc(2 * var(--font-size, 16px));
   }
 
   .dicas-contato {
@@ -306,11 +329,11 @@ footer p a {
 
   .contato input,
   .contato textarea {
-    font-size: 0.95rem;
+    font-size: calc(0.95 * var(--font-size, 16px));
   }
 
   footer {
-    font-size: 0.8rem;
+    font-size: calc(0.8 * var(--font-size, 16px));
     padding: 1.5rem;
   }
 }
