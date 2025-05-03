@@ -7,6 +7,7 @@ body {
   font-family: "Source Serif Pro", serif;
   background-color: #efebe6;
   color: #212121;
+  font-size: 100%; /* Tamanho base da fonte */
 }
 
 .navbar {
@@ -96,6 +97,7 @@ body {
   margin-bottom: 1rem;
 }
 
+/* Layout da estrutura */
 .card-container {
   display: grid;
   gap: 1.5rem;
@@ -112,7 +114,9 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
   background-color: #fff;
-  height: 320px;
+  height: auto; /* Ajuste para altura automática */
+  min-height: 320px; /* Altura mínima */
+  padding-bottom: 16px; /* Adiciona espaço no rodapé */
 }
 
 .card img {
@@ -141,7 +145,8 @@ body {
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  width: calc(100% - 32px);
+  width: calc(100% - 32px); /* Ajusta a largura do botão */
+  flex-grow: 0; /* Não permite que o botão cresça ou encolha */
 }
 
 .card a button:hover {
@@ -164,6 +169,7 @@ body {
   background-color: #1b5e20;
 }
 
+/* Seções de dicas e contato */
 .dicas-contato {
   display: flex;
   flex-wrap: wrap;
@@ -196,7 +202,7 @@ body {
   font-size: 1.1rem;
   color: #2e7d32;
   font-family: "Source Serif Pro", serif;
-  transition: all 0.3s ease; /* Transição suave para todos os efeitos */
+  transition: all 0.3s ease;
 }
 
 .dicas li span {
@@ -206,7 +212,7 @@ body {
 
 .dicas li:hover {
   background-color: #f1f8e9;
-  padding: 12px; /* Padding um pouco maior no hover */
+  padding: 12px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -223,7 +229,6 @@ body {
   overflow-y: auto;
   padding-right: 1rem;
 }
-
 
 .contato input,
 .contato textarea {
@@ -248,6 +253,7 @@ body {
   background-color: #1b5e20;
 }
 
+/* Rodapé */
 footer {
   background-color: #1f4025;
   padding: 2rem;

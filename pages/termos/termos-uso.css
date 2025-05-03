@@ -1,57 +1,55 @@
-/* Estilos para a página de Termos de Uso */
-
 body {
-    margin: 0;
-    font-family: "Source Serif Pro", serif;
-    background-color: #efebe6;
-    color: #212121;
+  margin: 0;
+  font-family: "Source Serif Pro", serif;
+  background-color: #efebe6;
+  color: #212121;
 }
 
 .privacidade-container {
-    max-width: 1200px;
-    margin: 4rem auto;
-    padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    background: linear-gradient(white, #f9f9f9);
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(white, #f9f9f9);
 }
 
 .privacidade-container h1 {
-    font-size: 2.5rem;
-    color: #1f4025;
-    margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  color: #1f4025;
+  margin-bottom: 1.5rem;
 }
 
 .privacidade-container h2 {
-    font-size: 1.75rem;
-    color: #1f4025;
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: #1f4025;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
 }
 
 .privacidade-container p {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    margin-bottom: 1rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
 }
 
 .privacidade-container ul {
-    padding-left: 1.5rem;
-    margin-top: 1rem;
+  padding-left: 1.5rem;
+  margin-top: 1rem;
 }
 
 .privacidade-container li {
-    font-size: 1.05rem;
-    margin-bottom: 0.75rem;
-    list-style: decimal;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+  list-style: decimal;
 }
 
 footer {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid #ccc;
-    font-size: 0.95rem;
-    text-align: center;
-    color: #555;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #ccc;
+  font-size: 0.95rem;
+  text-align: center;
+  color: #555;
 }
