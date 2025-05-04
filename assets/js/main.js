@@ -59,7 +59,7 @@ receitas.forEach((r) => {
     <img src="${r.imagem}" alt="${r.nome}" />
     <h3>${r.nome}</h3>
     <p>${r.descricao}</p>
-    <a href="${r.link}" target="_blank"><button>Ver Receita</button></a>
+    <a href="${r.link}"><button>Ver Receita</button></a>
   `;
 
   container.appendChild(card);
