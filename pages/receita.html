@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receita</title>
+  <link rel="stylesheet" href="../assets/css/receita.css" />
+  <link rel="stylesheet" href="../assets/css/aumento-fonte.css">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="accessibilidade-container">
+        <button data-font-size="0.5rem">-A</button>
+        <button data-font-size="1.0rem">A</button>
+        <button data-font-size="2.0rem">+A</button>
+      </div>  
+
+  <main class="receita-container">
+    <div class="receita-header">
+      <h1 id="titulo-receita">Título da Receita</h1>
+      <img id="foto-receita" src="" alt="Foto da receita" class="receita-imagem" />
+    </div>
+
+    <div class="receita-content">
+      <section class="receita-secao ingredientes-box">
+        <h2 class="section-title">
+          <span class="icon">📋</span>
+          <span>Ingredientes</span>
+        </h2>
+        <ul id="ingredientes-lista" class="ingredientes-lista">
+          <!-- Preenchido pelo JavaScript -->
+        </ul>
+      </section>
+
+      <section class="receita-secao preparo-box">
+        <h2 class="section-title">
+          <span class="icon">👨‍🍳</span>
+          <span>Modo de Preparo</span>
+        </h2>
+        <ol id="preparo-lista" class="preparo-lista">
+          <!-- Preenchido pelo JavaScript -->
+        </ol>
+      </section>
+    </div>
+  </main>
+
+  <button class="btn-voltar" onclick="window.location.href='../index.html'">
+    ← Voltar para o Início
+  </button>
+
+  <script src="../assets/js/receita-detalhes.js"></script>
+  <script src="../assets/js/aumento-fonte.js"></script>
+</body>
+</html>

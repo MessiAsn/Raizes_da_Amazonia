@@ -1,52 +1,52 @@
-/* Alimetação de Receitas */
+/* Alimentação de Receitas */
 const receitas = [
   {
     "nome": "Tacacá",
     "descricao": "Caldo quente de tucupi com goma de mandioca, jambu e camarão.",
     "imagem": "assets/imgs/tacaca.png",
-    "link": "https://pt.wikipedia.org/wiki/Tacac%C3%A1"
+    "link": "pages/receita.html?nome=Tacacá&descricao=Caldo+quente+de+tucupi+com+goma+de+mandioca%2C+jambu+e+camar%C3%A3o.&imagem=../assets%2Fimgs%2Ftacaca.png"
   },
   {
     "nome": "X-Caboquinho",
     "descricao": "Sanduíche regional com tucumã, banana frita e queijo coalho.",
     "imagem": "assets/imgs/xcaboquinho.png",
-    "link": "https://pt.wikipedia.org/wiki/X-caboquinho"
+    "link": "pages/receita.html?nome=X-Caboquinho&descricao=Sandu%C3%ADche+regional+com+tucum%C3%A3%2C+banana+frita+e+queijo+coalho.&imagem=../assets%2Fimgs%2Fxcaboquinho.png"
   },
   {
     "nome": "Pato no Tucupi",
     "descricao": "Pato cozido no tucupi com jambu, prato típico do norte.",
-    "imagem": "assets/imgs/patotucupi.png",
-    "link": "https://pt.wikipedia.org/wiki/Pato_no_tucupi"
+    "imagem": "assets/imgs/patotucupi.jpg",
+    "link": "pages/receita.html?nome=Pato+no+Tucupi&descricao=Pato+cozido+no+tucupi+com+jambu%2C+prato+t%C3%ADpico+do+norte.&imagem=../assets%2Fimgs%2Fpatotucupi.jpg"
   },
   {
     "nome": "Pirarucu de Casaca",
     "descricao": "Pirarucu desfiado, arroz, farofa e vegetais, prato tradicional do Amazonas.",
     "imagem": "assets/imgs/pirarucucasaca.jpg",
-    "link": "https://pt.wikipedia.org/wiki/Pirarucu_de_Casaca"
+    "link": "pages/receita.html?nome=Bob%C3%B3+de+Camar%C3%A3o&descricao=Camar%C3%B5es+cozidos+em+um+creme+de+mandioca+com+leite+de+coco+e+azeite+de+dend%C3%AA.&imagem=../assets%2Fimgs%2Fbobocamarao.jpg"
   },
   {
     "nome": "Curau",
     "descricao": "Sobremesa feita com milho verde, leite, açúcar e canela.",
     "imagem": "assets/imgs/curau.jpg",
-    "link": "https://pt.wikipedia.org/wiki/Curau"
+    "link": "pages/receita.html?nome=Curau&descricao=Sobremesa+feita+com+milho+verde%2C+leite%2C+a%C3%A7%C3%BAcar+e+canela.&imagem=../assets%2Fimgs%2Fcurau.jpg"
   },
   {
     "nome": "Moqueca",
     "descricao": "Prato cremoso de peixe cozido com leite de coco, azeite de dendê, pimentões e tomates.",
     "imagem": "assets/imgs/moqueca.jpg",
-    "link": "https://pt.wikipedia.org/wiki/Moqueca"
+    "link": "pages/receita.html?nome=Moqueca&descricao=Prato+cremoso+de+peixe+cozido+com+leite+de+coco%2C+azeite+de+dend%C3%AA%2C+piment%C3%B5es+e+tomates.&imagem=../assets%2Fimgs%2Fmoqueca.jpg"
   },
   {
     "nome": "Bobó de Camarão",
     "descricao": "Camarões cozidos em um creme de mandioca com leite de coco e azeite de dendê.",
     "imagem": "assets/imgs/bobocamarao.jpg",
-    "link": "https://pt.wikipedia.org/wiki/Bob%C3%B3_de_camar%C3%A3o"
+    "link": "pages/receita.html?nome=Bobó+de+Camarão&descricao=Camar%C3%B5es+cozidos+em+um+creme+de+mandioca+com+leite+de+coco+e+azeite+de+dend%C3%AA.&imagem=../assets%2Fimgs%2Fbobocamarao.jpg"
   },
   {
     "nome": "Canjica",
     "descricao": "Prato doce feito com milho branco cozido com leite, açúcar e especiarias.",
     "imagem": "assets/imgs/canjica.jpg",
-    "link": "https://pt.wikipedia.org/wiki/Canjica"
+    "link": "pages/receita.html?nome=Canjica&descricao=Prato+doce+feito+com+milho+branco+cozido+com+leite%2C+a%C3%A7%C3%BAcar+e+especiarias.&imagem=../assets%2Fimgs%2Fcanjica.jpg"
   }
 ];
 const container = document.querySelector(".card-container");
