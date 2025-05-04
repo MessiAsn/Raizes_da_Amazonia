@@ -1,24 +1,31 @@
-html {
+:root {
   --font-size: 1rem;
+}
+
+html {
   font-size: var(--font-size);
   transition: font-size 0.3s ease;
+  -webkit-text-size-adjust: 100%; /* Evita zoom automático em iOS */
+  text-size-adjust: 100%;
 }
 
-  
-h1 {
-    font-size: calc(2 * var(--font-size));
-}
-  
-p {
-    font-size: var(--font-size);
-}
-
-:root {
-    --font-size: 1rem;
-}
-  
 body {
-    font-size: var(--font-size);
+  font-size: var(--font-size);
+  font-family: "Source Serif Pro", serif;
+  line-height: 1.6;
+  word-break: normal;
+  overflow-wrap: anywhere; /* Ajuda a evitar quebras excessivas */
+}
+
+h1 {
+  font-size: calc(2 * var(--font-size));
+}
+
+p, li {
+  font-size: var(--font-size);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  hyphens: manual;
 }
 
 .accessibilidade-container {
@@ -34,8 +41,8 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(6px);
-  max-width: 90vw; /* Limita a largura máxima */
-  transform-origin: right bottom; /* Ponto de origem para transformações */
+  max-width: 90vw;
+  transform-origin: right bottom;
 }
 
 .accessibilidade-container button[data-font-size] {
@@ -45,11 +52,11 @@ body {
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
-  font-size: min(1rem, 4vw); /* Tamanho relativo à viewport */
+  font-size: min(1rem, 4vw);
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  width: 100%; /* Ocupa toda a largura do container */
+  width: 100%;
   box-sizing: border-box;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -71,21 +78,20 @@ body {
     bottom: 10px;
     padding: 8px;
     gap: 8px;
-    transform: scale(0.9); /* Reduz ligeiramente o tamanho */
+    transform: scale(0.9);
     transform-origin: right bottom;
   }
-  
+
   .accessibilidade-container button[data-font-size] {
     font-size: min(0.9rem, 3.5vw);
     padding: 6px 10px;
   }
-  
-  /* Quando a fonte do site aumentar */
+
   html[style*="--font-size: 1.2rem"] .accessibilidade-container,
   html[style*="--font-size: 1.4rem"] .accessibilidade-container {
     transform: scale(0.8);
   }
-  
+
   html[style*="--font-size: 1.6rem"] .accessibilidade-container {
     transform: scale(0.7);
     right: 5px;
@@ -93,7 +99,6 @@ body {
   }
 }
 
-/* Ajuste para quando o teclado virtual aparecer */
 @media (max-height: 500px) {
   .accessibilidade-container {
     bottom: 5px;
