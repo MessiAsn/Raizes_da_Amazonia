@@ -7,15 +7,15 @@ body {
 }
 
 .receita-container {
-    max-width: 1400px;
+    max-width: min(1400px, 95vw); /* Alterado para limitar pela viewport */
+    width: 100%;
     margin: 2.5rem auto;
     padding: 3rem; 
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    overflow-wrap: break-word;
-    word-break: break-word;
-    hyphens: auto;
+    overflow: hidden; /* Adicionado para conter o conteúdo */
+    box-sizing: border-box;
 }
 
 .receita-header {
@@ -27,59 +27,63 @@ body {
 .receita-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 3rem; /* Aumentado o espaço entre colunas */
+    gap: 3rem;
 }
 
 .receita-imagem {
     width: 100%;
-    max-height: 450px; /* Aumentado a altura máxima */
+    max-height: 450px;
     object-fit: cover;
-    border-radius: 12px; /* Bordas mais arredondadas */
+    border-radius: 12px;
     margin-top: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra mais destacada */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .section-title {
-    font-size: 1.7rem; /* Título um pouco maior */
+    font-size: 1.7rem;
     color: #1f4025;
-    margin-bottom: 2rem; /* Mais espaço abaixo do título */
+    margin-bottom: 2rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* Espaço maior entre ícone e texto */
+    gap: 0.75rem;
     padding-bottom: 0.75rem;
-    border-bottom: 3px solid #e0e0e0; /* Linha mais espessa */
+    border-bottom: 3px solid #e0e0e0;
 }
 
 .icon {
-    font-size: 1.5rem; /* Ícones maiores */
+    font-size: 1.5rem;
 }
 
 .ingredientes-box {
     background: #f8f8f8;
-    padding: 2rem; /* Mais espaço interno */
+    padding: 2rem;
     border-radius: 12px;
-    border-left: 6px solid #1f4025; /* Borda lateral mais espessa */
+    border-left: 6px solid #1f4025;
+    overflow: hidden; /* Adicionado */
 }
 
 .preparo-box {
     background: #f5f5f5;
-    padding: 2rem; /* Mais espaço interno */
+    padding: 2rem;
     border-radius: 12px;
-    border-left: 6px solid #8b5400; /* Borda lateral mais espessa */
+    border-left: 6px solid #8b5400;
+    overflow: hidden; /* Adicionado */
 }
 
 .ingredientes-lista,
 .preparo-lista {
-    padding-left: 1.5rem; /* Espaçamento maior */
+    padding-left: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* Espaço uniforme entre itens */
+    gap: 1rem;
+    overflow-wrap: anywhere; /* Melhorado */
+    word-break: break-word; /* Adicionado */
 }
 
 .ingredientes-lista li {
-    padding: 0.5rem 0.75rem; /* Espaçamento interno */
+    padding: 0.5rem 0.75rem;
     position: relative;
-    background-color: #ffffff90; /* Fundo sutil para cada item */
+    background-color: #ffffff90;
     border-radius: 6px;
     transition: transform 0.2s ease;
 }
@@ -93,7 +97,6 @@ body {
     margin-bottom: 1.25rem;
     transition: all 0.2s ease;
 }
-
 
 .btn-voltar {
     display: block;
@@ -137,5 +140,20 @@ body {
     
     .receita-imagem {
         max-height: 350px;
+    }
+    
+    /* Adicionado para mobile */
+    .ingredientes-box,
+    .preparo-box {
+        padding: 1.5rem;
+    }
+    
+    .ingredientes-lista li,
+    .preparo-lista li {
+        padding: 0.8rem;
+    }
+    
+    .preparo-lista li {
+        padding-left: 2.5rem;
     }
 }
