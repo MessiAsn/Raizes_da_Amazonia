@@ -1,17 +1,22 @@
 // Função para obter parâmetros da URL
 function getParams() {
-    const params = new URLSearchParams(window.location.search);
-    return {
-      nome: params.get("nome") ? decodeURIComponent(params.get("nome").toLowerCase().replace(/\s+/g, '-')) : "receita",  // Decodificando a URL
-      descricao: params.get("descricao") || "",
-      imagem: params.get("imagem") || ""
-    };
+  const params = new URLSearchParams(window.location.search);
+  return {
+    nome: params.get("nome") ? decodeURIComponent(params.get("nome").toLowerCase().replace(/\s+/g, '-')) : "receita",
+    descricao: params.get("descricao") || "",
+    imagem: params.get("imagem") || "",
+    historia: params.get("historia") ? decodeURIComponent(params.get("historia")) : ""
+  };
 }
+
 
 
 // Detalhes das receitas com as chaves normalizadas (sem acento e em minúsculas)
 const detalhesReceitas = {
     "tacacá": {
+      historia: [
+        "O Tacacá é um dos pratos mais emblemáticos da Amazônia, com raízes profundas na cultura indígena e na culinária paraense. A combinação de tucupi, jambu e camarões secos faz deste prato uma verdadeira experiência sensorial. O jambu, uma planta nativa, confere uma sensação única de formigamento na boca, que é um convite para explorar os sabores intensos da região. Tradicionalmente servido em cuia, o Tacacá não é apenas comida, mas um ritual que conecta as pessoas à terra e aos seus costumes."
+      ],
       ingredientes: [
         "1 litro de tucupi (fervido por 30 minutos para neutralizar o ácido cianídrico)",
         "2 colheres de sopa de goma de mandioca (dissolvida em 200ml de água fria)",
@@ -30,6 +35,9 @@ const detalhesReceitas = {
       ]
     },
     "x-caboquinho": {
+      historia: [
+        "O X-Caboquinho nasceu nas ruas de Manaus, misturando ingredientes típicos da floresta com a simplicidade do pão. Tucumã e queijo coalho, juntos, formam uma combinação irresistível de sabor e textura, enquanto a banana pacovã caramelizada traz o doce equilibrado com a crocância do pão francês. Esse sanduíche é uma homenagem à riqueza da culinária amazônica e, ao mesmo tempo, uma forma de trazer a natureza para as mãos de quem prova."
+      ],
       ingredientes: [
         "4 pães franceses artesanais (casca crocante, miolo macio)",
         "200g de tucumã da Amazônia (polpa sem fibras, fatiada em 5mm de espessura)",
@@ -47,6 +55,9 @@ const detalhesReceitas = {
       ]
     },
     "pato-no-tucupi": {
+      historia: [
+        "O Pato no Tucupi é um prato tradicional do Pará, que tem suas raízes na culinária indígena e foi amplamente popularizado pelos paraenses. O tucupi, um caldo extraído da mandioca, é o elemento central que confere o sabor único e característico do prato. A mistura do tucupi com o pato caipira e o jambu cria um prato saboroso e cheio de tradição. É comum ser servido durante festas típicas como o Círio de Nazaré, celebrando a cultura paraense."
+      ],
       ingredientes: [
         "1 pato caipira (cerca de 2kg, cortado em 8 pedaços com pele)",
         "1,5 litro de tucupi artesanal (já fervido)",
@@ -66,6 +77,9 @@ const detalhesReceitas = {
       ]
     },
     "pirarucu-de-casaca": {
+      historia: [
+        "O Pirarucu de Casaca é um prato típico da culinária amazônica, especialmente do estado do Amazonas. A base do prato é o pirarucu, um peixe gigante da região, combinado com arroz, farofa e legumes. Ele é conhecido por seu preparo que representa a rica biodiversidade da Amazônia, onde o peixe é protagonista, acompanhado de ingredientes simples, mas que trazem um sabor incomparável. A casaca é uma espécie de torta, com camadas de arroz e peixe, tornando esse prato uma verdadeira delícia regional."
+      ],
       ingredientes: [
         "500g de pirarucu salgado (dessalgado por 24h com 3 trocas de água)",
         "2 xícaras de arroz agulhinha (cozido no caldo do peixe)",
@@ -86,6 +100,9 @@ const detalhesReceitas = {
       ]
     },
     "curau": {
+      historia: [
+        "O Curau é uma sobremesa tradicional da culinária brasileira, com forte presença nas festas juninas, especialmente no Norte e Nordeste. Feito a partir do milho verde, o curau tem um sabor doce e cremoso, que encanta gerações. Sua preparação simples, com leite, açúcar e manteiga, remete aos sabores das festas típicas e à rica produção agrícola do Brasil, especialmente no campo do milho."
+      ],
         ingredientes: [
           "6 espigas de milho verde orgânico (variedade doce, grãos no ponto leitoso)",
           "1 litro de leite integral fresco",
@@ -106,6 +123,9 @@ const detalhesReceitas = {
         ]
       },
       "moqueca": {
+        historia: [
+        "A Moqueca é um prato de forte influência afro-brasileira, muito consumido nas regiões costeiras do Brasil, especialmente na Bahia e Espírito Santo. Sua combinação de peixe, leite de coco e azeite de dendê traz uma mistura de sabores e aromas intensos, que refletem a diversidade cultural do país. A Moqueca é um prato símbolo da hospitalidade e das festas em família, sendo preparada com muito carinho e servida em grande parte durante eventos especiais e celebrações."
+      ],
         ingredientes: [
           "500g de filé de robalo (ou badejo, com pele e escamas)",
           "400ml de leite de coco artesanal (primeira extração)",
@@ -130,6 +150,9 @@ const detalhesReceitas = {
         ]
       },
       "bobó-de-camarão": {
+        historia: [
+          "O Bobó de Camarão é um prato clássico da culinária nordestina, com influências africanas, que destaca o uso da mandioca e do leite de coco. A receita é rica em sabor, combinando camarões frescos com o purê de mandioca, formando uma combinação cremosa e deliciosa. Esse prato é uma verdadeira celebração da gastronomia brasileira e é tradicionalmente servido em festas e reuniões familiares."
+        ],
         ingredientes: [
           "500g de camarões médios (com cabeça, limpos mas com casca)",
           "1 kg de mandioca branca (descascada e cortada em pedaços)",
@@ -154,6 +177,9 @@ const detalhesReceitas = {
         ]
       },
       "canjica": {
+        historia: [
+          "A Canjica é uma sobremesa que carrega uma forte tradição nas festas de São João, especialmente no Nordeste do Brasil. Feita com milho branco, leite condensado e coco ralado, a canjica é uma iguaria doce e reconfortante. Sua preparação remonta às raízes indígenas e africanas, com o milho como ingrediente central, sendo uma das principais sobremesas das festas juninas, marcando a convivência e as celebrações ao redor da fogueira."
+        ],
         ingredientes: [
           "500g de milho branco para canjica (de molho por 8 horas em água gelada)",
           "1,5 litro de leite integral fresco",
@@ -183,7 +209,6 @@ const detalhesReceitas = {
         .replace(/(?:^|\s)\S/g, char => char.toUpperCase()); // Capitaliza apenas a primeira letra de cada palavra
 }
 
-
 function carregarDetalhes() {
     const { nome, descricao, imagem } = getParams();
 
@@ -191,7 +216,7 @@ function carregarDetalhes() {
 
     document.getElementById("titulo-receita").textContent = nomeFormatado;
     document.getElementById("foto-receita").src = decodeURIComponent(imagem);
-    document.getElementById("foto-receita").alt = nomeFormatado;    
+    document.getElementById("foto-receita").alt = nomeFormatado;
 
     const dados = detalhesReceitas[nome.toLowerCase()];
 
@@ -209,9 +234,14 @@ function carregarDetalhes() {
             li.textContent = passo;
             ol.appendChild(li);
         });
+
+        // Preencher a história
+        const historiaElemento = document.getElementById("historia-receita");
+        historiaElemento.textContent = dados.historia || "História não disponível."; // Adiciona história ou mensagem padrão
     } else {
         document.getElementById("ingredientes-lista").innerHTML = "<li>Dados não disponíveis.</li>";
         document.getElementById("preparo-lista").innerHTML = "<li>Dados não disponíveis.</li>";
+        document.getElementById("historia-receita").textContent = "História não disponível."; // Caso não haja dados
     }
 }
 
