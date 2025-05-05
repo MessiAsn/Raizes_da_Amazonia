@@ -1,4 +1,3 @@
-// Função para obter parâmetros da URL
 function getParams() {
   const params = new URLSearchParams(window.location.search);
   return {
@@ -11,7 +10,6 @@ function getParams() {
 
 
 
-// Detalhes das receitas com as chaves normalizadas (sem acento e em minúsculas)
 const detalhesReceitas = {
     "tacacá": {
       historia: [
@@ -212,7 +210,7 @@ const detalhesReceitas = {
 function carregarDetalhes() {
     const { nome, descricao, imagem } = getParams();
 
-    const nomeFormatado = formatarNome(nome); // Formata o nome para exibição
+    const nomeFormatado = formatarNome(nome);
 
     document.getElementById("titulo-receita").textContent = nomeFormatado;
     document.getElementById("foto-receita").src = decodeURIComponent(imagem);
@@ -241,7 +239,7 @@ function carregarDetalhes() {
     } else {
         document.getElementById("ingredientes-lista").innerHTML = "<li>Dados não disponíveis.</li>";
         document.getElementById("preparo-lista").innerHTML = "<li>Dados não disponíveis.</li>";
-        document.getElementById("historia-receita").textContent = "História não disponível."; // Caso não haja dados
+        document.getElementById("historia-receita").textContent = "História não disponível.";
     }
 }
 
