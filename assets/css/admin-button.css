@@ -1,0 +1,136 @@
+/* Estilos do Botão Admin - Centralizado para todas as páginas */
+
+.admin-button-container {
+  position: relative;
+}
+
+.admin-toggle {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: "Source Serif Pro", serif;
+  min-width: 70px;
+  transition: background-color 0.3s ease;
+}
+
+.admin-toggle:hover {
+  background-color: #1f4025;
+}
+
+.admin-toggle:focus {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+/* Estilos para diferentes contextos */
+
+/* Para navbar da página principal */
+.navbar .admin-toggle {
+  background-color: #2e7d32;
+}
+
+/* Para navbar simples (todas-receitas) */
+.simple-navbar .admin-toggle {
+  background-color: #2e7d32;
+}
+
+/* Para header de receita individual */
+.receita-header .admin-toggle {
+  background-color: #2e7d32;
+}
+
+.receita-header .header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.receita-header .header-top h1 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .admin-toggle {
+    align-self: center;
+    margin-top: 0.5rem;
+  }
+
+  /* Específico para navbar principal */
+  .navbar .container .admin-toggle {
+    align-self: center;
+    margin-top: 0.5rem;
+  }
+
+  /* Específico para header de receita */
+  .receita-header .header-top .admin-toggle {
+    order: 2;
+    align-self: center;
+  }
+
+  .receita-header .header-top h1 {
+    order: 1;
+    text-align: center;
+  }
+}
+
+/* Animações para mensagens de feedback */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.admin-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  z-index: 1000;
+  animation: slideInRight 0.3s ease-out;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: "Source Serif Pro", serif;
+}
+
+.admin-message.success {
+  background-color: #4caf50;
+}
+
+.admin-message.error {
+  background-color: #f44336;
+}
+
+.admin-message.info {
+  background-color: #2196f3;
+}
+
+.admin-message.slide-out {
+  animation: slideOutRight 0.3s ease-in;
+}

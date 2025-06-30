@@ -1,186 +1,202 @@
 body {
-    margin: 0;
-    font-family: "Source Serif Pro", serif;
-    background-color: #efebe6;
-    color: #212121;
-    line-height: 1.6;
+  margin: 0;
+  font-family: "Source Serif Pro", serif;
+  background-color: #efebe6;
+  color: #212121;
+  line-height: 1.6;
 }
 
 .receita-container {
-    max-width: min(1400px, 95vw);
-    width: 100%;
-    margin: 2.5rem auto;
-    padding: 3rem;
-    background-color: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
+  max-width: min(1400px, 95vw);
+  width: 100%;
+  margin: 2.5rem auto;
+  padding: 3rem;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .receita-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    color: #1f4025;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #1f4025;
 }
 
 .receita-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
 }
 
 .receita-content > * {
-    min-width: 0;
+  min-width: 0;
 }
 
 .receita-imagem {
-    width: 100%;
-    max-height: 450px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-top: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-height: 450px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .section-title {
-    font-size: 1.7rem;
-    color: #1f4025;
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 3px solid #e0e0e0;
+  font-size: 1.7rem;
+  color: #1f4025;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid #e0e0e0;
 }
 
 .icon {
-    font-size: 1.5rem;
+  font-size: 1.5rem;
 }
 
 .historia-box {
-    grid-column: span 2;
-    padding: 2rem;
-    background-color: #f4f4f4;
-    border-left: 6px solid #4e342e;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    box-sizing: border-box;
+  grid-column: span 2;
+  padding: 2rem;
+  background-color: #f4f4f4;
+  border-left: 6px solid #4e342e;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-sizing: border-box;
 }
 
 .historia-receita {
-    font-size: 1.1rem;
-    color: #333;
-    line-height: 1.8;
-    text-align: justify;
-    white-space: pre-line;
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.8;
+  text-align: justify;
+  white-space: pre-line;
 }
 
-.ingredientes-box, 
+.ingredientes-box,
 .preparo-box {
-    padding: 2rem;
-    border-radius: 12px;
-    background: #f8f8f8;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    hyphens: manual;
-    max-width: 100%;
-    box-sizing: border-box;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #f8f8f8;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: manual;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .ingredientes-box {
-    border-left: 6px solid #1f4025;
+  border-left: 6px solid #1f4025;
 }
 
 .preparo-box {
-    background: #f5f5f5;
-    border-left: 6px solid #8b5400;
+  background: #f5f5f5;
+  border-left: 6px solid #8b5400;
 }
 
 .ingredientes-lista,
 .preparo-lista {
-    padding-left: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    max-width: 100%;
-    box-sizing: border-box;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .ingredientes-lista li,
 .preparo-lista li {
-    padding: 0.5rem 0.75rem;
-    position: relative;
-    background-color: #ffffff90;
-    border-radius: 6px;
-    transition: transform 0.2s ease;
-    word-break: break-word;
+  padding: 0.5rem 0.75rem;
+  position: relative;
+  background-color: #ffffff90;
+  border-radius: 6px;
+  transition: transform 0.2s ease;
+  word-break: break-word;
 }
 
 .preparo-lista li {
-    padding: 1rem 1.5rem 1rem 3rem;
-    counter-increment: step-counter;
-    margin-bottom: 1.25rem;
+  padding: 1rem 1.5rem 1rem 3rem;
+  counter-increment: step-counter;
+  margin-bottom: 1.25rem;
 }
 
 .btn-voltar {
-    display: block;
-    margin: 3rem auto 2rem;
-    padding: 1rem 2.5rem;
-    background-color: #2e7d32;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: "Source Serif Pro", serif;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: block;
+  margin: 3rem auto 2rem;
+  padding: 1rem 2.5rem;
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Source Serif Pro", serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn-voltar:hover {
-    background-color: #1f4025;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background-color: #1f4025;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsividade para telas menores */
 @media (max-width: 768px) {
-    .receita-content {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
+  .receita-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
 
-    .receita-container {
-        padding: 2rem 1.5rem;
-        margin: 1.5rem;
-        max-width: calc(100% - 3rem);
-    }
+  .receita-container {
+    padding: 2rem 1.5rem;
+    margin: 1.5rem;
+    max-width: calc(100% - 3rem);
+  }
 
-    h1 {
-        font-size: 2.2rem;
-    }
+  .header-top {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
 
-    .section-title {
-        font-size: 1.5rem;
-    }
+  .header-top h1 {
+    text-align: center;
+    order: 1;
+  }
 
-    .receita-imagem {
-        max-height: 350px;
-    }
+  .admin-toggle {
+    order: 2;
+    align-self: center;
+  }
 
-    .ingredientes-box,
-    .preparo-box,
-    .historia-box {
-        padding: 1.5rem;
-    }
+  h1 {
+    font-size: 2.2rem;
+  }
 
-    .historia-box {
-        grid-column: span 1;
-    }
+  .section-title {
+    font-size: 1.5rem;
+  }
 
-    .historia-receita {
-        font-size: 1rem;
-        line-height: 1.6; 
-    }
+  .receita-imagem {
+    max-height: 350px;
+  }
+
+  .ingredientes-box,
+  .preparo-box,
+  .historia-box {
+    padding: 1.5rem;
+  }
+
+  .historia-box {
+    grid-column: span 1;
+  }
+
+  .historia-receita {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
 }

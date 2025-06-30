@@ -1,0 +1,163 @@
+/* CSS específico para página Todas as Receitas */
+
+/* Botão Admin */
+.admin-toggle {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: calc(0.9 * var(--font-size, 16px));
+  transition: background-color 0.3s ease;
+}
+
+.admin-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Estatísticas */
+.stats-info {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stats-content {
+  display: flex;
+  gap: 2.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  font-size: calc(1.1 * var(--font-size, 16px));
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: #1f4025;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(31, 64, 37, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(31, 64, 37, 0.15);
+}
+
+/* Filtros */
+.filtros {
+  background-color: white;
+  padding: 2rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filtros .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.filtros-container {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.busca-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+  min-width: 300px;
+}
+
+.busca-container input {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: var(--font-size, 16px);
+  flex: 1;
+  min-width: 200px;
+}
+
+.busca-container input:focus {
+  outline: none;
+  border-color: #1f4025;
+}
+
+/* Responsividade específica para página de receitas */
+
+/* Seção de receitas */
+.receitas {
+  padding: 3rem 0;
+}
+
+.receitas .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Estilos específicos da página todas-receitas */
+
+/* Responsividade específica do todas-receitas */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .stats-content {
+    gap: 1rem;
+    flex-direction: column;
+  }
+
+  .stat-item {
+    font-size: calc(0.95 * var(--font-size, 16px));
+    padding: 0.6rem 0.8rem;
+    justify-content: center;
+  }
+
+  .btn-voltar {
+    text-align: center;
+  }
+
+  .busca-container {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .busca-container input {
+    min-width: unset;
+    width: 100%;
+  }
+
+  /* Melhorias nos botões mobile */
+  .card-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1.5rem 1.5rem 0;
+    padding-bottom: 1.5rem;
+    align-items: stretch;
+  }
+
+  .card-actions button {
+    flex: none;
+    width: 100%;
+    padding: 1rem;
+    font-size: 0.9rem;
+    min-width: unset;
+  }
+}

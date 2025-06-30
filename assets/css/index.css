@@ -275,6 +275,82 @@ footer p a {
   color: #ffffff;
 }
 
+/* Estilos para o botão "Ver Mais" */
+.ver-mais-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  grid-column: 1 / -1; /* Ocupa toda a largura do grid */
+  margin-top: 1rem;
+}
+
+.ver-mais-card {
+  background: linear-gradient(135deg, #f8fdf8 0%, #f1f8f1 100%);
+  border: 2px solid #c8e6c9;
+  color: #2e7d32;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  max-width: 280px;
+  margin: 0 auto;
+  min-height: 180px;
+}
+
+.ver-mais-card:hover {
+  background: linear-gradient(135deg, #f1f8f1 0%, #e8f5e8 100%);
+  border-color: #a5d6a7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+}
+
+.ver-mais-content {
+  padding: 1rem; /* Reduzido de 1.5rem para 1rem */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  height: 100%;
+  justify-content: center;
+}
+
+.ver-mais-icon {
+  font-size: 1.5rem; /* Reduzido de 2rem para 1.5rem */
+  margin-bottom: 0.25rem; /* Reduzido */
+}
+
+.ver-mais-card h3 {
+  color: #2e7d32 !important;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.ver-mais-card p {
+  color: #558b5a;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+.btn-ver-mais {
+  background: #2e7d32;
+  color: white;
+  border: 2px solid #2e7d32;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.btn-ver-mais:hover {
+  background: #1b5e20;
+  border-color: #1b5e20;
+  transform: scale(1.02);
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .navbar .container {
