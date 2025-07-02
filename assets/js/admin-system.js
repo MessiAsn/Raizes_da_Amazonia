@@ -271,6 +271,12 @@ window.RaizesAmazonia.Admin = {
     if (btnAdicionarDica) {
       btnAdicionarDica.style.display = this.isAdmin ? "block" : "none";
     }
+
+    // Mostrar/esconder botão de adicionar receita na página todas-receitas (usando cache)
+    const btnAdicionarReceita = DOMCache.get("#btn-adicionar-receita");
+    if (btnAdicionarReceita) {
+      btnAdicionarReceita.style.display = this.isAdmin ? "block" : "none";
+    }
   },
 
   // Método para inicialização com melhor estrutura

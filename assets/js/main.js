@@ -9,11 +9,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (window.RaizesAmazonia?.DependencyManager) {
     await window.RaizesAmazonia.DependencyManager.waitForModule("core");
   }
-  
+
   // Inicializar aplicação
   console.log("Iniciando carregamento da aplicação...");
   console.log("API URL:", getApiBaseUrl());
-  
+
   // Carregar receitas
   carregarReceitas();
 
@@ -203,9 +203,13 @@ function mostrarInfo(texto) {
 /* Configuração da API */
 // Garantir que sempre temos a URL correta
 function getApiBaseUrl() {
-  const url = window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+  const url =
+    window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
   console.log("🔧 getApiBaseUrl() retornando:", url);
-  console.log("🔍 window.RaizesAmazonia?.Config disponível:", !!window.RaizesAmazonia?.Config);
+  console.log(
+    "🔍 window.RaizesAmazonia?.Config disponível:",
+    !!window.RaizesAmazonia?.Config
+  );
   return url;
 }
 
@@ -215,14 +219,16 @@ const container = document.querySelector(".card-container");
 async function carregarReceitas() {
   const API_BASE_URL = getApiBaseUrl();
   console.log("Carregando receitas da URL:", API_BASE_URL);
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/receitas`);
     console.log("Response status:", response.status);
     console.log("Response OK:", response.ok);
-    
+
     if (!response.ok) {
-      throw new Error(`Erro ao carregar receitas: ${response.status} - ${response.statusText}`);
+      throw new Error(
+        `Erro ao carregar receitas: ${response.status} - ${response.statusText}`
+      );
     }
 
     const receitas = await response.json();
@@ -880,7 +886,12 @@ window.carregarDicas = async function carregarDicas(tentativas = 3) {
 
 // Funções para gerenciar dicas (modo admin)
 // Tornar função global para evitar duplicação
-window.mostrarConfirmacao = function mostrarConfirmacao(titulo, mensagem, onConfirm, onCancel = null) {
+window.mostrarConfirmacao = function mostrarConfirmacao(
+  titulo,
+  mensagem,
+  onConfirm,
+  onCancel = null
+) {
   return new Promise((resolve) => {
     const modal = document.createElement("div");
     modal.className = "modal-overlay";
@@ -980,7 +991,7 @@ window.mostrarConfirmacao = function mostrarConfirmacao(titulo, mensagem, onConf
 
     document.addEventListener("keydown", handleEsc);
   });
-}
+};
 
 /* Sistema de Autenticação Simples */
 // A variável isAdmin agora é gerenciada pelo admin-system.js

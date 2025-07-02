@@ -1,21 +1,5 @@
 /* CSS específico para página Todas as Receitas */
 
-/* Botão Admin */
-.admin-toggle {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: calc(0.9 * var(--font-size, 16px));
-  transition: background-color 0.3s ease;
-}
-
-.admin-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
 /* Estatísticas */
 .stats-info {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -98,17 +82,6 @@
 
 /* Responsividade específica para página de receitas */
 
-/* Seção de receitas */
-.receitas {
-  padding: 3rem 0;
-}
-
-.receitas .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
 /* Estilos específicos da página todas-receitas */
 
 /* Responsividade específica do todas-receitas */
@@ -142,22 +115,5 @@
   .busca-container input {
     min-width: unset;
     width: 100%;
-  }
-
-  /* Melhorias nos botões mobile */
-  .card-actions {
-    flex-direction: column;
-    gap: 0.5rem;
-    margin: 1.5rem 1.5rem 0;
-    padding-bottom: 1.5rem;
-    align-items: stretch;
-  }
-
-  .card-actions button {
-    flex: none;
-    width: 100%;
-    padding: 1rem;
-    font-size: 0.9rem;
-    min-width: unset;
   }
 }

@@ -60,6 +60,14 @@
     <section class="receitas">
       <div class="container">
         <div id="stats-info" class="stats-info"></div>
+        <button
+          id="btn-adicionar-receita"
+          class="btn-admin"
+          onclick="abrirModalNovaReceita()"
+          style="display: none"
+        >
+          ➕ Adicionar Nova Receita
+        </button>
         <div id="loading" class="loading" style="display: none">
           <div class="loading-spinner"></div>
           <p>Carregando receitas...</p>
@@ -112,6 +120,15 @@
               name="modo_preparo"
               rows="6"
               required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-historia">História da Receita:</label>
+            <textarea
+              id="edit-historia"
+              name="historia"
+              rows="4"
+              placeholder="Conte a origem e história desta receita tradicional"
             ></textarea>
           </div>
           <div class="form-group">
@@ -188,6 +205,15 @@
             ></textarea>
           </div>
           <div class="form-group">
+            <label for="historia">História da Receita:</label>
+            <textarea
+              id="historia"
+              name="historia"
+              rows="4"
+              placeholder="Conte a origem e história desta receita tradicional"
+            ></textarea>
+          </div>
+          <div class="form-group">
             <label for="imagem">Imagem (opcional):</label>
             <input
               type="file"
@@ -216,17 +242,17 @@
 
     <!-- Rodapé -->
     <footer>
-      <p>&copy; 2025 Raízes da Amazônia. Todos os direitos reservados.</p>
       <p>
         <a href="politica-privacidade.html">Política de Privacidade</a> |
         <a href="termos-uso.html">Termos de Uso</a>
       </p>
+      <p>&copy; 2025 Raízes da Amazônia. Todos os direitos reservados.</p>
     </footer>
 
     <!-- Scripts -->
     <script src="../assets/js/config.js"></script>
     <script src="../assets/js/admin-system.js"></script>
-    <script src="../assets/js/aumento-fonte.js"></script>
     <script src="../assets/js/todas-receitas.js"></script>
+    <script src="../assets/js/aumento-fonte.js"></script>
   </body>
 </html>

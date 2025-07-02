@@ -1,7 +1,8 @@
 /* JavaScript para página Todas as Receitas */
 
 // Usar configuração centralizada do config.js
-const API_BASE_URL = window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL =
+  window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
 const container = document.getElementById("card-container");
 const loadingElement = document.getElementById("loading");
 
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (window.RaizesAmazonia?.DependencyManager) {
     await window.RaizesAmazonia.DependencyManager.waitForModule("core");
   }
-  
+
   carregarTodasReceitas();
   carregarEstatisticas();
 });
@@ -48,7 +49,7 @@ async function confirmarDelecao(itemNome, itemTipo = "item") {
       () => mostrarMensagem("❌ Exclusão cancelada", "info")
     );
   }
-  
+
   // Fallback simples
   return confirm(`${titulo}\n\n${mensagem}`);
 }
@@ -128,10 +129,7 @@ function renderizarReceitas(receitas) {
     container.appendChild(card);
   });
 
-  // Adicionar botão para nova receita se for admin
-  if (isAdmin) {
-    adicionarBotaoNovaReceita();
-  }
+  // Botão de adicionar nova receita agora está fixo no HTML
 }
 
 function mostrarMensagemVazia() {
@@ -170,20 +168,6 @@ function mostrarErroConexao() {
 
 function mostrarLoading(mostrar) {
   loadingElement.style.display = mostrar ? "block" : "none";
-}
-
-function adicionarBotaoNovaReceita() {
-  const botaoContainer = document.createElement("div");
-  botaoContainer.className = "card nova-receita-card";
-  botaoContainer.innerHTML = `
-        <div class="nova-receita-content">
-            <span class="plus-icon">+</span>
-            <h3>Adicionar Nova Receita</h3>
-            <p>Clique aqui para adicionar uma nova receita</p>
-        </div>
-    `;
-  botaoContainer.onclick = abrirModalNovaReceita;
-  container.appendChild(botaoContainer);
 }
 
 // Funções de filtro e busca
@@ -294,6 +278,7 @@ function editarReceita(id) {
       document.getElementById("edit-descricao").value = receita.descricao;
       document.getElementById("edit-ingredientes").value = receita.ingredientes;
       document.getElementById("edit-modo_preparo").value = receita.modo_preparo;
+      document.getElementById("edit-historia").value = receita.historia || "";
 
       // Limpar preview de imagem
       document.getElementById("edit-preview-container").style.display = "none";
@@ -323,6 +308,7 @@ function salvarEdicaoReceita(event) {
     "modo_preparo",
     document.getElementById("edit-modo_preparo").value
   );
+  formData.append("historia", document.getElementById("edit-historia").value);
 
   const imagemFile = document.getElementById("edit-imagem").files[0];
   if (imagemFile) {
@@ -417,6 +403,7 @@ function adicionarReceita(event) {
     "modo_preparo",
     document.getElementById("modo_preparo").value
   );
+  formData.append("historia", document.getElementById("historia").value);
 
   const imagemFile = document.getElementById("imagem").files[0];
   if (imagemFile) {
@@ -509,7 +496,7 @@ function mostrarMensagem(texto, tipo = "info", duracao = 6000) {
   if (window.RaizesAmazonia?.Messages?.show) {
     return window.RaizesAmazonia.Messages.show(texto, tipo, duracao);
   }
-  
+
   // Fallback para implementação local se sistema centralizado não estiver disponível
   // Remover mensagem existente se houver
   const mensagemExistente = document.querySelector(".mensagem-toast");

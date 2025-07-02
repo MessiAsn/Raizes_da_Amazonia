@@ -56,6 +56,41 @@
   text-align: center;
 }
 
+/* Estilo para botões admin específicos */
+.btn-admin {
+  background-color: #ffd54f;
+  color: #1f4025;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: "Source Serif Pro", serif;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-admin:hover {
+  background-color: #ffc107;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-admin:active {
+  transform: translateY(0);
+  transition: all 0.1s ease;
+}
+
+.btn-admin:focus {
+  outline: 2px solid #ff8f00;
+  outline-offset: 2px;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .admin-toggle {

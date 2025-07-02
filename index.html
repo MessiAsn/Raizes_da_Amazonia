@@ -1,97 +1,149 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Raízes da Amazônia</title>
-  <link rel="stylesheet" href="assets/css/common.css" />
-  <link rel="stylesheet" href="assets/css/index.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Jersey+25&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/aumento-fonte.css">
-</head>
-<body>
-
-  <div class="accessibilidade-container">
-    <button data-font-size="0.9rem">-A</button>
-    <button data-font-size="1.0rem">A</button>
-    <button data-font-size="1.2rem">+A</button>
-    <button data-font-size="1.4rem">+A+</button>
-  </div>
-  
-
-  <nav class="navbar">
-    <div class="container">
-      <div class="logo">RAÍZES DA AMAZÔNIA</div>
-      <ul>
-        <li><a href="#sobre">Sobre o Projeto</a></li>
-        <li><a href="#receitas">Receitas</a></li>
-        <li><a href="#dicas">Dicas Culinárias</a></li>
-        <li><a href="#contato">Contato</a></li>
-      </ul>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raízes da Amazônia</title>
+    <link rel="stylesheet" href="assets/css/common.css" />
+    <link rel="stylesheet" href="assets/css/index.css" />
+    <link rel="stylesheet" href="assets/css/admin-button.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jersey+25&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/aumento-fonte.css" />
+  </head>
+  <body>
+    <div class="accessibilidade-container">
+      <button data-font-size="0.9rem">-A</button>
+      <button data-font-size="1.0rem">A</button>
+      <button data-font-size="1.2rem">+A</button>
+      <button data-font-size="1.4rem">+A+</button>
     </div>
-  </nav>
 
-  <header class="hero">
-    <div class="hero-content">
-      <h1>Receitas Regionais Brasileiras</h1>
-      <a href="#receitas" class="hero-button">Ver Receitas</a>
-    </div>
-  </header>
+    <nav class="navbar">
+      <div class="container">
+        <div class="logo">RAÍZES DA AMAZÔNIA</div>
+        <ul>
+          <li><a href="#sobre">Sobre o Projeto</a></li>
+          <li><a href="#receitas">Receitas</a></li>
+          <li><a href="#dicas">Dicas Culinárias</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+        <button onclick="toggleAdmin()" class="admin-toggle">Admin</button>
+      </div>
+    </nav>
 
-  <section class="sobre" id="sobre">
-    <h2>Sobre o Projeto</h2>
-    <p>O <strong style="color: #1f4025;">Raízes da Amazônia</strong> nasceu com o objetivo de preservar e compartilhar as receitas tradicionais do Brasil, com um foco especial na rica e diversificada culinária da Amazônia. Este projeto vai além de um simples repositório de receitas. Em cada prato, não apenas encontramos ingredientes autênticos e naturais, mas também a história e a cultura de comunidades que, ao longo de gerações, mantiveram viva a tradição de cozinhar com o que a terra oferece.</p>    
-    <p>Seja <strong style="color: #1f4025;">BEM VINDO(A)</strong> ao <strong style="color: #1f4025;">Raízes da Amazônia</strong> — um espaço dedicado a você que deseja conhecer, aprender e se apaixonar pela culinária da Amazônia. Aqui, cada ingrediente tem um significado, cada prato é uma memória e, mais do que tudo, cada sabor é uma verdadeira viagem pela imensidão da floresta amazônica. Convidamos você a explorar as delícias da nossa terra e a fazer parte dessa jornada de preservação, valorização e celebração da gastronomia amazônica.</p>
-  </section>
+    <header class="hero">
+      <div class="hero-content">
+        <h1>Receitas Regionais Brasileiras</h1>
+        <a href="pages/todas-receitas.html" class="hero-button">Ver Receitas</a>
+      </div>
+    </header>
 
-  <section class="receitas" id="receitas">
-    <h2>Receitas</h2>
-    <div class="card-container"></div>
-    
-    <!-- Card "Ver Todas as Receitas" estático -->
-    <div class="ver-mais-wrapper">
-      <div class="card ver-mais-card" onclick="window.location.href='pages/todas-receitas.html'">
-        <div class="ver-mais-content">
-          <span class="ver-mais-icon">🍽️</span>
-          <h3>Ver Todas as Receitas</h3>
-          <p>Explore nossa coleção completa</p>
-          <button class="btn-ver-mais">Explorar</button>
+    <section class="sobre" id="sobre">
+      <h2>Sobre o Projeto</h2>
+      <p>
+        O <strong style="color: #1f4025">Raízes da Amazônia</strong> nasceu com
+        o objetivo de preservar e compartilhar as receitas tradicionais do
+        Brasil, com um foco especial na rica e diversificada culinária da
+        Amazônia. Este projeto vai além de um simples repositório de receitas.
+        Em cada prato, não apenas encontramos ingredientes autênticos e
+        naturais, mas também a história e a cultura de comunidades que, ao longo
+        de gerações, mantiveram viva a tradição de cozinhar com o que a terra
+        oferece.
+      </p>
+      <p>
+        Seja <strong style="color: #1f4025">BEM VINDO(A)</strong> ao
+        <strong style="color: #1f4025">Raízes da Amazônia</strong> — um espaço
+        dedicado a você que deseja conhecer, aprender e se apaixonar pela
+        culinária da Amazônia. Aqui, cada ingrediente tem um significado, cada
+        prato é uma memória e, mais do que tudo, cada sabor é uma verdadeira
+        viagem pela imensidão da floresta amazônica. Convidamos você a explorar
+        as delícias da nossa terra e a fazer parte dessa jornada de preservação,
+        valorização e celebração da gastronomia amazônica.
+      </p>
+    </section>
+
+    <section class="receitas" id="receitas">
+      <h2>Receitas</h2>
+      <div class="card-container"></div>
+
+      <!-- Card "Ver Todas as Receitas" estático -->
+      <div class="ver-mais-wrapper">
+        <div
+          class="card ver-mais-card"
+          onclick="window.location.href='pages/todas-receitas.html'"
+        >
+          <div class="ver-mais-content">
+            <span class="ver-mais-icon">🍽️</span>
+            <h3>Ver Todas as Receitas</h3>
+            <p>Explore nossa coleção completa</p>
+            <button class="btn-ver-mais">Explorar</button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="dicas-contato">
-    <div class="dicas card-section" id="dicas">
-      <h2>Dicas culinárias</h2>
-      <div class="dicas-scroll">
-        <ul></ul>
+    <section class="dicas-contato">
+      <div class="dicas card-section" id="dicas">
+        <h2>Dicas culinárias</h2>
+        <div class="dicas-scroll">
+          <ul></ul>
+        </div>
+        <button
+          id="btn-adicionar-dica"
+          class="btn-admin"
+          onclick="adicionarDica()"
+          style="display: none"
+        >
+          ✨ Adicionar Nova Dica
+        </button>
       </div>
-      <button id="btn-adicionar-dica" class="btn-admin" onclick="adicionarDica()" style="display: none;">
-        ✨ Adicionar Nova Dica
-      </button>
-    </div>
 
-    <div class="contato card-section" id="contato">
-      <h2>Contate-nos</h2>
-      <form id="form-contato">
-        <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required />
-        <input type="email" id="email" name="email" placeholder="Digite seu email" required />
-        <textarea id="mensagem" name="mensagem" placeholder="Digite sua mensagem" required></textarea>
-        <button type="submit">Enviar</button>
-      </form>
-    </div>
-  </section>
+      <div class="contato card-section" id="contato">
+        <h2>Contate-nos</h2>
+        <form id="form-contato">
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Digite seu nome"
+            required
+          />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Digite seu email"
+            required
+          />
+          <textarea
+            id="mensagem"
+            name="mensagem"
+            placeholder="Digite sua mensagem"
+            required
+          ></textarea>
+          <button type="submit">Enviar</button>
+        </form>
+      </div>
+    </section>
 
-  <footer>
-    <p><a href="pages/politica-privacidade.html">Política de Privacidade</a> | <a href="pages/termos-uso.html">Termos de Uso</a></p>
-    <p>© 2025 Raízes da Amazônia. Todos os direitos reservados</p>
-  </footer>
+    <footer>
+      <p>
+        <a href="pages/politica-privacidade.html">Política de Privacidade</a> |
+        <a href="pages/termos-uso.html">Termos de Uso</a>
+      </p>
+      <p>© 2025 Raízes da Amazônia. Todos os direitos reservados</p>
+    </footer>
 
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/admin-system.js"></script>
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/aumento-fonte.js"></script>
-</body>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/admin-system.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/aumento-fonte.js"></script>
+  </body>
 </html>
