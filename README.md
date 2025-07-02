@@ -75,7 +75,7 @@ python debug_server.py
 ## 🔑 Modo Administrador
 
 - **Senha padrão**: `admin123`
-- **Ativação**: 
+- **Ativação**:
   - Clique no botão "Admin" na navbar
   - Ou use o atalho `Ctrl+Shift+A`
 - **Funcionalidades exclusivas**:
@@ -151,20 +151,20 @@ raizes_da_amazonia/
 
 ## 📡 API Endpoints
 
-| Método   | Endpoint             | Descrição                     |
-| -------- | -------------------- | ----------------------------- |
-| `GET`    | `/api/receitas`      | Listar todas as receitas      |
-| `GET`    | `/api/receitas/{id}` | Obter receita específica      |
-| `POST`   | `/api/receitas`      | Criar nova receita            |
-| `PUT`    | `/api/receitas/{id}` | Atualizar receita existente   |
-| `DELETE` | `/api/receitas/{id}` | Excluir receita               |
-| `GET`    | `/api/dicas`         | Listar dicas culinárias       |
-| `POST`   | `/api/dicas`         | Criar nova dica               |
-| `PUT`    | `/api/dicas/{id}`    | Atualizar dica                |
-| `DELETE` | `/api/dicas/{id}`    | Excluir dica                  |
-| `POST`   | `/api/contato`       | Enviar mensagem de contato    |
-| `POST`   | `/api/upload`        | Upload de imagem              |
-| `GET`    | `/uploads/{filename}`| Acessar imagem carregada      |
+| Método   | Endpoint              | Descrição                   |
+| -------- | --------------------- | --------------------------- |
+| `GET`    | `/api/receitas`       | Listar todas as receitas    |
+| `GET`    | `/api/receitas/{id}`  | Obter receita específica    |
+| `POST`   | `/api/receitas`       | Criar nova receita          |
+| `PUT`    | `/api/receitas/{id}`  | Atualizar receita existente |
+| `DELETE` | `/api/receitas/{id}`  | Excluir receita             |
+| `GET`    | `/api/dicas`          | Listar dicas culinárias     |
+| `POST`   | `/api/dicas`          | Criar nova dica             |
+| `PUT`    | `/api/dicas/{id}`     | Atualizar dica              |
+| `DELETE` | `/api/dicas/{id}`     | Excluir dica                |
+| `POST`   | `/api/contato`        | Enviar mensagem de contato  |
+| `POST`   | `/api/upload`         | Upload de imagem            |
+| `GET`    | `/uploads/{filename}` | Acessar imagem carregada    |
 
 ### 🔒 Autenticação
 
@@ -194,7 +194,6 @@ A API utiliza autenticação baseada em sessão. Rotas protegidas requerem login
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 ## 👨‍💻 Desenvolvimento
-
 
 **Finalidade**: Projeto educacional - Desenvolvimento Web  
 **Instituição**: Instituto Federal do Amazonas - Disciplina de DWEB

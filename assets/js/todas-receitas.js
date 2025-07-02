@@ -186,9 +186,8 @@ function buscarReceitas() {
     receitasFiltradas = [...todasReceitas];
   } else {
     // Busca apenas por nome da receita
-    receitasFiltradas = todasReceitas.filter(
-      (receita) =>
-        receita.nome.toLowerCase().includes(termoBusca)
+    receitasFiltradas = todasReceitas.filter((receita) =>
+      receita.nome.toLowerCase().includes(termoBusca)
     );
   }
 
@@ -213,7 +212,7 @@ function atualizarContadorResultados(termoBusca) {
   if (termoBusca) {
     const total = receitasFiltradas.length;
     const totalGeral = todasReceitas.length;
-    
+
     if (total === 0) {
       contador.innerHTML = `<span style="color: #dc3545;">❌ Nenhuma receita encontrada para "${termoBusca}"</span>`;
       contador.className = "search-results-info";
@@ -226,7 +225,8 @@ function atualizarContadorResultados(termoBusca) {
     }
   } else {
     const total = todasReceitas.length;
-    contador.innerHTML = total > 0 ? `📚 Mostrando todas as ${total} receitas` : "";
+    contador.innerHTML =
+      total > 0 ? `📚 Mostrando todas as ${total} receitas` : "";
     contador.className = "search-results-info";
   }
 }
@@ -239,13 +239,13 @@ function buscarComDebounce() {
 }
 
 // Event listeners melhorados para busca
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const campoBusca = document.getElementById("busca-receitas");
-  
+
   if (campoBusca) {
     // Busca em tempo real
     campoBusca.addEventListener("input", buscarComDebounce);
-    
+
     // Busca ao pressionar Enter (mantém compatibilidade)
     campoBusca.addEventListener("keypress", function (e) {
       if (e.key === "Enter") {
