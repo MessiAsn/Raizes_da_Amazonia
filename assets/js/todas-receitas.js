@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   carregarTodasReceitas();
-  carregarEstatisticas();
+  // As estatísticas serão calculadas automaticamente após carregar as receitas
 });
 
 // A verificação do status admin é feita automaticamente pelo admin-system.js
@@ -72,9 +72,10 @@ async function carregarTodasReceitas() {
     receitasFiltradas = [...todasReceitas];
 
     renderizarReceitas(receitasFiltradas);
+    atualizarContadorResultados(""); // Inicializar contador
 
-    // Tentar carregar estatísticas da API, se falhar usar dados locais
-    setTimeout(() => mostrarEstatisticasLocal(), 1000);
+    // Calcular e mostrar estatísticas
+    mostrarEstatisticasLocal();
   } catch (error) {
     console.error("Erro ao carregar receitas:", error);
     mostrarErroConexao();
@@ -177,64 +178,91 @@ function buscarReceitas() {
     .value.toLowerCase()
     .trim();
 
+  // Controlar visibilidade do botão de limpar
+  const btnLimpar = document.getElementById("btn-limpar-busca");
+  btnLimpar.style.display = termoBusca ? "flex" : "none";
+
   if (termoBusca === "") {
     receitasFiltradas = [...todasReceitas];
   } else {
+    // Busca apenas por nome da receita
     receitasFiltradas = todasReceitas.filter(
       (receita) =>
-        receita.nome.toLowerCase().includes(termoBusca) ||
-        receita.descricao.toLowerCase().includes(termoBusca) ||
-        (receita.ingredientes &&
-          receita.ingredientes.toLowerCase().includes(termoBusca)) ||
-        (receita.modo_preparo &&
-          receita.modo_preparo.toLowerCase().includes(termoBusca))
+        receita.nome.toLowerCase().includes(termoBusca)
     );
   }
 
+  atualizarContadorResultados(termoBusca);
   renderizarReceitas(receitasFiltradas);
 }
 
-// Permitir busca ao pressionar Enter
-document
-  .getElementById("busca-receitas")
-  .addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      buscarReceitas();
-    }
-  });
+function limparBusca() {
+  document.getElementById("busca-receitas").value = "";
+  document.getElementById("btn-limpar-busca").style.display = "none";
+  receitasFiltradas = [...todasReceitas];
+  atualizarContadorResultados("");
+  renderizarReceitas(receitasFiltradas);
+  // Focar no campo de busca
+  document.getElementById("busca-receitas").focus();
+}
 
-// Carregar estatísticas
-async function carregarEstatisticas() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/stats`);
+function atualizarContadorResultados(termoBusca) {
+  const contador = document.getElementById("resultados-count");
+  if (!contador) return;
 
-    if (response.ok) {
-      const stats = await response.json();
-      console.log("Estatísticas carregadas:", stats); // Debug
-
-      let statsElement = document.getElementById("stats-info");
-
-      if (statsElement) {
-        statsElement.innerHTML = `
-                <div class="stats-content">
-                    <span class="stat-item">📊 Total: ${stats.total_receitas}</span>
-                    <span class="stat-item">📷 Com imagem: ${stats.receitas_com_imagem}</span>
-                    <span class="stat-item">📝 Sem imagem: ${stats.receitas_sem_imagem}</span>
-                </div>
-            `;
-        console.log("Estatísticas inseridas no DOM"); // Debug
-      } else {
-        console.error("Elemento stats-info não encontrado"); // Debug
-      }
+  if (termoBusca) {
+    const total = receitasFiltradas.length;
+    const totalGeral = todasReceitas.length;
+    
+    if (total === 0) {
+      contador.innerHTML = `<span style="color: #dc3545;">❌ Nenhuma receita encontrada para "${termoBusca}"</span>`;
+      contador.className = "search-results-info";
+    } else if (total === totalGeral) {
+      contador.innerHTML = `📚 Mostrando todas as ${total} receitas`;
+      contador.className = "search-results-info";
     } else {
-      console.error("Erro na resposta da API de stats:", response.status); // Debug
+      contador.innerHTML = `🔍 ${total} de ${totalGeral} receitas encontradas para "<strong>${termoBusca}</strong>"`;
+      contador.className = "search-results-info highlight";
     }
-  } catch (error) {
-    console.error("Erro ao carregar estatísticas:", error);
-    // Fallback: calcular estatísticas das receitas carregadas
-    mostrarEstatisticasLocal();
+  } else {
+    const total = todasReceitas.length;
+    contador.innerHTML = total > 0 ? `📚 Mostrando todas as ${total} receitas` : "";
+    contador.className = "search-results-info";
   }
 }
+
+// Busca em tempo real com debounce para otimizar performance
+let timeoutBusca;
+function buscarComDebounce() {
+  clearTimeout(timeoutBusca);
+  timeoutBusca = setTimeout(buscarReceitas, 300); // 300ms de delay
+}
+
+// Event listeners melhorados para busca
+document.addEventListener("DOMContentLoaded", function() {
+  const campoBusca = document.getElementById("busca-receitas");
+  
+  if (campoBusca) {
+    // Busca em tempo real
+    campoBusca.addEventListener("input", buscarComDebounce);
+    
+    // Busca ao pressionar Enter (mantém compatibilidade)
+    campoBusca.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        clearTimeout(timeoutBusca); // Cancel debounce
+        buscarReceitas();
+      }
+    });
+
+    // Limpar com Escape
+    campoBusca.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        limparBusca();
+      }
+    });
+  }
+});
 
 // Mostrar estatísticas baseadas nas receitas carregadas localmente
 function mostrarEstatisticasLocal() {

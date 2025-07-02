@@ -42,15 +42,28 @@
       <div class="container">
         <div class="filtros-container">
           <a href="../index.html" class="btn-voltar">← Voltar</a>
+          
           <div class="busca-container">
-            <input
-              type="text"
-              id="busca-receitas"
-              placeholder="Buscar receitas..."
-            />
-            <button onclick="buscarReceitas()" class="btn-buscar">
-              Buscar
-            </button>
+            <div class="search-wrapper">
+              <input
+                type="text"
+                id="busca-receitas"
+                placeholder="🔍 Buscar receita por nome..."
+                aria-label="Buscar receitas por nome"
+              />
+              <button 
+                id="btn-limpar-busca" 
+                onclick="limparBusca()" 
+                class="btn-clear"
+                title="Limpar busca"
+                style="display: none;"
+              >
+                ✕
+              </button>
+            </div>
+            <div class="search-results-info">
+              <span id="resultados-count"></span>
+            </div>
           </div>
         </div>
       </div>
