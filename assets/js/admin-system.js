@@ -100,17 +100,11 @@ window.RaizesAmazonia.Admin = {
 
   // Configurações
   config: {
-    get password() {
-      return window.RaizesAmazonia?.Config?.ADMIN_PASSWORD || "admin123";
-    },
+    password: "admin123", // Altere aqui
     sessionKey: "isAdmin",
     loginAttempts: 0,
-    get maxAttempts() {
-      return window.RaizesAmazonia?.Config?.MAX_LOGIN_ATTEMPTS || 3;
-    },
-    get lockoutTime() {
-      return window.RaizesAmazonia?.Config?.LOCKOUT_TIME || 5 * 60 * 1000;
-    },
+    maxAttempts: 3,
+    lockoutTime: 5 * 60 * 1000, // 5 minutos
   },
 
   // Getter/Setter para isAdmin
@@ -270,12 +264,6 @@ window.RaizesAmazonia.Admin = {
     const btnAdicionarDica = DOMCache.get("#btn-adicionar-dica");
     if (btnAdicionarDica) {
       btnAdicionarDica.style.display = this.isAdmin ? "block" : "none";
-    }
-
-    // Mostrar/esconder botão de adicionar receita na página todas-receitas (usando cache)
-    const btnAdicionarReceita = DOMCache.get("#btn-adicionar-receita");
-    if (btnAdicionarReceita) {
-      btnAdicionarReceita.style.display = this.isAdmin ? "block" : "none";
     }
   },
 

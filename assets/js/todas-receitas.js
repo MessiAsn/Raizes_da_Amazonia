@@ -1,12 +1,9 @@
 /* JavaScript para página Todas as Receitas */
 
-// Usar configuração centralizada do config.js
-const API_BASE_URL =
-  window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+// Configuração da API
+const API_BASE_URL = "http://localhost:8000";
 const container = document.getElementById("card-container");
 const loadingElement = document.getElementById("loading");
-
-// Estado do admin é gerenciado pelo admin-system.js
 
 // Cache das receitas para filtros
 let todasReceitas = [];
@@ -14,11 +11,6 @@ let receitasFiltradas = [];
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", async function () {
-  // Aguardar configuração ser carregada se disponível
-  if (window.RaizesAmazonia?.DependencyManager) {
-    await window.RaizesAmazonia.DependencyManager.waitForModule("core");
-  }
-
   carregarTodasReceitas();
   // As estatísticas serão calculadas automaticamente após carregar as receitas
 });
@@ -141,7 +133,7 @@ function mostrarMensagemVazia() {
             <h3>🍽️ Ainda não há receitas!</h3>
             <p>${
               isAdmin
-                ? "Seja o primeiro a adicionar uma deliciosa receita amazônica!"
+                ? "Mais receitas serão adicionadas em breve!"
                 : "Em breve teremos deliciosas receitas amazônicas aqui!"
             }</p>
             ${
@@ -520,12 +512,6 @@ function verReceitaDetalhes(id) {
 
 /* Sistema de Mensagens Personalizadas */
 function mostrarMensagem(texto, tipo = "info", duracao = 6000) {
-  // Usar sistema centralizado se disponível
-  if (window.RaizesAmazonia?.Messages?.show) {
-    return window.RaizesAmazonia.Messages.show(texto, tipo, duracao);
-  }
-
-  // Fallback para implementação local se sistema centralizado não estiver disponível
   // Remover mensagem existente se houver
   const mensagemExistente = document.querySelector(".mensagem-toast");
   if (mensagemExistente) {

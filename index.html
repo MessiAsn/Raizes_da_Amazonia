@@ -34,14 +34,22 @@
           <li><a href="#dicas">Dicas Culinárias</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
-        <button onclick="toggleAdmin()" class="admin-toggle">Admin</button>
+        <div class="admin-button-container">
+          <button
+            id="admin-toggle"
+            class="admin-toggle"
+            onclick="toggleAdmin()"
+          >
+            Admin
+          </button>
+        </div>
       </div>
     </nav>
 
     <header class="hero">
       <div class="hero-content">
         <h1>Receitas Regionais Brasileiras</h1>
-        <a href="pages/todas-receitas.html" class="hero-button">Ver Receitas</a>
+        <a href="#receitas" class="hero-button">Ver Receitas</a>
       </div>
     </header>
 
@@ -72,21 +80,6 @@
     <section class="receitas" id="receitas">
       <h2>Receitas</h2>
       <div class="card-container"></div>
-
-      <!-- Card "Ver Todas as Receitas" estático -->
-      <div class="ver-mais-wrapper">
-        <div
-          class="card ver-mais-card"
-          onclick="window.location.href='pages/todas-receitas.html'"
-        >
-          <div class="ver-mais-content">
-            <span class="ver-mais-icon">🍽️</span>
-            <h3>Ver Todas as Receitas</h3>
-            <p>Explore nossa coleção completa</p>
-            <button class="btn-ver-mais">Explorar</button>
-          </div>
-        </div>
-      </div>
     </section>
 
     <section class="dicas-contato">
@@ -95,41 +88,14 @@
         <div class="dicas-scroll">
           <ul></ul>
         </div>
-        <button
-          id="btn-adicionar-dica"
-          class="btn-admin"
-          onclick="adicionarDica()"
-          style="display: none"
-        >
-          ✨ Adicionar Nova Dica
-        </button>
       </div>
 
       <div class="contato card-section" id="contato">
         <h2>Contate-nos</h2>
-        <form id="form-contato">
-          <input
-            type="text"
-            id="nome"
-            name="nome"
-            placeholder="Digite seu nome"
-            required
-          />
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Digite seu email"
-            required
-          />
-          <textarea
-            id="mensagem"
-            name="mensagem"
-            placeholder="Digite sua mensagem"
-            required
-          ></textarea>
-          <button type="submit">Enviar</button>
-        </form>
+        <input type="text" placeholder="Digite seu nome" />
+        <input type="email" placeholder="Digite seu email" />
+        <textarea placeholder="Digite sua mensagem"></textarea>
+        <button>Enviar</button>
       </div>
     </section>
 
@@ -141,8 +107,6 @@
       <p>© 2025 Raízes da Amazônia. Todos os direitos reservados</p>
     </footer>
 
-    <script src="assets/js/config.js"></script>
-    <script src="assets/js/admin-system.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/aumento-fonte.js"></script>
   </body>

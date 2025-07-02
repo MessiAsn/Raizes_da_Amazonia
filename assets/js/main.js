@@ -1,234 +1,123 @@
-/* Sistema Principal - Raízes da Amazônia - Versão Modular */
+/* Sistema Principal - Raízes da Amazônia */
 
-// Inicializar namespace se não existir
-window.RaizesAmazonia = window.RaizesAmazonia || {};
+// Configuração da API
+const API_BASE_URL = "http://localhost:8000";
 
-// Aguardar config.js ser carregado se necessário
-document.addEventListener("DOMContentLoaded", async () => {
-  // Aguardar configuração ser carregada
-  if (window.RaizesAmazonia?.DependencyManager) {
-    await window.RaizesAmazonia.DependencyManager.waitForModule("core");
-  }
-
-  // Inicializar aplicação
-  console.log("Iniciando carregamento da aplicação...");
-  console.log("API URL:", getApiBaseUrl());
-
-  // Carregar receitas
-  carregarReceitas();
-
-  // Aguardar um pouco antes de carregar as dicas para garantir que o DOM está completamente pronto
-  setTimeout(() => {
-    carregarDicas();
-  }, 300);
-
-  // Configurar formulário de contato
-  const formContato = document.getElementById("form-contato");
-  if (formContato) {
-    formContato.addEventListener("submit", enviarContato);
-  }
-});
-
-// Módulo de Cache de Performance para dados
-window.RaizesAmazonia.DataCache = {
-  _cache: new Map(),
-  _timestamps: new Map(),
-
-  set(key, data) {
-    this._cache.set(key, data);
-    this._timestamps.set(key, Date.now());
-  },
-
-  get(key) {
-    const timestamp = this._timestamps.get(key);
-    if (
-      timestamp &&
-      Date.now() - timestamp < window.RaizesAmazonia.Config.CACHE_TIMEOUT
-    ) {
-      return this._cache.get(key);
-    }
-    // Cache expirado
-    this.delete(key);
-    return null;
-  },
-
-  delete(key) {
-    this._cache.delete(key);
-    this._timestamps.delete(key);
-  },
-
-  clear() {
-    this._cache.clear();
-    this._timestamps.clear();
-  },
-};
-
-// Módulo de Mensagens com melhor performance
-window.RaizesAmazonia.Messages = {
-  show(texto, tipo = "info", duracao = null) {
-    const config = window.RaizesAmazonia.Config;
-    const DOMCache = window.RaizesAmazonia.DOMCache;
-
-    duracao = duracao || config.MESSAGE_DURATION;
-
-    // Remover mensagem existente se houver (usando cache)
-    let mensagemExistente = DOMCache.get(".mensagem-toast");
-    if (mensagemExistente) {
-      mensagemExistente.remove();
-      DOMCache.remove(".mensagem-toast");
-    }
-
-    const mensagem = document.createElement("div");
-    mensagem.className = `mensagem-toast mensagem-${tipo}`;
-
-    // Definir ícones e cores por tipo
-    const configs = {
-      success: { icone: "✅", cor: "#28a745" },
-      error: { icone: "❌", cor: "#dc3545" },
-      warning: { icone: "⚠️", cor: "#ffc107" },
-      info: { icone: "ℹ️", cor: "#17a2b8" },
-    };
-
-    const typeConfig = configs[tipo] || configs.info;
-
-    mensagem.innerHTML = `
-      <div class="mensagem-conteudo">
-        <span class="mensagem-icone">${typeConfig.icone}</span>
-        <span class="mensagem-texto">${texto}</span>
-        <button class="mensagem-fechar" onclick="this.parentElement.parentElement.remove()">&times;</button>
-      </div>
-    `;
-
-    mensagem.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: ${typeConfig.cor};
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      z-index: 10000;
-      max-width: 400px;
-      animation: slideInRight 0.3s ease-out;
-      font-family: inherit;
-    `;
-
-    const conteudo = mensagem.querySelector(".mensagem-conteudo");
-    conteudo.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    `;
-
-    const fechar = mensagem.querySelector(".mensagem-fechar");
-    fechar.style.cssText = `
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 0;
-      margin-left: auto;
-    `;
-
-    // Adicionar CSS para animação se não existe
-    if (!document.querySelector("#toast-animations")) {
-      const style = document.createElement("style");
-      style.id = "toast-animations";
-      style.textContent = `
-        @keyframes slideInRight {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOutRight {
-          from { transform: translateX(0); opacity: 1; }
-          to { transform: translateX(100%); opacity: 0; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    document.body.appendChild(mensagem);
-
-    // Auto-remover após duracao
-    setTimeout(() => {
-      if (mensagem.parentElement) {
-        mensagem.style.animation = "slideOutRight 0.3s ease-in";
-        setTimeout(() => {
-          mensagem.remove();
-          DOMCache.remove(".mensagem-toast");
-        }, 300);
-      }
-    }, duracao);
-  },
-
-  // Métodos específicos
-  success(texto, duracao) {
-    this.show(texto, "success", duracao);
-  },
-  error(texto, duracao) {
-    this.show(texto, "error", duracao);
-  },
-  warning(texto, duracao) {
-    this.show(texto, "warning", duracao);
-  },
-  info(texto, duracao) {
-    this.show(texto, "info", duracao);
-  },
-};
-
-// Funções de compatibilidade
+// Funções de compatibilidade - Sistema de Mensagens Simplificado
 function mostrarMensagem(texto, tipo = "info", duracao = 6000) {
-  window.RaizesAmazonia.Messages.show(texto, tipo, duracao);
+  // Remover mensagem existente se houver
+  const mensagemExistente = document.querySelector(".mensagem-toast");
+  if (mensagemExistente) {
+    mensagemExistente.remove();
+  }
+
+  const mensagem = document.createElement("div");
+  mensagem.className = `mensagem-toast mensagem-${tipo}`;
+
+  // Definir ícones e cores por tipo
+  const configs = {
+    success: { icone: "✅", cor: "#28a745" },
+    error: { icone: "❌", cor: "#dc3545" },
+    warning: { icone: "⚠️", cor: "#ffc107" },
+    info: { icone: "ℹ️", cor: "#17a2b8" },
+  };
+
+  const config = configs[tipo] || configs.info;
+
+  mensagem.innerHTML = `
+    <div class="mensagem-conteudo">
+      <span class="mensagem-icone">${config.icone}</span>
+      <span class="mensagem-texto">${texto}</span>
+      <button class="mensagem-fechar" onclick="this.parentElement.parentElement.remove()">&times;</button>
+    </div>
+  `;
+
+  mensagem.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${config.cor};
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    max-width: 400px;
+    animation: slideInRight 0.3s ease-out;
+    font-family: inherit;
+  `;
+
+  const conteudo = mensagem.querySelector(".mensagem-conteudo");
+  conteudo.style.cssText = `
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  `;
+
+  const botaoFechar = mensagem.querySelector(".mensagem-fechar");
+  botaoFechar.style.cssText = `
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    margin-left: auto;
+  `;
+
+  // Adicionar estilos de animação se não existir
+  if (!document.querySelector('#mensagem-styles')) {
+    const style = document.createElement("style");
+    style.id = 'mensagem-styles';
+    style.textContent = `
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  document.body.appendChild(mensagem);
+
+  // Auto-remover após a duração especificada
+  setTimeout(() => {
+    if (mensagem.parentNode) {
+      mensagem.remove();
+    }
+  }, duracao);
 }
 
-// Funcoes de conveniencia com durações específicas
+// Funcoes de conveniencia
 function mostrarSucesso(texto) {
-  window.RaizesAmazonia.Messages.success(texto, 8000); // 8 segundos para sucessos
+  mostrarMensagem(texto, "success", 8000); // 8 segundos para sucessos
 }
 
 function mostrarErro(texto) {
-  window.RaizesAmazonia.Messages.error(texto, 10000); // 10 segundos para erros
+  mostrarMensagem(texto, "error", 10000); // 10 segundos para erros
 }
 
 function mostrarAviso(texto) {
-  window.RaizesAmazonia.Messages.warning(texto, 7000); // 7 segundos para avisos
+  mostrarMensagem(texto, "warning", 7000); // 7 segundos para avisos
 }
 
 function mostrarInfo(texto) {
   mostrarMensagem(texto, "info", 5000); // 5 segundos para informações
 }
 
-/* Configuração da API */
-// Garantir que sempre temos a URL correta
-function getApiBaseUrl() {
-  const url =
-    window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
-  console.log("🔧 getApiBaseUrl() retornando:", url);
-  console.log(
-    "🔍 window.RaizesAmazonia?.Config disponível:",
-    !!window.RaizesAmazonia?.Config
-  );
-  return url;
-}
-
 /* Carregamento de Receitas da API */
-const container = document.querySelector(".card-container");
-
 async function carregarReceitas() {
-  const API_BASE_URL = getApiBaseUrl();
-  console.log("Carregando receitas da URL:", API_BASE_URL);
+  const container = document.querySelector(".card-container");
+
+  if (!container) {
+    console.error("Container .card-container não encontrado!");
+    return;
+  }
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/receitas`);
-    console.log("Response status:", response.status);
-    console.log("Response OK:", response.ok);
-
     if (!response.ok) {
-      throw new Error(
-        `Erro ao carregar receitas: ${response.status} - ${response.statusText}`
-      );
+      throw new Error("Erro ao carregar receitas");
     }
 
     const receitas = await response.json();
@@ -243,16 +132,7 @@ async function carregarReceitas() {
       mensagemVazia.innerHTML = `
         <div class="vazia-content">
           <h3>🍽️ Ainda não há receitas!</h3>
-          <p>${
-            isAdmin
-              ? "Seja o primeiro a adicionar uma deliciosa receita amazônica!"
-              : "Em breve teremos deliciosas receitas amazônicas aqui!"
-          }</p>
-          ${
-            isAdmin
-              ? '<button onclick="abrirModalNovaReceita()" class="btn-primary">Adicionar Primeira Receita</button>'
-              : ""
-          }
+          <p>Em breve teremos deliciosas receitas amazônicas aqui!</p>
         </div>
       `;
       container.appendChild(mensagemVazia);
@@ -281,31 +161,35 @@ async function carregarReceitas() {
           <div class="card-actions">
             <button onclick="verReceitaDetalhes('${
               r.id
-            }')" class="card-button">${isAdmin ? "Ver" : "Ver Receita"}</button>
-            ${
-              isAdmin
-                ? `
-              <button onclick="editarReceita('${r.id}')" class="btn-edit">Editar</button>
-              <button onclick="deletarReceita('${r.id}')" class="btn-delete">Excluir</button>
-            `
-                : ""
-            }
+            }')" class="card-button">Ver Receita</button>
           </div>
         `;
 
         container.appendChild(card);
       });
 
-      // Card "Ver Todas as Receitas" agora é estático no HTML
-      // Não é mais necessário adicionar dinamicamente
+      // Se há mais de 6 receitas, mostrar botão "Ver Mais"
+      if (receitas.length > 6) {
+        adicionarBotaoVerMais();
+      }
+
+      // Adicionar botão de nova receita se estiver em modo admin
+      if (isAdmin) {
+        adicionarBotaoNovaReceita();
+      }
     }
   } catch (error) {
     console.error("Erro ao carregar receitas:", error);
-    mostrarErroConexao();
+    mostrarErroConexao(container);
   }
 }
 
-function mostrarErroConexao() {
+function mostrarErroConexao(container) {
+  if (!container) {
+    console.error("Container não disponível para mostrar erro");
+    return;
+  }
+
   container.innerHTML = `
     <div class="erro-conexao">
       <div class="erro-content">
@@ -319,7 +203,6 @@ function mostrarErroConexao() {
 }
 
 async function atualizarEstatisticas() {
-  const API_BASE_URL = getApiBaseUrl();
   try {
     const response = await fetch(`${API_BASE_URL}/api/stats`);
     if (response.ok) {
@@ -356,52 +239,46 @@ async function atualizarEstatisticas() {
   }
 }
 
+function adicionarBotaoVerMais() {
+  // Criar wrapper para centralização
+  const wrapper = document.createElement("div");
+  wrapper.className = "ver-mais-wrapper";
+
+  const botaoContainer = document.createElement("div");
+  botaoContainer.className = "card ver-mais-card";
+  botaoContainer.innerHTML = `
+    <div class="ver-mais-content">
+      <span class="ver-mais-icon">👀</span>
+      <h3>Ver Todas as Receitas</h3>
+      <p>Explore nossa coleção completa de receitas amazônicas</p>
+      <button class="btn-ver-mais" onclick="window.location.href='pages/todas-receitas.html'">Ver Mais</button>
+    </div>
+  `;
+
+  wrapper.appendChild(botaoContainer);
+  container.appendChild(wrapper);
+}
+
 // Função para redirecionar para página de detalhes da receita
 function verReceitaDetalhes(id) {
   window.location.href = `pages/receita.html?id=${id}`;
 }
 
 async function deletarReceita(id) {
-  const API_BASE_URL = getApiBaseUrl();
-  // Verificar se é admin
-  if (!verificarAdmin()) {
-    return;
-  }
-
-  // Buscar nome da receita para personalizar a mensagem
-  let nomeReceita = "esta receita";
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`);
-    if (response.ok) {
-      const receita = await response.json();
-      nomeReceita = `"${receita.nome}"`;
-    }
-  } catch (error) {
-    console.log("Não foi possível buscar o nome da receita");
-  }
-
-  const confirmou = await mostrarConfirmacao(
-    "Confirmar Exclusão",
-    `Tem certeza que deseja excluir a receita ${nomeReceita}?\n\n⚠️ Esta ação não pode ser desfeita e todos os dados da receita serão perdidos permanentemente.`,
-    null, // onConfirm será tratado pelo retorno da Promise
-    () => mostrarInfo("❌ Exclusão cancelada")
-  );
+  // Simplificado: apenas solicitar confirmação
+  const confirmou = confirm("Tem certeza que deseja excluir esta receita?");
 
   if (!confirmou) {
     return;
   }
 
   try {
-    mostrarInfo("🗑️ Excluindo receita...");
-
     const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`, {
       method: "DELETE",
     });
 
     if (response.ok) {
-      mostrarSucesso(
-        `✅ Receita ${nomeReceita} excluída com sucesso! A receita foi removida permanentemente do sistema.`
-      );
+      mostrarSucesso("✅ Receita excluída com sucesso!");
       carregarReceitas(); // Recarregar lista
     } else {
       const error = await response.json();
@@ -413,10 +290,13 @@ async function deletarReceita(id) {
   }
 }
 
+// Funções de editar e deletar receitas foram movidas para ReceitaUtils
+// As funções abaixo são mantidas apenas para compatibilidade
+
+/*
 async function editarReceita(id) {
-  const API_BASE_URL = getApiBaseUrl();
   // Verificar se é admin
-  if (!verificarAdmin()) {
+  if (!window.RaizesAmazonia.Admin.requireAdmin("🔑 Para editar receitas, digite a senha de administrador:")) {
     return;
   }
 
@@ -437,10 +317,11 @@ async function editarReceita(id) {
     mostrarErro("❌ Erro ao carregar receita para edição: " + error.message);
   }
 }
+*/
 
+/*
 // Modal para editar receita
 function abrirModalEditarReceita(receita) {
-  const API_BASE_URL = getApiBaseUrl();
   const modal = document.createElement("div");
   modal.className = "modal-overlay";
   modal.innerHTML = `
@@ -556,11 +437,13 @@ function abrirModalEditarReceita(receita) {
     .getElementById("formEditarReceita")
     .addEventListener("submit", salvarEdicaoReceita);
 }
+*/
 
+/*
 // Modal para nova receita
 function abrirModalNovaReceita() {
   // Verificar se é admin
-  if (!verificarAdmin()) {
+  if (!window.RaizesAmazonia.Admin.requireAdmin("🔑 Para criar receitas, digite a senha de administrador:")) {
     return;
   }
 
@@ -657,6 +540,7 @@ function abrirModalNovaReceita() {
     document.getElementById("nomeReceita").focus();
   }, 100);
 }
+*/
 
 function fecharModal() {
   const modal = document.querySelector(".modal-overlay");
@@ -665,8 +549,8 @@ function fecharModal() {
   }
 }
 
+/*
 async function criarReceita(form) {
-  const API_BASE_URL = getApiBaseUrl();
   const formData = new FormData(form);
   const submitButton = form.querySelector('button[type="submit"]');
   const originalText = submitButton.textContent;
@@ -713,10 +597,11 @@ async function criarReceita(form) {
     submitButton.disabled = false;
   }
 }
+*/
 
+/*
 // Função para salvar edição da receita
 async function salvarEdicaoReceita(e) {
-  const API_BASE_URL = getApiBaseUrl();
   e.preventDefault();
 
   const form = e.target;
@@ -774,11 +659,34 @@ async function salvarEdicaoReceita(e) {
     mostrarErro("❌ Erro ao atualizar receita: " + error.message);
   }
 }
+*/
 
-/* Inicialização da página */
-// A inicialização agora é feita no event listener principal acima
+// Carregar receitas e dicas quando a página carregar
+document.addEventListener("DOMContentLoaded", () => {
+  // Verificar se estava logado como admin
+  if (sessionStorage.getItem("isAdmin") === "true") {
+    isAdmin = true;
+  }
+  
+  // Verificar admin inicial
+  verificarAdminInicial();
+
+  carregarReceitas();
+
+  // Aguardar um pouco antes de carregar as dicas para garantir que o DOM está completamente pronto
+  setTimeout(() => {
+    carregarDicas();
+  }, 300);
+
+  // Configurar formulário de contato
+  const formContato = document.getElementById("form-contato");
+  if (formContato) {
+    formContato.addEventListener("submit", enviarContato);
+  }
+});
+
+// Função para carregar dicas da API com retry logic
 window.carregarDicas = async function carregarDicas(tentativas = 3) {
-  const API_BASE_URL = getApiBaseUrl();
   try {
     // Aguardar um pouco para garantir que o DOM está pronto
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -885,13 +793,7 @@ window.carregarDicas = async function carregarDicas(tentativas = 3) {
 };
 
 // Funções para gerenciar dicas (modo admin)
-// Tornar função global para evitar duplicação
-window.mostrarConfirmacao = function mostrarConfirmacao(
-  titulo,
-  mensagem,
-  onConfirm,
-  onCancel = null
-) {
+function mostrarConfirmacao(titulo, mensagem, onConfirm, onCancel = null) {
   return new Promise((resolve) => {
     const modal = document.createElement("div");
     modal.className = "modal-overlay";
@@ -991,13 +893,13 @@ window.mostrarConfirmacao = function mostrarConfirmacao(
 
     document.addEventListener("keydown", handleEsc);
   });
-};
+}
 
 /* Sistema de Autenticação Simples */
-// A variável isAdmin agora é gerenciada pelo admin-system.js
+// A variável isAdmin agora é gerenciada pelo AdminManager
 
 // Função para verificar se é admin antes de ações administrativas
-function verificarAdmin() {
+async function verificarAdmin() {
   if (isAdmin) {
     return true;
   }
@@ -1007,13 +909,9 @@ function verificarAdmin() {
   if (senha === "admin123") {
     isAdmin = true;
     sessionStorage.setItem("isAdmin", "true");
-    mostrarSucesso(
-      "✅ Login de administrador realizado! Agora você pode gerenciar receitas."
-    );
-    updateAdminInterface();
+    mostrarSucesso("✅ Login de administrador realizado!");
     return true;
   } else if (senha !== null) {
-    // Se não cancelou
     mostrarErro("❌ Senha incorreta! Acesso negado.");
   }
 
@@ -1024,14 +922,12 @@ function verificarAdmin() {
 function logout() {
   isAdmin = false;
   sessionStorage.removeItem("isAdmin");
-  mostrarInfo("👋 Logout realizado. Você agora está no modo de visualização.");
-  updateAdminInterface();
+  mostrarInfo("👋 Logout realizado.");
 }
 
-/* Sistema de Autenticação Simples */
-// A variável isAdmin agora é gerenciada pelo admin-system.js
+/* Inicialização da página */
+// Funções para gerenciar dicas (modo admin) - tornando globais
 window.adicionarDica = async function adicionarDica() {
-  const API_BASE_URL = getApiBaseUrl();
   const texto = prompt("Digite a nova dica culinária:");
 
   if (!texto || texto.trim() === "") {
@@ -1061,7 +957,6 @@ window.adicionarDica = async function adicionarDica() {
 };
 
 window.editarDica = async function editarDica(id, textoAtual) {
-  const API_BASE_URL = getApiBaseUrl();
   const novoTexto = prompt("Editar dica:", textoAtual);
 
   if (!novoTexto || novoTexto.trim() === "") {
@@ -1096,7 +991,6 @@ window.editarDica = async function editarDica(id, textoAtual) {
 };
 
 window.excluirDica = async function excluirDica(id) {
-  const API_BASE_URL = getApiBaseUrl();
   const confirmacao = await mostrarConfirmacao(
     "Confirmar Exclusão",
     "Tem certeza que deseja excluir esta dica? Esta ação não pode ser desfeita."
@@ -1123,7 +1017,6 @@ window.excluirDica = async function excluirDica(id) {
 
 // Função para enviar formulário de contato
 async function enviarContato(event) {
-  const API_BASE_URL = getApiBaseUrl();
   event.preventDefault();
 
   const nome = document.getElementById("nome").value.trim();
@@ -1199,3 +1092,78 @@ async function enviarContato(event) {
     }, 1000); // Aguardar 1 segundo antes de reabilitar
   }
 }
+
+// =============================================
+// SISTEMA DE ADMINISTRAÇÃO BÁSICO
+// =============================================
+
+// Variável global para controlar modo admin
+let isAdmin = false;
+
+// Função para alternar modo admin
+window.toggleAdmin = function () {
+  if (!isAdmin) {
+    const senha = prompt("Digite a senha do administrador:");
+    if (senha === "admin123") {
+      isAdmin = true;
+      sessionStorage.setItem("isAdmin", "true");
+      atualizarModoAdmin();
+      mostrarMensagem("✅ Modo administrador ativado!", "success");
+    } else {
+      mostrarMensagem("❌ Senha incorreta!", "error");
+    }
+  } else {
+    isAdmin = false;
+    sessionStorage.removeItem("isAdmin");
+    atualizarModoAdmin();
+    mostrarMensagem("ℹ️ Modo administrador desativado!", "info");
+  }
+};
+
+// Função para atualizar interface do modo admin
+function atualizarModoAdmin() {
+  const adminButton = document.getElementById("admin-toggle");
+  if (adminButton) {
+    adminButton.textContent = isAdmin ? "Sair Admin" : "Admin";
+    adminButton.style.backgroundColor = isAdmin ? "#dc3545" : "#2e7d32";
+  }
+
+  // Recarregar receitas e dicas para mostrar/ocultar botões de admin
+  carregarReceitas();
+  carregarDicas();
+}
+
+// Botão para adicionar nova receita (só aparece no modo admin)
+function adicionarBotaoNovaReceita() {
+  if (!isAdmin) return;
+
+  const container = document.querySelector(".card-container");
+  if (!container) return;
+
+  // Verificar se já existe o botão
+  if (container.querySelector(".add-receita-card")) return;
+
+  const addCard = document.createElement("div");
+  addCard.className = "card add-receita-card";
+  addCard.innerHTML = `
+    <div class="add-receita-content">
+      <div class="add-icon">➕</div>
+      <h3>Adicionar Nova Receita</h3>
+      <p>Clique para adicionar uma nova receita amazônica</p>
+      <button onclick="window.location.href='pages/todas-receitas.html'" class="card-button">Gerenciar Receitas</button>
+    </div>
+  `;
+
+  // Adicionar no início do container
+  container.insertBefore(addCard, container.firstChild);
+}
+
+// Função para verificar admin na inicialização
+function verificarAdminInicial() {
+  if (sessionStorage.getItem("isAdmin") === "true") {
+    isAdmin = true;
+    atualizarModoAdmin();
+  }
+}
+
+

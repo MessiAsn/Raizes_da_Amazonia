@@ -124,34 +124,6 @@ body {
   margin-bottom: 1.25rem;
 }
 
-/* Estilo alternado para ingredientes e modo de preparo */
-.ingredientes-lista li:nth-child(even) {
-  background-color: #e8f5e8;
-}
-
-.ingredientes-lista li:nth-child(odd) {
-  background-color: #f1f8f1;
-}
-
-.preparo-lista li:nth-child(even) {
-  background-color: #fff3e0;
-}
-
-.preparo-lista li:nth-child(odd) {
-  background-color: #ffebc4;
-}
-
-/* Hover effects para melhor interação */
-.ingredientes-lista li:hover {
-  transform: translateX(5px);
-  background-color: #d4edda;
-}
-
-.preparo-lista li:hover {
-  transform: translateX(5px);
-  background-color: #ffd54f;
-}
-
 .btn-voltar {
   display: block;
   margin: 3rem auto 2rem;

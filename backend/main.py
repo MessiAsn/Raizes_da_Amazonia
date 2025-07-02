@@ -11,9 +11,11 @@ import shutil
 import uuid
 import smtplib
 import traceback
+from email import message
 
 # Configuração do banco de dados
 # SQLite é ideal para projetos acadêmicos por ser simples e não precisar de instalação
+import os
 
 # Garantir que o banco seja sempre criado na pasta backend, independente de onde o script é executado
 DB_PATH = os.path.join(os.path.dirname(__file__), "receitas.db")

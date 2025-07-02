@@ -78,12 +78,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .navbar .logo {
   font-size: calc(4.5 * var(--font-size, 16px));
   word-break: break-word;
   max-width: 100%;
+  flex-shrink: 0;
 }
 
 .navbar ul {
@@ -92,6 +95,8 @@ body {
   gap: 1rem;
   margin: 0;
   padding: 0;
+  flex: 1;
+  justify-content: center;
 }
 
 .navbar li a {
@@ -925,6 +930,12 @@ footer p {
     order: -1;
   }
 
+  .navbar .admin-button-container {
+    order: 1;
+    width: auto;
+    margin: 0;
+  }
+
   /* Modal responsivo */
   .modal-content {
     padding: 1rem;
@@ -1136,4 +1147,75 @@ a:focus-visible {
 
 .admin-toggle:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Estilos para o botão de adicionar receita (modo admin) */
+.add-receita-card {
+  border: 2px dashed var(--primary-green) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(31, 64, 37, 0.05) 0%,
+    rgba(255, 213, 79, 0.05) 100%
+  ) !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-receita-card:hover {
+  border-color: var(--accent-green) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(31, 64, 37, 0.1) 0%,
+    rgba(255, 213, 79, 0.1) 100%
+  ) !important;
+  transform: translateY(-2px);
+}
+
+.add-receita-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  height: 100%;
+  min-height: 250px;
+}
+
+.add-icon {
+  font-size: 3rem;
+  color: var(--primary-green);
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.add-receita-card:hover .add-icon {
+  transform: scale(1.1);
+}
+
+.add-receita-content h3 {
+  color: var(--primary-green);
+  margin-bottom: 0.5rem;
+  font-size: calc(1.2 * var(--font-size, 16px));
+}
+
+.add-receita-content p {
+  color: var(--text-medium);
+  margin-bottom: 1.5rem;
+  font-size: calc(0.9 * var(--font-size, 16px));
+}
+
+/* Garantir que o botão admin seja visível na navbar */
+.admin-button-container {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .admin-button-container {
+    margin-top: 1rem;
+    width: 100%;
+    justify-content: center;
+  }
 }
