@@ -1,7 +1,8 @@
-/* JavaScript para página Todas as Receitas */
+/* JavaScript para página Todas as Receitas - Versão Simplificada (Somente Leitura) */
 
-// Configuração da API
-const API_BASE_URL = "http://localhost:8000";
+// Usar configuração centralizada do config.js
+const API_BASE_URL =
+  window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
 const container = document.getElementById("card-container");
 const loadingElement = document.getElementById("loading");
 
@@ -11,14 +12,13 @@ let receitasFiltradas = [];
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", async function () {
+  // Aguardar configuração ser carregada se disponível
+  if (window.RaizesAmazonia?.DependencyManager) {
+    await window.RaizesAmazonia.DependencyManager.waitForModule("core");
+  }
+
   carregarTodasReceitas();
-  // As estatísticas serão calculadas automaticamente após carregar as receitas
 });
-
-// A verificação do status admin é feita automaticamente pelo admin-system.js
-
-// ==============================================
-// UTILITÁRIOS DE CONFIRMAÇÃO DINÂMICA
 // ==============================================
 
 /**
@@ -54,13 +54,8 @@ async function carregarTodasReceitas() {
   mostrarLoading(true);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/receitas`);
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    todasReceitas = await response.json();
+    // Usar o ReceitaManager centralizado
+    todasReceitas = await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
     receitasFiltradas = [...todasReceitas];
 
     renderizarReceitas(receitasFiltradas);
@@ -103,45 +98,21 @@ function renderizarReceitas(receitas) {
             <h3>${r.nome}</h3>
             <p>${r.descricao}</p>
             <div class="card-actions">
-                <button onclick="verReceitaDetalhes('${
-                  r.id
-                }')" class="card-button">${
-      isAdmin ? "Ver" : "Ver Receita"
-    }</button>
-                ${
-                  isAdmin
-                    ? `
-                        <button onclick="editarReceita('${r.id}')" class="btn-edit">Editar</button>
-                        <button onclick="deletarReceita('${r.id}')" class="btn-delete">Excluir</button>
-                        `
-                    : ""
-                }
+                <button onclick="verReceitaDetalhes('${r.id}')" class="card-button">Ver Receita</button>
             </div>
         `;
 
     container.appendChild(card);
   });
-
-  // Botão de adicionar nova receita agora está fixo no HTML
 }
 
 function mostrarMensagemVazia() {
   const mensagemVazia = document.createElement("div");
   mensagemVazia.className = "mensagem-vazia";
   mensagemVazia.innerHTML = `
-        <div class="vazia-content">
-            <h3>🍽️ Ainda não há receitas!</h3>
-            <p>${
-              isAdmin
-                ? "Mais receitas serão adicionadas em breve!"
-                : "Em breve teremos deliciosas receitas amazônicas aqui!"
-            }</p>
-            ${
-              isAdmin
-                ? '<button onclick="abrirModalNovaReceita()" class="btn-primary">Adicionar Primeira Receita</button>'
-                : ""
-            }
-        </div>
+        <h3>📝 Nenhuma receita encontrada</h3>
+        <p>Não há receitas disponíveis no momento.</p>
+        <p>As receitas podem ser gerenciadas através do <a href="admin.html">painel administrativo</a>.</p>
     `;
   container.appendChild(mensagemVazia);
 }
@@ -282,318 +253,47 @@ function mostrarEstatisticasLocal() {
   }
 }
 
-// Funções dos modais (similares ao main.js)
-// Variável global para armazenar o ID da receita sendo editada
-let receitaEditandoId = null;
-
-function editarReceita(id) {
-  if (!isAdmin) return;
-
-  receitaEditandoId = id;
-
-  fetch(`${API_BASE_URL}/api/receitas/${id}`)
-    .then((response) => response.json())
-    .then((receita) => {
-      document.getElementById("edit-nome").value = receita.nome;
-      document.getElementById("edit-descricao").value = receita.descricao;
-      document.getElementById("edit-ingredientes").value = receita.ingredientes;
-      document.getElementById("edit-modo_preparo").value = receita.modo_preparo;
-      document.getElementById("edit-historia").value = receita.historia || "";
-
-      // Limpar preview de imagem
-      document.getElementById("edit-preview-container").style.display = "none";
-      document.getElementById("edit-imagem").value = "";
-
-      abrirModal("modal-editar-receita");
-    })
-    .catch((error) => {
-      console.error("Erro ao carregar receita para edição:", error);
-      mostrarMensagem("Erro ao carregar receita", "error");
-    });
-}
-
-function salvarEdicaoReceita(event) {
-  event.preventDefault();
-
-  if (!isAdmin || !receitaEditandoId) return;
-
-  const formData = new FormData();
-  formData.append("nome", document.getElementById("edit-nome").value);
-  formData.append("descricao", document.getElementById("edit-descricao").value);
-  formData.append(
-    "ingredientes",
-    document.getElementById("edit-ingredientes").value
-  );
-  formData.append(
-    "modo_preparo",
-    document.getElementById("edit-modo_preparo").value
-  );
-  formData.append("historia", document.getElementById("edit-historia").value);
-
-  const imagemFile = document.getElementById("edit-imagem").files[0];
-  if (imagemFile) {
-    formData.append("imagem", imagemFile);
-  }
-
-  fetch(`${API_BASE_URL}/api/receitas/${receitaEditandoId}`, {
-    method: "PUT",
-    body: formData,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      mostrarMensagem("Receita atualizada com sucesso!", "success");
-      fecharModal("modal-editar-receita");
-      carregarTodasReceitas();
-      receitaEditandoId = null;
-    })
-    .catch((error) => {
-      console.error("Erro ao atualizar receita:", error);
-      mostrarMensagem("Erro ao atualizar receita", "error");
-    });
-}
-
-async function deletarReceita(id) {
-  if (!isAdmin) return;
-
-  // Buscar nome da receita para confirmação personalizada
-  let nomeReceita = "esta receita";
-  try {
-    const receita = todasReceitas.find((r) => r.id === id);
-    if (receita && receita.nome) {
-      nomeReceita = `"${receita.nome}"`;
-    }
-  } catch (error) {
-    console.log("Não foi possível buscar o nome da receita");
-  }
-
-  const confirmou = await confirmarDelecao(nomeReceita, "receita");
-
-  if (!confirmou) {
-    return;
-  }
-
-  try {
-    mostrarMensagem("🗑️ Excluindo receita...", "info");
-
-    const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-    mostrarMensagem("✅ Receita excluída com sucesso!", "success");
-    carregarTodasReceitas();
-  } catch (error) {
-    console.error("Erro ao excluir receita:", error);
-    mostrarMensagem("❌ Erro ao excluir receita", "error");
-  }
-}
-
-function abrirModalNovaReceita() {
-  if (!isAdmin) return;
-
-  // Limpar formulário
-  document.getElementById("form-nova-receita").reset();
-  document.getElementById("preview-container").style.display = "none";
-
-  abrirModal("modal-nova-receita");
-}
-
-function adicionarReceita(event) {
-  event.preventDefault();
-
-  if (!isAdmin) return;
-
-  const formData = new FormData();
-  formData.append("nome", document.getElementById("nome").value);
-  formData.append("descricao", document.getElementById("descricao").value);
-  formData.append(
-    "ingredientes",
-    document.getElementById("ingredientes").value
-  );
-  formData.append(
-    "modo_preparo",
-    document.getElementById("modo_preparo").value
-  );
-  formData.append("historia", document.getElementById("historia").value);
-
-  const imagemFile = document.getElementById("imagem").files[0];
-  if (imagemFile) {
-    formData.append("imagem", imagemFile);
-  }
-
-  fetch(`${API_BASE_URL}/api/receitas`, {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      mostrarMensagem("Receita adicionada com sucesso!", "success");
-      fecharModal("modal-nova-receita");
-      carregarTodasReceitas();
-    })
-    .catch((error) => {
-      console.error("Erro ao adicionar receita:", error);
-      mostrarMensagem("Erro ao adicionar receita", "error");
-    });
-}
-
-// Funções auxiliares para modais
-function abrirModal(modalId) {
-  document.getElementById(modalId).style.display = "flex";
-  document.body.style.overflow = "hidden";
-}
-
-function fecharModal(modalId) {
-  document.getElementById(modalId).style.display = "none";
-  document.body.style.overflow = "auto";
-}
-
-// Fechar modal ao clicar fora dele
-document.addEventListener("click", function (event) {
-  if (event.target.classList.contains("modal-overlay")) {
-    event.target.style.display = "none";
-    document.body.style.overflow = "auto";
-  }
-});
-
-// Preview de imagem
-function previewImage(event) {
-  const file = event.target.files[0];
-  const container = document.getElementById("preview-container");
-  const img = document.getElementById("preview-image");
-
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      img.src = e.target.result;
-      container.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  } else {
-    container.style.display = "none";
-  }
-}
-
-function previewEditImage(event) {
-  const file = event.target.files[0];
-  const container = document.getElementById("edit-preview-container");
-  const img = document.getElementById("edit-preview-image");
-
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      img.src = e.target.result;
-      container.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  } else {
-    container.style.display = "none";
-  }
-}
+// ========================================
+// FUNÇÕES ESSENCIAIS
+// ========================================
 
 // Função para redirecionar para página de detalhes da receita
 function verReceitaDetalhes(id) {
   window.location.href = `receita.html?id=${id}`;
 }
 
-/* Sistema de Mensagens Personalizadas */
+// Sistema de Mensagens Simplificado
 function mostrarMensagem(texto, tipo = "info", duracao = 6000) {
-  // Remover mensagem existente se houver
-  const mensagemExistente = document.querySelector(".mensagem-toast");
-  if (mensagemExistente) {
-    mensagemExistente.remove();
+  // Usar sistema centralizado se disponível
+  if (window.RaizesAmazonia?.Messages?.show) {
+    return window.RaizesAmazonia.Messages.show(texto, tipo, duracao);
   }
-
-  const mensagem = document.createElement("div");
-  mensagem.className = `mensagem-toast mensagem-${tipo}`;
-
-  // Definir ícones e cores por tipo
-  const configs = {
-    success: { icone: "✅", cor: "#28a745" },
-    error: { icone: "❌", cor: "#dc3545" },
-    warning: { icone: "⚠️", cor: "#ffc107" },
-    info: { icone: "ℹ️", cor: "#17a2b8" },
-  };
-
-  const config = configs[tipo] || configs.info;
-
-  mensagem.innerHTML = `
-        <div class="mensagem-conteudo">
-            <span class="mensagem-icone">${config.icone}</span>
-            <span class="mensagem-texto">${texto}</span>
-            <button class="mensagem-fechar" onclick="this.parentElement.parentElement.remove()">&times;</button>
-        </div>
-    `;
-
-  mensagem.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${config.cor};
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        z-index: 10000;
-        max-width: 400px;
-        animation: slideInRight 0.3s ease-out;
-        font-family: inherit;
-    `;
-
-  const conteudo = mensagem.querySelector(".mensagem-conteudo");
-  conteudo.style.cssText = `
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    `;
-
-  const botaoFechar = mensagem.querySelector(".mensagem-fechar");
-  botaoFechar.style.cssText = `
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.2rem;
-        cursor: pointer;
-        padding: 0;
-        margin-left: auto;
-    `;
-
-  document.body.appendChild(mensagem);
-
-  // Auto-remover após a duração especificada
-  setTimeout(() => {
-    if (mensagem.parentNode) {
-      mensagem.remove();
-    }
-  }, duracao);
+  
+  // Fallback simples
+  console.log(`[${tipo.toUpperCase()}] ${texto}`);
 }
 
-// Adicionar estilos de animação
-const style = document.createElement("style");
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+// Função para alternar para o modo admin (redireciona para painel dedicado)
+window.toggleAdmin = function() {
+  // Verificar se já está autenticado
+  const isAdmin = sessionStorage.getItem("isAdmin") === "true";
+  
+  if (!isAdmin) {
+    const senha = prompt("🔐 Digite a senha de administrador:");
+    if (senha === "admin123") {
+      sessionStorage.setItem("isAdmin", "true");
+      mostrarMensagem("✅ Redirecionando para o painel administrativo...", "success");
+      setTimeout(() => {
+        window.location.href = "admin.html";
+      }, 1500);
+    } else {
+      mostrarMensagem("❌ Senha incorreta!", "error");
     }
-`;
-document.head.appendChild(style);
+  } else {
+    // Já está autenticado, redirecionar direto
+    mostrarMensagem("🔄 Redirecionando para o painel administrativo...", "info");
+    setTimeout(() => {
+      window.location.href = "admin.html";
+    }, 1000);
+  }
+};

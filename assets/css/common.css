@@ -78,15 +78,12 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
 }
 
 .navbar .logo {
   font-size: calc(4.5 * var(--font-size, 16px));
   word-break: break-word;
   max-width: 100%;
-  flex-shrink: 0;
 }
 
 .navbar ul {
@@ -95,8 +92,6 @@ body {
   gap: 1rem;
   margin: 0;
   padding: 0;
-  flex: 1;
-  justify-content: center;
 }
 
 .navbar li a {
@@ -640,6 +635,15 @@ footer p {
   color: var(--primary-green);
 }
 
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
 /* Estilos de formulário comuns */
 .form-group {
   margin-bottom: 1.5rem;
@@ -895,6 +899,100 @@ footer p {
   box-shadow: 0 0 5px rgba(31, 64, 37, 0.3);
 }
 
+/* =================================================
+ * SEÇÃO DE NAVEGAÇÃO PADRONIZADA
+ * ================================================= */
+
+/* Seção de navegação no topo das páginas */
+.navigation-section {
+  background: linear-gradient(135deg, #f8fdf8 0%, #f1f8f1 100%);
+  padding: 2rem 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-bottom: 3px solid #e8f5e8;
+  margin-bottom: 2rem;
+}
+
+.navigation-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.navigation-container {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+/* Botão voltar padronizado */
+.btn-voltar-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary-green);
+  color: white;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-small);
+  font-size: calc(0.95 * var(--font-size, 16px));
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(47, 125, 50, 0.2);
+}
+
+.btn-voltar-nav:hover {
+  background-color: var(--secondary-green);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(47, 125, 50, 0.3);
+}
+
+/* Título da página na navegação */
+.page-title-nav {
+  color: var(--primary-green);
+  font-size: calc(1.3 * var(--font-size, 16px));
+  font-weight: 600;
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* Navegação simplificada para página de receita individual */
+.navigation-section .navigation-container:has(.btn-voltar-nav:only-child) {
+  justify-content: flex-start;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .navigation-section {
+    padding: 1.5rem 0;
+  }
+  
+  .navigation-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .page-title-nav {
+    font-size: calc(1.2 * var(--font-size, 16px));
+  }
+}
+
+@media (max-width: 480px) {
+  .navigation-section .container {
+    padding: 0 1rem;
+  }
+  
+  .btn-voltar-nav {
+    padding: 0.6rem 1.2rem;
+    font-size: calc(0.9 * var(--font-size, 16px));
+  }
+}
+
 /* Responsividade básica */
 @media (max-width: 768px) {
   .container {
@@ -928,12 +1026,6 @@ footer p {
     font-size: calc(2.5 * var(--font-size, 16px));
     margin-bottom: 1rem;
     order: -1;
-  }
-
-  .navbar .admin-button-container {
-    order: 1;
-    width: auto;
-    margin: 0;
   }
 
   /* Modal responsivo */
@@ -1147,75 +1239,4 @@ a:focus-visible {
 
 .admin-toggle:hover {
   background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Estilos para o botão de adicionar receita (modo admin) */
-.add-receita-card {
-  border: 2px dashed var(--primary-green) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(31, 64, 37, 0.05) 0%,
-    rgba(255, 213, 79, 0.05) 100%
-  ) !important;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.add-receita-card:hover {
-  border-color: var(--accent-green) !important;
-  background: linear-gradient(
-    135deg,
-    rgba(31, 64, 37, 0.1) 0%,
-    rgba(255, 213, 79, 0.1) 100%
-  ) !important;
-  transform: translateY(-2px);
-}
-
-.add-receita-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  text-align: center;
-  height: 100%;
-  min-height: 250px;
-}
-
-.add-icon {
-  font-size: 3rem;
-  color: var(--primary-green);
-  margin-bottom: 1rem;
-  transition: transform 0.3s ease;
-}
-
-.add-receita-card:hover .add-icon {
-  transform: scale(1.1);
-}
-
-.add-receita-content h3 {
-  color: var(--primary-green);
-  margin-bottom: 0.5rem;
-  font-size: calc(1.2 * var(--font-size, 16px));
-}
-
-.add-receita-content p {
-  color: var(--text-medium);
-  margin-bottom: 1.5rem;
-  font-size: calc(0.9 * var(--font-size, 16px));
-}
-
-/* Garantir que o botão admin seja visível na navbar */
-.admin-button-container {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .admin-button-container {
-    margin-top: 1rem;
-    width: 100%;
-    justify-content: center;
-  }
 }

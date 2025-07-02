@@ -357,6 +357,351 @@ window.RaizesAmazonia.Admin = {
   },
 };
 
+// ==============================================
+// GERENCIADOR DE RECEITAS
+// ==============================================
+window.RaizesAmazonia.ReceitaManager = {
+  // Cache de receitas
+  _cache: new Map(),
+  _cacheTimeout: 5 * 60 * 1000, // 5 minutos
+
+  /**
+   * Carregar receitas da API com cache
+   */
+  async carregarReceitas(forceRefresh = false) {
+    const Logger = window.RaizesAmazonia.Logger;
+    const cacheKey = "receitas_list";
+
+    // Verificar cache se não for refresh forçado
+    if (!forceRefresh && this._cache.has(cacheKey)) {
+      const cached = this._cache.get(cacheKey);
+      const now = Date.now();
+
+      if (now - cached.timestamp < this._cacheTimeout) {
+        Logger.info("Receitas carregadas do cache");
+        return cached.data;
+      }
+    }
+
+    try {
+      Logger.info("Carregando receitas da API...");
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE_URL}/api/receitas`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const receitas = await response.json();
+
+      // Atualizar cache
+      this._cache.set(cacheKey, {
+        data: receitas,
+        timestamp: Date.now(),
+      });
+
+      Logger.success(`${receitas.length} receitas carregadas com sucesso`);
+      return receitas;
+    } catch (error) {
+      Logger.error("Erro ao carregar receitas:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Carregar receita específica por ID
+   */
+  async carregarReceita(id) {
+    const Logger = window.RaizesAmazonia.Logger;
+
+    try {
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const receita = await response.json();
+      Logger.info(`Receita ${id} carregada:`, receita.nome);
+      return receita;
+    } catch (error) {
+      Logger.error(`Erro ao carregar receita ${id}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Criar nova receita
+   */
+  async criarReceita(formData) {
+    const Logger = window.RaizesAmazonia.Logger;
+
+    try {
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE_URL}/api/receitas`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const receita = await response.json();
+
+      // Limpar cache para forçar atualização
+      this._cache.delete("receitas_list");
+
+      Logger.success("Receita criada:", receita.nome);
+      return receita;
+    } catch (error) {
+      Logger.error("Erro ao criar receita:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Atualizar receita existente
+   */
+  async atualizarReceita(id, formData) {
+    const Logger = window.RaizesAmazonia.Logger;
+
+    try {
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const receita = await response.json();
+
+      // Limpar cache para forçar atualização
+      this._cache.delete("receitas_list");
+
+      Logger.success("Receita atualizada:", receita.nome);
+      return receita;
+    } catch (error) {
+      Logger.error(`Erro ao atualizar receita ${id}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Deletar receita
+   */
+  async deletarReceita(id) {
+    const Logger = window.RaizesAmazonia.Logger;
+
+    try {
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // Limpar cache para forçar atualização
+      this._cache.delete("receitas_list");
+
+      Logger.success(`Receita ${id} deletada com sucesso`);
+      return true;
+    } catch (error) {
+      Logger.error(`Erro ao deletar receita ${id}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Limpar cache
+   */
+  clearCache() {
+    this._cache.clear();
+    window.RaizesAmazonia.Logger.info("Cache de receitas limpo");
+  },
+};
+
+// ==============================================
+// GERENCIADOR DE DICAS
+// ==============================================
+window.RaizesAmazonia.DicaManager = {
+  // Cache de dicas
+  _cache: new Map(),
+  _cacheTimeout: 5 * 60 * 1000, // 5 minutos
+
+  /**
+   * Carregar dicas da API com cache
+   */
+  async carregarDicas(forceRefresh = false) {
+    const Logger = window.RaizesAmazonia.Logger;
+    const cacheKey = "dicas_list";
+
+    // Verificar cache se não for refresh forçado
+    if (!forceRefresh && this._cache.has(cacheKey)) {
+      const cached = this._cache.get(cacheKey);
+      const now = Date.now();
+
+      if (now - cached.timestamp < this._cacheTimeout) {
+        Logger.info("Dicas carregadas do cache");
+        return cached.data;
+      }
+    }
+
+    try {
+      Logger.info("Carregando dicas da API...");
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE_URL}/api/dicas`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const dicas = await response.json();
+
+      // Atualizar cache
+      this._cache.set(cacheKey, {
+        data: dicas,
+        timestamp: Date.now(),
+      });
+
+      Logger.success(`${dicas.length} dicas carregadas com sucesso`);
+      return dicas;
+    } catch (error) {
+      Logger.error("Erro ao carregar dicas:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Criar nova dica
+   */
+  async criarDica(conteudo) {
+    const Logger = window.RaizesAmazonia.Logger;
+
+    try {
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const formData = new FormData();
+      formData.append("conteudo", conteudo);
+
+      const response = await fetch(`${API_BASE_URL}/api/dicas`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const dica = await response.json();
+
+      // Limpar cache para forçar atualização
+      this._cache.delete("dicas_list");
+
+      Logger.success("Dica criada:", dica.conteudo.substring(0, 50) + "...");
+      return dica;
+    } catch (error) {
+      Logger.error("Erro ao criar dica:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Atualizar dica existente
+   */
+  async atualizarDica(id, conteudo) {
+    const Logger = window.RaizesAmazonia.Logger;
+
+    try {
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const formData = new FormData();
+      formData.append("conteudo", conteudo);
+
+      const response = await fetch(`${API_BASE_URL}/api/dicas/${id}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const dica = await response.json();
+
+      // Limpar cache para forçar atualização
+      this._cache.delete("dicas_list");
+
+      Logger.success("Dica atualizada:", dica.conteudo.substring(0, 50) + "...");
+      return dica;
+    } catch (error) {
+      Logger.error(`Erro ao atualizar dica ${id}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Deletar dica
+   */
+  async deletarDica(id) {
+    const Logger = window.RaizesAmazonia.Logger;
+
+    try {
+      const API_BASE_URL =
+        window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
+      const response = await fetch(`${API_BASE_URL}/api/dicas/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // Limpar cache para forçar atualização
+      this._cache.delete("dicas_list");
+
+      Logger.success(`Dica ${id} deletada com sucesso`);
+      return true;
+    } catch (error) {
+      Logger.error(`Erro ao deletar dica ${id}:`, error);
+      throw error;
+    }
+  },
+
+  /**
+   * Limpar cache
+   */
+  clearCache() {
+    this._cache.clear();
+    window.RaizesAmazonia.Logger.info("Cache de dicas limpo");
+  },
+};
+
 // Funções de compatibilidade com código existente
 function toggleAdmin() {
   window.RaizesAmazonia.Admin.toggle();

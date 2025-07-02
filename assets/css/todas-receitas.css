@@ -193,3 +193,39 @@
     text-align: center;
   }
 }
+
+/* Navegação e busca customizada para todas-receitas */
+.navigation-section .navigation-container {
+  justify-content: space-between;
+}
+
+.busca-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+  max-width: 400px;
+  margin-left: 2rem;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.busca-container input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  padding-right: 3rem;
+  border: 2px solid #e0e0e0;
+  border-radius: var(--border-radius-small);
+  font-size: calc(0.95 * var(--font-size, 16px));
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.busca-container input:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(47, 125, 50, 0.1);
+}
