@@ -151,20 +151,20 @@ raizes_da_amazonia/
 
 ## 📡 API Endpoints
 
-| Método   | Endpoint             | Descrição                     | Autenticação |
-| -------- | -------------------- | ----------------------------- | ------------ |
-| `GET`    | `/api/receitas`      | Listar todas as receitas      | ❌           |
-| `GET`    | `/api/receitas/{id}` | Obter receita específica      | ❌           |
-| `POST`   | `/api/receitas`      | Criar nova receita            | ✅ Admin     |
-| `PUT`    | `/api/receitas/{id}` | Atualizar receita existente   | ✅ Admin     |
-| `DELETE` | `/api/receitas/{id}` | Excluir receita               | ✅ Admin     |
-| `GET`    | `/api/dicas`         | Listar dicas culinárias       | ❌           |
-| `POST`   | `/api/dicas`         | Criar nova dica               | ✅ Admin     |
-| `PUT`    | `/api/dicas/{id}`    | Atualizar dica                | ✅ Admin     |
-| `DELETE` | `/api/dicas/{id}`    | Excluir dica                  | ✅ Admin     |
-| `POST`   | `/api/contato`       | Enviar mensagem de contato    | ❌           |
-| `POST`   | `/api/upload`        | Upload de imagem              | ✅ Admin     |
-| `GET`    | `/uploads/{filename}`| Acessar imagem carregada      | ❌           |
+| Método   | Endpoint             | Descrição                     |
+| -------- | -------------------- | ----------------------------- |
+| `GET`    | `/api/receitas`      | Listar todas as receitas      |
+| `GET`    | `/api/receitas/{id}` | Obter receita específica      |
+| `POST`   | `/api/receitas`      | Criar nova receita            |
+| `PUT`    | `/api/receitas/{id}` | Atualizar receita existente   |
+| `DELETE` | `/api/receitas/{id}` | Excluir receita               |
+| `GET`    | `/api/dicas`         | Listar dicas culinárias       |
+| `POST`   | `/api/dicas`         | Criar nova dica               |
+| `PUT`    | `/api/dicas/{id}`    | Atualizar dica                |
+| `DELETE` | `/api/dicas/{id}`    | Excluir dica                  |
+| `POST`   | `/api/contato`       | Enviar mensagem de contato    |
+| `POST`   | `/api/upload`        | Upload de imagem              |
+| `GET`    | `/uploads/{filename}`| Acessar imagem carregada      |
 
 ### 🔒 Autenticação
 
