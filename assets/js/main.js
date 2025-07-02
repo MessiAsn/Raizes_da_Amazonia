@@ -66,9 +66,9 @@ function mostrarMensagem(texto, tipo = "info", duracao = 6000) {
   `;
 
   // Adicionar estilos de animação se não existir
-  if (!document.querySelector('#mensagem-styles')) {
+  if (!document.querySelector("#mensagem-styles")) {
     const style = document.createElement("style");
-    style.id = 'mensagem-styles';
+    style.id = "mensagem-styles";
     style.textContent = `
       @keyframes slideInRight {
         from { transform: translateX(100%); opacity: 0; }
@@ -667,7 +667,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (sessionStorage.getItem("isAdmin") === "true") {
     isAdmin = true;
   }
-  
+
   // Verificar admin inicial
   verificarAdminInicial();
 
@@ -1165,5 +1165,3 @@ function verificarAdminInicial() {
     atualizarModoAdmin();
   }
 }
-
-
