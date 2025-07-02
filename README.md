@@ -11,7 +11,8 @@ Sistema web para compartilhamento de receitas tradicionais da Amazônia, desenvo
 - **Edição**: Modificação completa de receitas existentes
 - **Exclusão**: Remoção segura com confirmação dinâmica
 - **Detalhes**: Página individual para cada receita
-- **Navegação**: Sistema de busca e filtros
+- **Busca por Nome**: Sistema de busca em tempo real para encontrar receitas pelo nome
+- **Navegação**: Interface otimizada com contador de resultados e filtros
 
 ### 🌿 Dicas Culinárias
 
@@ -194,19 +195,6 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 
 ## 👨‍💻 Desenvolvimento
 
-**Status**: Em desenvolvimento ativo  
+
 **Finalidade**: Projeto educacional - Desenvolvimento Web  
-**Instituição**: Faculdade - Disciplina de DWEB
-
-### 🎯 Próximas Funcionalidades
-
-- [ ] Sistema de favoritos
-- [ ] Comentários nas receitas
-- [ ] Busca avançada com filtros
-- [ ] Exportação de receitas (PDF)
-- [ ] Sistema de avaliações
-- [ ] Modo offline (PWA)
-
----
-
-**🌿 Preservando as tradições culinárias da Amazônia através da tecnologia 🌿**
+**Instituição**: Instituto Federal do Amazonas - Disciplina de DWEB
