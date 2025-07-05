@@ -19,6 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Sistema de mensagens simples
 function mostrarMensagem(texto, tipo = "info", duracao = 3000) {
+  // Use a função global se disponível, senão implementa localmente
+  if (window.RaizesAmazonia?.UI?.showMessage) {
+    return window.RaizesAmazonia.UI.showMessage(texto, tipo, duracao);
+  }
+  
+  // Implementação local como fallback
   // Remover mensagem existente se houver
   const mensagemExistente = document.querySelector(".mensagem");
   if (mensagemExistente) {
@@ -109,18 +115,24 @@ async function carregarReceitas() {
 }
 
 function mostrarErroConexao() {
-  const container = document.querySelector(".card-container");
-  if (container) {
-    container.innerHTML = `
-      <div class="erro-conexao">
-        <div class="erro-content">
-          <h3>⚠️ Erro de Conexão</h3>
-          <p>Não foi possível conectar com o servidor.</p>
-          <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
-          <button onclick="carregarReceitas()" class="btn-retry">Tentar Novamente</button>
+  // Usar sistema centralizado de erro de conexão
+  if (window.RaizesAmazonia?.UI?.mostrarErroConexao) {
+    window.RaizesAmazonia.UI.mostrarErroConexao('.card-container', 'carregarReceitas');
+  } else {
+    // Fallback para caso o config.js não esteja carregado
+    const container = document.querySelector(".card-container");
+    if (container) {
+      container.innerHTML = `
+        <div class="erro-conexao">
+          <div class="erro-content">
+            <h3>⚠️ Erro de Conexão</h3>
+            <p>Não foi possível conectar com o servidor.</p>
+            <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+            <button onclick="carregarReceitas()" class="btn-retry">Tentar Novamente</button>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
   }
 }
 

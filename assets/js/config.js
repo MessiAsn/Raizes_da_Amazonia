@@ -87,6 +87,137 @@ window.RaizesAmazonia.Utils = {
 };
 
 // ==============================================
+// SISTEMA DE NOTIFICAÇÕES E ERROS
+// ==============================================
+window.RaizesAmazonia.UI = {
+  /**
+   * Mostrar erro de conexão padronizado
+   */
+  mostrarErroConexao(containerId = null, retryFunction = null) {
+    const errorHTML = `
+      <div class="erro-conexao">
+        <div class="erro-content">
+          <h3>⚠️ Erro de Conexão</h3>
+          <p>Não foi possível conectar com o servidor.</p>
+          <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+          ${retryFunction ? `<button onclick="${retryFunction}()" class="btn-retry">Tentar Novamente</button>` : ''}
+        </div>
+      </div>
+    `;
+
+    // Se um container específico foi fornecido
+    if (containerId) {
+      const container = document.getElementById(containerId) || document.querySelector(containerId);
+      if (container) {
+        container.innerHTML = errorHTML;
+        return;
+      }
+    }
+
+    // Tentar containers padrão comuns
+    const containers = [
+      '#card-container',
+      '.card-container',
+      '#lista-receitas',
+      '#receitas-lista',
+      '#lista-dicas',
+      '#estatisticas-container',
+      '.receita-container',
+      '.container'
+    ];
+
+    for (const selector of containers) {
+      const container = document.querySelector(selector);
+      if (container) {
+        container.innerHTML = errorHTML;
+        return;
+      }
+    }
+
+    // Fallback: mostrar toast se não encontrar container
+    if (window.RaizesAmazonia.UI.showMessage) {
+      window.RaizesAmazonia.UI.showMessage(
+        "❌ Erro de conexão com o servidor. Verifique se o backend está rodando.",
+        "error",
+        8000
+      );
+    }
+  },
+
+  /**
+   * Sistema de mensagens toast centralizado
+   */
+  showMessage(texto, tipo = "info", duracao = 4000) {
+    // Remove mensagens existentes
+    const existingToasts = document.querySelectorAll('.toast-message');
+    existingToasts.forEach(toast => toast.remove());
+
+    // Criar toast
+    const toast = document.createElement('div');
+    toast.className = `toast-message toast-${tipo}`;
+    
+    // Estilos inline para garantir que funcione em todas as páginas
+    toast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      z-index: 9999;
+      max-width: 400px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease-out;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    `;
+
+    // Cores por tipo
+    const cores = {
+      success: '#10b981',
+      error: '#ef4444', 
+      warning: '#f59e0b',
+      info: '#3b82f6'
+    };
+    
+    toast.style.backgroundColor = cores[tipo] || cores.info;
+    toast.textContent = texto;
+
+    // Adicionar ao DOM
+    document.body.appendChild(toast);
+
+    // Remover automaticamente
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => toast.remove(), 300);
+      }
+    }, duracao);
+
+    return toast;
+  }
+};
+
+// Adicionar estilos CSS apenas para animações dos toasts
+const toastStyles = document.createElement('style');
+toastStyles.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+`;
+
+if (!document.querySelector('#raizes-toast-styles')) {
+  toastStyles.id = 'raizes-toast-styles';
+  document.head.appendChild(toastStyles);
+}
+
+// ==============================================
 // API HELPER CENTRALIZADO
 // ==============================================
 window.RaizesAmazonia.API = {

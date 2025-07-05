@@ -121,7 +121,12 @@ function mostrarMensagemVazia() {
 }
 
 function mostrarErroConexao() {
-  container.innerHTML = `
+  // Usar sistema centralizado de erro de conexão
+  if (window.RaizesAmazonia?.UI?.mostrarErroConexao) {
+    window.RaizesAmazonia.UI.mostrarErroConexao('#card-container', 'carregarTodasReceitas');
+  } else {
+    // Fallback para caso o config.js não esteja carregado
+    container.innerHTML = `
         <div class="erro-conexao">
             <div class="erro-content">
                 <h3>⚠️ Erro de Conexão</h3>
@@ -131,6 +136,7 @@ function mostrarErroConexao() {
             </div>
         </div>
     `;
+  }
 }
 
 function mostrarLoading(mostrar) {

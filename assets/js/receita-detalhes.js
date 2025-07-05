@@ -179,18 +179,41 @@ function mostrarLoading(mostrar = true) {
 
 // Função para mostrar erro
 function mostrarErro(mensagem) {
+  // Verificar se é erro de conexão
+  const isConnectionError = mensagem.includes('Failed to fetch') || 
+                           mensagem.includes('NetworkError') || 
+                           mensagem.includes('ERR_CONNECTION') ||
+                           mensagem.includes('Não foi possível carregar') ||
+                           !navigator.onLine;
+
   const container = document.querySelector(".receita-container");
-  container.innerHTML = `
-    <div style="text-align: center; padding: 3rem; color: #e74c3c;">
-      <h1 style="font-size: 3rem; margin-bottom: 1rem;">❌</h1>
-      <h2>Erro ao carregar receita</h2>
-      <p style="margin: 1rem 0; font-size: 1.1rem;">${mensagem}</p>
-      <button onclick="window.location.href='../index.html'" 
-              style="padding: 1rem 2rem; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
-        ← Voltar para o Início
-      </button>
-    </div>
-  `;
+  
+  if (isConnectionError) {
+    // Usar estrutura padrão para erros de conexão
+    container.innerHTML = `
+      <div class="erro-conexao">
+        <div class="erro-content">
+          <h3>⚠️ Erro de Conexão</h3>
+          <p>Não foi possível conectar com o servidor.</p>
+          <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+          <button onclick="carregarDetalhes()" class="btn-retry">Tentar Novamente</button>
+        </div>
+      </div>
+    `;
+  } else {
+    // Mostrar erro personalizado para outros tipos de erro
+    container.innerHTML = `
+      <div style="text-align: center; padding: 3rem; color: #e74c3c;">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem;">❌</h1>
+        <h2>Erro ao carregar receita</h2>
+        <p style="margin: 1rem 0; font-size: 1.1rem;">${mensagem}</p>
+        <button onclick="window.location.href='../index.html'" 
+                style="padding: 1rem 2rem; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
+          ← Voltar para o Início
+        </button>
+      </div>
+    `;
+  }
 }
 
 // Função principal para carregar detalhes

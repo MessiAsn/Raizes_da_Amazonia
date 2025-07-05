@@ -265,8 +265,19 @@ async function carregarReceitasInicio() {
     renderizarListaReceitas(receitas);
   } catch (error) {
     console.error("❌ Erro ao carregar receitas:", error);
-    document.getElementById("lista-receitas").innerHTML =
-      '<div class="message error">❌ Erro ao carregar receitas. Verifique se o backend está rodando.</div>';
+    
+    // Verificar se é erro de conexão
+    const isConnectionError = error.message.includes('Failed to fetch') || 
+                             error.message.includes('NetworkError') || 
+                             error.message.includes('ERR_CONNECTION') ||
+                             !navigator.onLine;
+    
+    if (isConnectionError) {
+      mostrarErroConexaoAdmin();
+    } else {
+      document.getElementById("lista-receitas").innerHTML =
+        '<div class="message error">❌ Erro ao carregar receitas. Verifique se o backend está rodando.</div>';
+    }
   } finally {
     mostrarCarregamento("receitas", false);
   }
@@ -387,8 +398,29 @@ async function carregarEstatisticas() {
     }
   } catch (error) {
     console.error("❌ Erro ao carregar estatísticas:", error);
-    document.getElementById("estatisticas-container").innerHTML =
-      '<div class="message error">❌ Erro ao carregar estatísticas.</div>';
+    
+    // Verificar se é erro de conexão
+    const isConnectionError = error.message.includes('Failed to fetch') || 
+                             error.message.includes('NetworkError') || 
+                             error.message.includes('ERR_CONNECTION') ||
+                             !navigator.onLine;
+    
+    if (isConnectionError) {
+      // Usar função específica para estatísticas
+      document.getElementById("estatisticas-container").innerHTML = `
+        <div class="erro-conexao">
+          <div class="erro-content">
+            <h3>⚠️ Erro de Conexão</h3>
+            <p>Não foi possível conectar com o servidor.</p>
+            <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+            <button onclick="carregarEstatisticas()" class="btn-retry">Tentar Novamente</button>
+          </div>
+        </div>
+      `;
+    } else {
+      document.getElementById("estatisticas-container").innerHTML =
+        '<div class="message error">❌ Erro ao carregar estatísticas.</div>';
+    }
   }
 }
 
@@ -1378,11 +1410,21 @@ async function carregarDicasAdmin() {
     atualizarEstatisticasDicas(dicas);
   } catch (error) {
     console.error("Erro ao carregar dicas:", error);
-    mostrarMensagemAdmin(
-      "Erro ao carregar dicas. Verifique se o backend está rodando.",
-      "error"
-    );
-    mostrarErroConexaoDicas();
+    
+    // Verificar se é erro de conexão
+    const isConnectionError = error.message.includes('Failed to fetch') || 
+                             error.message.includes('NetworkError') || 
+                             error.message.includes('ERR_CONNECTION') ||
+                             !navigator.onLine;
+    
+    if (isConnectionError) {
+      mostrarErroConexaoDicas();
+    } else {
+      mostrarMensagemAdmin(
+        "Erro ao carregar dicas. Verifique se o backend está rodando.",
+        "error"
+      );
+    }
   } finally {
     mostrarLoadingDicas(false);
   }
@@ -1758,18 +1800,15 @@ function mostrarLoadingDicas(mostrar) {
 function mostrarErroConexaoDicas() {
   const container = document.getElementById("dicas-lista");
   container.innerHTML = `
-    <div class="error-state">
-      <h3>❌ Erro de Conexão</h3>
-      <p>Não foi possível conectar ao servidor.</p>
-      <button id="btn-retry-dicas" class="btn-retry">🔄 Tentar Novamente</button>
+    <div class="erro-conexao">
+      <div class="erro-content">
+        <h3>⚠️ Erro de Conexão</h3>
+        <p>Não foi possível conectar com o servidor.</p>
+        <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+        <button onclick="carregarDicasAdmin()" class="btn-retry">Tentar Novamente</button>
+      </div>
     </div>
   `;
-
-  // Adicionar event listener para o botão de retry
-  const btnRetry = document.getElementById("btn-retry-dicas");
-  if (btnRetry) {
-    btnRetry.addEventListener("click", carregarDicasAdmin);
-  }
 }
 
 // ========================================
@@ -1864,18 +1903,15 @@ function mostrarLoading(mostrar) {
 function mostrarErroConexaoAdmin() {
   const container = document.getElementById("receitas-lista");
   container.innerHTML = `
-    <div class="error-state">
-      <h3>❌ Erro de Conexão</h3>
-      <p>Não foi possível conectar ao servidor.</p>
-      <button id="btn-retry-receitas" class="btn-retry">🔄 Tentar Novamente</button>
+    <div class="erro-conexao">
+      <div class="erro-content">
+        <h3>⚠️ Erro de Conexão</h3>
+        <p>Não foi possível conectar com o servidor.</p>
+        <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+        <button onclick="carregarReceitasAdmin()" class="btn-retry">Tentar Novamente</button>
+      </div>
     </div>
   `;
-
-  // Adicionar event listener para o botão de retry
-  const btnRetry = document.getElementById("btn-retry-receitas");
-  if (btnRetry) {
-    btnRetry.addEventListener("click", carregarReceitasAdmin);
-  }
 }
 
 // ========================================
