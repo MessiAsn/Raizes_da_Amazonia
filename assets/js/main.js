@@ -3,10 +3,10 @@
 // Aguardar que todos os scripts sejam carregados
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 Iniciando aplicação...");
-  
+
   // Carregar receitas
   carregarReceitas();
-  
+
   // Carregar dicas
   carregarDicas();
 
@@ -31,9 +31,9 @@ function mostrarMensagem(texto, tipo = "info", duracao = 3000) {
   // Definir cores por tipo
   const cores = {
     success: "#28a745",
-    error: "#dc3545", 
+    error: "#dc3545",
     warning: "#ffc107",
-    info: "#17a2b8"
+    info: "#17a2b8",
   };
 
   const cor = cores[tipo] || cores.info;
@@ -76,32 +76,32 @@ function getApiBaseUrl() {
 async function carregarReceitas() {
   try {
     console.log("Carregando receitas...");
-    
+
     // Usar o ReceitaManager se disponível
     if (window.RaizesAmazonia?.ReceitaManager) {
-      const receitas = await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
+      const receitas =
+        await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
       const container = document.querySelector(".card-container");
-      
+
       if (container) {
         renderizarReceitas(receitas.slice(0, 6), container);
       }
       return;
     }
-    
+
     // Fallback para fetch direto
     const response = await fetch(`${getApiBaseUrl()}/api/receitas`);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    
+
     const receitas = await response.json();
     const container = document.querySelector(".card-container");
-    
+
     if (container) {
       renderizarReceitas(receitas.slice(0, 6), container);
     }
-    
   } catch (error) {
     console.error("Erro ao carregar receitas:", error);
     mostrarErroConexao();
@@ -137,21 +137,25 @@ function renderizarReceitas(receitas, container) {
     return;
   }
 
-  receitas.forEach(receita => {
+  receitas.forEach((receita) => {
     const card = document.createElement("div");
     card.className = "card";
-    
-    const imagemUrl = receita.imagem ? `${getApiBaseUrl()}${receita.imagem}` : null;
-    
+
+    const imagemUrl = receita.imagem
+      ? `${getApiBaseUrl()}${receita.imagem}`
+      : null;
+
     card.innerHTML = `
-      ${imagemUrl ? `<img src="${imagemUrl}" alt="${receita.nome}" />` : ''}
+      ${imagemUrl ? `<img src="${imagemUrl}" alt="${receita.nome}" />` : ""}
       <h3>${receita.nome}</h3>
       <p>${receita.descricao}</p>
       <div class="card-actions">
-        <button onclick="verReceita('${receita.id}')" class="card-button">Ver Receita</button>
+        <button onclick="verReceita('${
+          receita.id
+        }')" class="card-button">Ver Receita</button>
       </div>
     `;
-    
+
     container.appendChild(card);
   });
 }
@@ -164,32 +168,31 @@ function verReceita(id) {
 async function carregarDicas() {
   try {
     console.log("Carregando dicas...");
-    
+
     // Usar o DicaManager se disponível
     if (window.RaizesAmazonia?.DicaManager) {
       const dicas = await window.RaizesAmazonia.DicaManager.carregarDicas();
       const container = document.querySelector(".dicas-scroll ul");
-      
+
       if (container) {
         renderizarDicas(dicas, container);
       }
       return;
     }
-    
+
     // Fallback para fetch direto
     const response = await fetch(`${getApiBaseUrl()}/api/dicas`);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    
+
     const dicas = await response.json();
     const container = document.querySelector(".dicas-scroll ul");
-    
+
     if (container) {
       renderizarDicas(dicas, container);
     }
-    
   } catch (error) {
     console.error("Erro ao carregar dicas:", error);
     mostrarErroDicas();
@@ -204,12 +207,12 @@ function renderizarDicas(dicas, container) {
     return;
   }
 
-  dicas.forEach(dica => {
+  dicas.forEach((dica) => {
     const dicaElement = document.createElement("li");
     dicaElement.innerHTML = `
       <div class="dica-content">
         <span class="dica-icon">💡</span>
-        <span class="dica-text">${dica.conteudo || dica.texto || ''}</span>
+        <span class="dica-text">${dica.conteudo || dica.texto || ""}</span>
       </div>
     `;
     container.appendChild(dicaElement);
@@ -263,7 +266,6 @@ async function enviarContato(event) {
 
     mostrarMensagem("Mensagem enviada com sucesso!", "success");
     document.getElementById("form-contato").reset();
-    
   } catch (error) {
     console.error("Erro ao enviar contato:", error);
     mostrarMensagem("Erro ao enviar mensagem.", "error");
@@ -275,15 +277,18 @@ async function enviarContato(event) {
 // ========================================
 
 // Função para alternar para o modo admin (redireciona para painel dedicado)
-window.toggleAdmin = function() {
+window.toggleAdmin = function () {
   // Verificar se já está autenticado
   const isAdmin = sessionStorage.getItem("isAdmin") === "true";
-  
+
   if (!isAdmin) {
     const senha = prompt("🔐 Digite a senha de administrador:");
     if (senha === "admin123") {
       sessionStorage.setItem("isAdmin", "true");
-      mostrarMensagem("✅ Redirecionando para o painel administrativo...", "success");
+      mostrarMensagem(
+        "✅ Redirecionando para o painel administrativo...",
+        "success"
+      );
       setTimeout(() => {
         window.location.href = "pages/admin.html";
       }, 1500);
@@ -292,7 +297,10 @@ window.toggleAdmin = function() {
     }
   } else {
     // Já está autenticado, redirecionar direto
-    mostrarMensagem("🔄 Redirecionando para o painel administrativo...", "info");
+    mostrarMensagem(
+      "🔄 Redirecionando para o painel administrativo...",
+      "info"
+    );
     setTimeout(() => {
       window.location.href = "pages/admin.html";
     }, 1000);

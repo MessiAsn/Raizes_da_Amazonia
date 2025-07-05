@@ -656,7 +656,10 @@ window.RaizesAmazonia.DicaManager = {
       // Limpar cache para forçar atualização
       this._cache.delete("dicas_list");
 
-      Logger.success("Dica atualizada:", dica.conteudo.substring(0, 50) + "...");
+      Logger.success(
+        "Dica atualizada:",
+        dica.conteudo.substring(0, 50) + "..."
+      );
       return dica;
     } catch (error) {
       Logger.error(`Erro ao atualizar dica ${id}:`, error);

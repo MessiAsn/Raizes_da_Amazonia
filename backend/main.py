@@ -378,6 +378,50 @@ async def deletar_dica(
     return {"message": "Dica deletada com sucesso"}
 
 
+# Endpoint para estatísticas do dashboard admin
+@app.get("/api/stats")
+async def get_estatisticas(db: Session = Depends(get_db)):
+    """Retorna estatísticas gerais do sistema"""
+
+    # Contar receitas
+    total_receitas = db.query(ReceitaDB).count()
+
+    # Contar dicas
+    total_dicas = db.query(DicaDB).count()
+
+    # Classificar dicas por tamanho (curtas <= 100 caracteres, longas > 100)
+    dicas = db.query(DicaDB).all()
+    dicas_curtas = sum(1 for dica in dicas if len(dica.texto) <= 100)
+    dicas_longas = sum(1 for dica in dicas if len(dica.texto) > 100)
+
+    # Receitas mais recentes (últimas 5)
+    receitas_recentes = db.query(ReceitaDB).order_by(ReceitaDB.created_at.desc()).limit(5).all()
+
+    # Dicas mais recentes (últimas 3)
+    dicas_recentes = db.query(DicaDB).order_by(DicaDB.created_at.desc()).limit(3).all()
+
+    return {
+        "total_receitas": total_receitas,
+        "total_dicas": total_dicas,
+        "dicas_curtas": dicas_curtas,
+        "dicas_longas": dicas_longas,
+        "receitas_recentes": [
+            {
+                "id": r.id,
+                "nome": r.nome,
+                "created_at": r.created_at.isoformat() if r.created_at else None
+            } for r in receitas_recentes
+        ],
+        "dicas_recentes": [
+            {
+                "id": d.id,
+                "texto": d.texto[:50] + "..." if len(d.texto) > 50 else d.texto,
+                "created_at": d.created_at.isoformat() if d.created_at else None
+            } for d in dicas_recentes
+        ]
+    }
+
+
 # Rota para envio de email de contato
 @app.post("/api/contato")
 async def enviar_contato(

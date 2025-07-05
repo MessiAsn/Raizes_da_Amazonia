@@ -55,7 +55,8 @@ async function carregarTodasReceitas() {
 
   try {
     // Usar o ReceitaManager centralizado
-    todasReceitas = await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
+    todasReceitas =
+      await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
     receitasFiltradas = [...todasReceitas];
 
     renderizarReceitas(receitasFiltradas);
@@ -98,7 +99,9 @@ function renderizarReceitas(receitas) {
             <h3>${r.nome}</h3>
             <p>${r.descricao}</p>
             <div class="card-actions">
-                <button onclick="verReceitaDetalhes('${r.id}')" class="card-button">Ver Receita</button>
+                <button onclick="verReceitaDetalhes('${
+                  r.id
+                }')" class="card-button">Ver Receita</button>
             </div>
         `;
 
@@ -268,21 +271,24 @@ function mostrarMensagem(texto, tipo = "info", duracao = 6000) {
   if (window.RaizesAmazonia?.Messages?.show) {
     return window.RaizesAmazonia.Messages.show(texto, tipo, duracao);
   }
-  
+
   // Fallback simples
   console.log(`[${tipo.toUpperCase()}] ${texto}`);
 }
 
 // Função para alternar para o modo admin (redireciona para painel dedicado)
-window.toggleAdmin = function() {
+window.toggleAdmin = function () {
   // Verificar se já está autenticado
   const isAdmin = sessionStorage.getItem("isAdmin") === "true";
-  
+
   if (!isAdmin) {
     const senha = prompt("🔐 Digite a senha de administrador:");
     if (senha === "admin123") {
       sessionStorage.setItem("isAdmin", "true");
-      mostrarMensagem("✅ Redirecionando para o painel administrativo...", "success");
+      mostrarMensagem(
+        "✅ Redirecionando para o painel administrativo...",
+        "success"
+      );
       setTimeout(() => {
         window.location.href = "admin.html";
       }, 1500);
@@ -291,7 +297,10 @@ window.toggleAdmin = function() {
     }
   } else {
     // Já está autenticado, redirecionar direto
-    mostrarMensagem("🔄 Redirecionando para o painel administrativo...", "info");
+    mostrarMensagem(
+      "🔄 Redirecionando para o painel administrativo...",
+      "info"
+    );
     setTimeout(() => {
       window.location.href = "admin.html";
     }, 1000);
