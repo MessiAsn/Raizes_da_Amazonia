@@ -3,7 +3,8 @@
 // ========================================
 // CONFIGURAÇÃO E CONSTANTES
 // ========================================
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL =
+  window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
 
 // Estado global do admin
 let currentTab = "receitas";
@@ -249,7 +250,7 @@ async function carregarDadosIniciais() {
   }
 }
 
-async function carregarReceitas() {
+async function carregarReceitasInicio() {
   console.log("📖 Carregando receitas...");
   mostrarCarregamento("receitas", true);
 
@@ -307,7 +308,7 @@ function renderizarListaReceitas(receitas) {
           ${
             imagemUrl
               ? `<img src="${imagemUrl}" alt="${receita.nome}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;" />`
-              : "�"
+              : `<div class="receita-placeholder" style="width: 80px; height: 80px; border-radius: 8px; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); display: flex; align-items: center; justify-content: center; color: #999; font-size: 24px; border: 2px dashed #ccc;">📷</div>`
           }
         </div>
         <div class="receita-info">
@@ -678,6 +679,12 @@ function mostrarCarregamento(tipo, mostrar) {
 
 // Sistema de notificações Toast melhorado
 function mostrarMensagem(mensagem, tipo = "info", duracao = 4000) {
+  // Use a função global se disponível, senão implementa localmente
+  if (window.RaizesAmazonia?.UI?.showMessage) {
+    return window.RaizesAmazonia.UI.showMessage(mensagem, tipo, duracao);
+  }
+
+  // Implementação local como fallback
   // Criar container de toasts se não existir
   let toastContainer = document.querySelector(".toast-container");
   if (!toastContainer) {
@@ -1231,7 +1238,7 @@ async function deletarReceitaAdmin(id) {
               ${
                 receita.imagem
                   ? `<img src="${API_BASE_URL}${receita.imagem}" alt="${receita.nome}" class="preview-img">`
-                  : ""
+                  : `<div class="preview-placeholder" style="width: 100px; height: 100px; border-radius: 8px; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); display: flex; align-items: center; justify-content: center; color: #999; font-size: 32px; border: 2px dashed #ccc; margin: 0 auto 10px;">📷</div>`
               }
               <h4>${receita.nome}</h4>
               <p>${receita.descricao}</p>
@@ -1834,7 +1841,7 @@ function previewEditImage(event) {
 }
 
 // Função para ver detalhes da receita
-function verReceitaDetalhes(id) {
+function verReceitaDetalhesAdmin(id) {
   window.open(`receita.html?id=${id}`, "_blank");
 }
 

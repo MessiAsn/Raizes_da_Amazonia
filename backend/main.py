@@ -386,6 +386,14 @@ async def get_estatisticas(db: Session = Depends(get_db)):
     # Contar receitas
     total_receitas = db.query(ReceitaDB).count()
 
+    # Buscar todas as receitas para classificar
+    receitas = db.query(ReceitaDB).all()
+    receitas_com_imagem = sum(1 for receita in receitas if receita.imagem)
+    receitas_sem_imagem = total_receitas - receitas_com_imagem
+    receitas_com_historia = sum(
+        1 for receita in receitas if receita.historia and receita.historia.strip()
+    )
+
     # Contar dicas
     total_dicas = db.query(DicaDB).count()
 
@@ -405,6 +413,19 @@ async def get_estatisticas(db: Session = Depends(get_db)):
     return {
         "total_receitas": total_receitas,
         "total_dicas": total_dicas,
+        "receitas_com_imagem": receitas_com_imagem,
+        "receitas_sem_imagem": receitas_sem_imagem,
+        "receitas_com_historia": receitas_com_historia,
+        "percentual_receitas_com_imagem": (
+            round((receitas_com_imagem / total_receitas) * 100)
+            if total_receitas > 0
+            else 0
+        ),
+        "percentual_receitas_com_historia": (
+            round((receitas_com_historia / total_receitas) * 100)
+            if total_receitas > 0
+            else 0
+        ),
         "dicas_curtas": dicas_curtas,
         "dicas_longas": dicas_longas,
         "receitas_recentes": [

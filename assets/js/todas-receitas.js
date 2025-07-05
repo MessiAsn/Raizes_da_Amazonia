@@ -267,6 +267,12 @@ function verReceitaDetalhes(id) {
 
 // Sistema de Mensagens Simplificado
 function mostrarMensagem(texto, tipo = "info", duracao = 6000) {
+  // Use a função global se disponível, senão implementa localmente
+  if (window.RaizesAmazonia?.UI?.showMessage) {
+    return window.RaizesAmazonia.UI.showMessage(texto, tipo, duracao);
+  }
+
+  // Implementação local como fallback
   // Usar sistema centralizado se disponível
   if (window.RaizesAmazonia?.Messages?.show) {
     return window.RaizesAmazonia.Messages.show(texto, tipo, duracao);

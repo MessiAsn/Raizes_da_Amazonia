@@ -146,7 +146,11 @@ function renderizarReceitas(receitas, container) {
       : null;
 
     card.innerHTML = `
-      ${imagemUrl ? `<img src="${imagemUrl}" alt="${receita.nome}" />` : ""}
+      ${
+        imagemUrl
+          ? `<img src="${imagemUrl}" alt="${receita.nome}" />`
+          : `<div class="card-placeholder" style="height: 200px; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); display: flex; align-items: center; justify-content: center; color: #999; font-size: 48px; border: 2px dashed #ccc; border-radius: 8px;">📷</div>`
+      }
       <h3>${receita.nome}</h3>
       <p>${receita.descricao}</p>
       <div class="card-actions">
