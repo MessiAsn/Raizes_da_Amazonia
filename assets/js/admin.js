@@ -423,8 +423,12 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
       : 0;
 
   // Classificar dicas por tamanho
-  const dicasCurtas = dicas.filter((d) => (d.conteudo || d.texto || "").length <= 100).length;
-  const dicasLongas = dicas.filter((d) => (d.conteudo || d.texto || "").length > 100).length;
+  const dicasCurtas = dicas.filter(
+    (d) => (d.conteudo || d.texto || "").length <= 100
+  ).length;
+  const dicasLongas = dicas.filter(
+    (d) => (d.conteudo || d.texto || "").length > 100
+  ).length;
 
   // Estatísticas de ingredientes (se existir no campo ingredientes)
   const todosIngredientes = receitas.flatMap((r) => {
@@ -812,18 +816,19 @@ function mostrarLoadingOverlay(mostrar = true) {
 // Estados visuais para botões
 function setBotaoEstado(botaoOuId, estado, textoOriginal = null) {
   let botao;
-  
+
   // Verificar se é um elemento HTML ou um ID/seletor
-  if (typeof botaoOuId === 'string') {
+  if (typeof botaoOuId === "string") {
     // É um ID ou seletor
-    botao = document.getElementById(botaoOuId) || document.querySelector(botaoOuId);
+    botao =
+      document.getElementById(botaoOuId) || document.querySelector(botaoOuId);
   } else if (botaoOuId && botaoOuId.nodeType === Node.ELEMENT_NODE) {
     // É um elemento HTML
     botao = botaoOuId;
   }
-  
+
   if (!botao) {
-    console.log('❌ Botão não encontrado:', botaoOuId);
+    console.log("❌ Botão não encontrado:", botaoOuId);
     return;
   }
 
@@ -1045,7 +1050,6 @@ function abrirModalNovaReceitaAdmin() {
 
   console.log("🔵 Abrindo modal...");
   abrirModal("modal-nova-receita");
-
 }
 
 // Função para adicionar nova receita
@@ -1505,7 +1509,6 @@ function abrirModalNovaDicaAdmin() {
 
   console.log("🔵 Abrindo modal...");
   abrirModal("modal-nova-dica");
-
 }
 
 // Função para adicionar nova dica
@@ -1949,48 +1952,48 @@ async function testarCarregamentoDicas() {
 
 // Função para testar manualmente os event listeners
 function testarEventListeners() {
-  console.log('🧪 Testando event listeners...');
-  
+  console.log("🧪 Testando event listeners...");
+
   // Testar formulários
-  const formNovaReceita = document.getElementById('form-nova-receita');
-  const formNovaDica = document.getElementById('form-nova-dica');
-  
-  console.log('📋 Formulários encontrados:');
-  console.log('- Nova receita:', formNovaReceita ? 'SIM' : 'NÃO');
-  console.log('- Nova dica:', formNovaDica ? 'SIM' : 'NÃO');
-  
+  const formNovaReceita = document.getElementById("form-nova-receita");
+  const formNovaDica = document.getElementById("form-nova-dica");
+
+  console.log("📋 Formulários encontrados:");
+  console.log("- Nova receita:", formNovaReceita ? "SIM" : "NÃO");
+  console.log("- Nova dica:", formNovaDica ? "SIM" : "NÃO");
+
   // Testar botões de fechar
-  const botoesFechar = document.querySelectorAll('[data-close-modal]');
+  const botoesFechar = document.querySelectorAll("[data-close-modal]");
   console.log(`🔘 Botões de fechar encontrados: ${botoesFechar.length}`);
-  
+
   // Testar botões principais
-  const btnNovaReceita = document.getElementById('btn-nova-receita');
-  const btnNovaDica = document.getElementById('btn-nova-dica');
-  
-  console.log('🔘 Botões principais encontrados:');
-  console.log('- Nova receita:', btnNovaReceita ? 'SIM' : 'NÃO');
-  console.log('- Nova dica:', btnNovaDica ? 'SIM' : 'NÃO');
-  
+  const btnNovaReceita = document.getElementById("btn-nova-receita");
+  const btnNovaDica = document.getElementById("btn-nova-dica");
+
+  console.log("🔘 Botões principais encontrados:");
+  console.log("- Nova receita:", btnNovaReceita ? "SIM" : "NÃO");
+  console.log("- Nova dica:", btnNovaDica ? "SIM" : "NÃO");
+
   return {
     formNovaReceita,
     formNovaDica,
     botoesFechar: botoesFechar.length,
     btnNovaReceita,
-    btnNovaDica
+    btnNovaDica,
   };
 }
 
 // Função para reconfigurar tudo manualmente
 function reconfigurarTudo() {
-  console.log('🔧 Reconfigurando todos os event listeners...');
-  
+  console.log("🔧 Reconfigurando todos os event listeners...");
+
   // Reconfigurar botões principais
   setTimeout(() => {
     configurarEventos();
     configurarFormularios();
     configurarBotoesFecharModal();
     configurarPreviewsImagem();
-    console.log('✅ Reconfiguração completa!');
+    console.log("✅ Reconfiguração completa!");
   }, 500);
 }
 
@@ -1999,7 +2002,7 @@ window.adminDebug = {
   testar: testarEventListeners,
   reconfigurar: reconfigurarTudo,
   abrirReceita: () => abrirModalNovaReceitaAdmin(),
-  abrirDica: () => abrirModalNovaDicaAdmin()
+  abrirDica: () => abrirModalNovaDicaAdmin(),
 };
 
 // ========================================

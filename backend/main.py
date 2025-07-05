@@ -395,7 +395,9 @@ async def get_estatisticas(db: Session = Depends(get_db)):
     dicas_longas = sum(1 for dica in dicas if len(dica.texto) > 100)
 
     # Receitas mais recentes (últimas 5)
-    receitas_recentes = db.query(ReceitaDB).order_by(ReceitaDB.created_at.desc()).limit(5).all()
+    receitas_recentes = (
+        db.query(ReceitaDB).order_by(ReceitaDB.created_at.desc()).limit(5).all()
+    )
 
     # Dicas mais recentes (últimas 3)
     dicas_recentes = db.query(DicaDB).order_by(DicaDB.created_at.desc()).limit(3).all()
@@ -409,16 +411,18 @@ async def get_estatisticas(db: Session = Depends(get_db)):
             {
                 "id": r.id,
                 "nome": r.nome,
-                "created_at": r.created_at.isoformat() if r.created_at else None
-            } for r in receitas_recentes
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+            }
+            for r in receitas_recentes
         ],
         "dicas_recentes": [
             {
                 "id": d.id,
                 "texto": d.texto[:50] + "..." if len(d.texto) > 50 else d.texto,
-                "created_at": d.created_at.isoformat() if d.created_at else None
-            } for d in dicas_recentes
-        ]
+                "created_at": d.created_at.isoformat() if d.created_at else None,
+            }
+            for d in dicas_recentes
+        ],
     }
 
 
