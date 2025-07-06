@@ -178,13 +178,9 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   margin-top: 3rem;
-  padding: 2rem 1rem;
-  border-top: 2px solid #e8f5e8;
-  background: linear-gradient(135deg, #f8fdf8 0%, #f1f8f1 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem 1rem;
   clear: both;
   width: 100%;
 }
@@ -197,9 +193,9 @@
 
 .pagination-info {
   margin-right: 1rem;
-  color: #4a5d6a;
-  font-size: calc(0.9 * var(--font-size, 16px));
-  font-weight: 500;
+  color: #888;
+  font-size: calc(0.85 * var(--font-size, 16px));
+  font-weight: 400;
 }
 
 .pagination-btn {
@@ -209,12 +205,12 @@
   min-width: 40px;
   height: 40px;
   padding: 0.5rem;
-  border: 2px solid #e0e7e0;
-  background: white;
-  color: #1f4025;
+  border: 1px solid #ddd;
+  background: transparent;
+  color: #666;
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border-radius: 50%;
+  transition: all 0.3s ease;
   cursor: pointer;
   font-weight: 500;
   font-size: calc(0.9 * var(--font-size, 16px));
@@ -222,23 +218,23 @@
 
 .pagination-btn:hover:not(.disabled) {
   border-color: var(--primary-green);
-  background: #f8fdf8;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(47, 125, 50, 0.15);
+  background: rgba(47, 125, 50, 0.1);
+  transform: translateY(-2px);
+  color: var(--primary-green);
 }
 
 .pagination-btn.active {
   background: var(--primary-green);
   color: white;
   border-color: var(--primary-green);
-  box-shadow: 0 3px 8px rgba(47, 125, 50, 0.3);
+  transform: scale(1.1);
 }
 
 .pagination-btn.disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
-  background: #f5f5f5;
-  color: #999;
+  background: transparent;
+  color: #ccc;
 }
 
 .pagination-ellipsis {
@@ -251,6 +247,8 @@
 .pagination-next {
   padding: 0.5rem 1rem;
   font-weight: 600;
+  border-radius: 20px;
+  min-width: auto;
 }
 
 .pagination-prev::before {
@@ -268,24 +266,25 @@
   align-items: center;
   gap: 0.5rem;
   margin-left: 1rem;
-  color: #4a5d6a;
-  font-size: calc(0.9 * var(--font-size, 16px));
+  color: #888;
+  font-size: calc(0.85 * var(--font-size, 16px));
 }
 
 .items-per-page select {
   padding: 0.5rem;
-  border: 2px solid #e0e7e0;
-  border-radius: 6px;
-  background: white;
-  color: #1f4025;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: transparent;
+  color: #666;
   font-size: calc(0.9 * var(--font-size, 16px));
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .items-per-page select:focus {
   outline: none;
   border-color: var(--primary-green);
+  background: rgba(47, 125, 50, 0.05);
 }
 
 /* Responsividade específica para página de receitas */
@@ -325,7 +324,7 @@
     gap: 1.5rem;
     padding: 1.5rem 1rem;
   }
-  
+
   .pagination-info,
   .items-per-page {
     text-align: center;
@@ -336,13 +335,13 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .pagination-btn {
     min-width: 35px;
     height: 35px;
     font-size: calc(0.8 * var(--font-size, 16px));
   }
-  
+
   .pagination-prev,
   .pagination-next {
     padding: 0.4rem 0.8rem;
@@ -356,7 +355,7 @@
     height: 32px;
     padding: 0.3rem;
   }
-  
+
   .pagination-prev,
   .pagination-next {
     padding: 0.3rem 0.6rem;

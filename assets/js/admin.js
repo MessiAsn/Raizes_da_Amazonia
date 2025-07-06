@@ -18,14 +18,14 @@ const paginacao = {
     paginaAtual: 1,
     itensPorPagina: 6,
     totalItens: 0,
-    dados: []
+    dados: [],
   },
   dicas: {
     paginaAtual: 1,
     itensPorPagina: 8,
     totalItens: 0,
-    dados: []
-  }
+    dados: [],
+  },
 };
 
 // Função para calcular total de páginas
@@ -46,22 +46,27 @@ function obterItensPaginaAtual(tipo) {
 function gerarPaginacao(tipo) {
   const config = paginacao[tipo];
   const totalPaginas = calcularTotalPaginas(tipo);
-  
+
   if (totalPaginas <= 1) {
-    return '';
+    return "";
   }
 
   let html = `
     <div class="pagination-container">
       <div class="pagination-info">
         Mostrando ${(config.paginaAtual - 1) * config.itensPorPagina + 1} - 
-        ${Math.min(config.paginaAtual * config.itensPorPagina, config.totalItens)} 
+        ${Math.min(
+          config.paginaAtual * config.itensPorPagina,
+          config.totalItens
+        )} 
         de ${config.totalItens} ${tipo}
       </div>
       <div class="pagination">
-        <button class="pagination-btn pagination-prev ${config.paginaAtual === 1 ? 'disabled' : ''}" 
+        <button class="pagination-btn pagination-prev ${
+          config.paginaAtual === 1 ? "disabled" : ""
+        }" 
                 onclick="irParaPagina('${tipo}', ${config.paginaAtual - 1})"
-                ${config.paginaAtual === 1 ? 'disabled' : ''}>
+                ${config.paginaAtual === 1 ? "disabled" : ""}>
           Anterior
         </button>
   `;
@@ -85,7 +90,9 @@ function gerarPaginacao(tipo) {
 
   // Páginas do meio
   for (let i = inicio; i <= fim; i++) {
-    html += `<button class="pagination-btn ${i === config.paginaAtual ? 'active' : ''}" 
+    html += `<button class="pagination-btn ${
+      i === config.paginaAtual ? "active" : ""
+    }" 
              onclick="irParaPagina('${tipo}', ${i})">${i}</button>`;
   }
 
@@ -98,20 +105,32 @@ function gerarPaginacao(tipo) {
   }
 
   html += `
-        <button class="pagination-btn pagination-next ${config.paginaAtual === totalPaginas ? 'disabled' : ''}" 
+        <button class="pagination-btn pagination-next ${
+          config.paginaAtual === totalPaginas ? "disabled" : ""
+        }" 
                 onclick="irParaPagina('${tipo}', ${config.paginaAtual + 1})"
-                ${config.paginaAtual === totalPaginas ? 'disabled' : ''}>
+                ${config.paginaAtual === totalPaginas ? "disabled" : ""}>
           Próximo
         </button>
       </div>
       <div class="items-per-page">
         <label for="${tipo}-per-page">Itens por página:</label>
         <select id="${tipo}-per-page" onchange="alterarItensPorPagina('${tipo}', this.value)">
-          <option value="4" ${config.itensPorPagina === 4 ? 'selected' : ''}>4</option>
-          <option value="6" ${config.itensPorPagina === 6 ? 'selected' : ''}>6</option>
-          <option value="8" ${config.itensPorPagina === 8 ? 'selected' : ''}>8</option>
-          <option value="12" ${config.itensPorPagina === 12 ? 'selected' : ''}>12</option>
-          <option value="20" ${config.itensPorPagina === 20 ? 'selected' : ''}>20</option>
+          <option value="4" ${
+            config.itensPorPagina === 4 ? "selected" : ""
+          }>4</option>
+          <option value="6" ${
+            config.itensPorPagina === 6 ? "selected" : ""
+          }>6</option>
+          <option value="8" ${
+            config.itensPorPagina === 8 ? "selected" : ""
+          }>8</option>
+          <option value="12" ${
+            config.itensPorPagina === 12 ? "selected" : ""
+          }>12</option>
+          <option value="20" ${
+            config.itensPorPagina === 20 ? "selected" : ""
+          }>20</option>
         </select>
       </div>
     </div>
@@ -123,16 +142,16 @@ function gerarPaginacao(tipo) {
 // Função para ir para uma página específica
 function irParaPagina(tipo, pagina) {
   const totalPaginas = calcularTotalPaginas(tipo);
-  
+
   if (pagina < 1 || pagina > totalPaginas) {
     return;
   }
 
   paginacao[tipo].paginaAtual = pagina;
-  
-  if (tipo === 'receitas') {
+
+  if (tipo === "receitas") {
     renderizarReceitasAdmin(paginacao.receitas.dados);
-  } else if (tipo === 'dicas') {
+  } else if (tipo === "dicas") {
     renderizarDicasAdmin(paginacao.dicas.dados);
   }
 }
@@ -141,10 +160,10 @@ function irParaPagina(tipo, pagina) {
 function alterarItensPorPagina(tipo, novoValor) {
   paginacao[tipo].itensPorPagina = parseInt(novoValor);
   paginacao[tipo].paginaAtual = 1; // Voltar para primeira página
-  
-  if (tipo === 'receitas') {
+
+  if (tipo === "receitas") {
     renderizarReceitasAdmin(paginacao.receitas.dados);
-  } else if (tipo === 'dicas') {
+  } else if (tipo === "dicas") {
     renderizarDicasAdmin(paginacao.dicas.dados);
   }
 }
@@ -423,10 +442,6 @@ async function carregarDadosIniciais() {
     mostrarMensagemAdmin("❌ Erro ao carregar dados iniciais.", "error");
   }
 }
-
-
-
-
 
 async function carregarEstatisticas() {
   try {
@@ -1058,7 +1073,7 @@ function renderizarReceitasAdmin(todasReceitas) {
   }
 
   // Obter receitas da página atual
-  const receitasPagina = obterItensPaginaAtual('receitas');
+  const receitasPagina = obterItensPaginaAtual("receitas");
 
   // Limpar container
   container.innerHTML = "";
@@ -1086,13 +1101,19 @@ function renderizarReceitasAdmin(todasReceitas) {
         }
       </div>
       <div class="card-actions">
-        <button class="btn-secondary btn-view" title="Visualizar" data-action="view" data-id="${receita.id}">
+        <button class="btn-secondary btn-view" title="Visualizar" data-action="view" data-id="${
+          receita.id
+        }">
           Ver
         </button>
-        <button class="btn-primary btn-edit" title="Editar" data-action="edit" data-id="${receita.id}">
+        <button class="btn-primary btn-edit" title="Editar" data-action="edit" data-id="${
+          receita.id
+        }">
           Editar
         </button>
-        <button class="btn-danger btn-delete" title="Excluir" data-action="delete" data-id="${receita.id}">
+        <button class="btn-danger btn-delete" title="Excluir" data-action="delete" data-id="${
+          receita.id
+        }">
           Excluir
         </button>
       </div>
@@ -1129,9 +1150,9 @@ function renderizarReceitasAdmin(todasReceitas) {
   container.appendChild(receitasContainer);
 
   // Adicionar paginação
-  const paginacaoHTML = gerarPaginacao('receitas');
+  const paginacaoHTML = gerarPaginacao("receitas");
   if (paginacaoHTML) {
-    container.insertAdjacentHTML('beforeend', paginacaoHTML);
+    container.insertAdjacentHTML("beforeend", paginacaoHTML);
   }
 }
 
@@ -1533,7 +1554,7 @@ function renderizarDicasAdmin(todasDicas) {
   }
 
   // Obter dicas da página atual
-  const dicasPagina = obterItensPaginaAtual('dicas');
+  const dicasPagina = obterItensPaginaAtual("dicas");
 
   // Limpar container
   container.innerHTML = "";
@@ -1578,10 +1599,14 @@ function renderizarDicasAdmin(todasDicas) {
         <span class="dica-tamanho">${tamanhoLabel} (${tamanhoTexto} caracteres)</span>
       </div>
       <div class="card-actions">
-        <button class="btn-primary btn-edit" title="Editar" data-action="edit" data-id="${dica.id}">
+        <button class="btn-primary btn-edit" title="Editar" data-action="edit" data-id="${
+          dica.id
+        }">
           Editar
         </button>
-        <button class="btn-danger btn-delete" title="Excluir" data-action="delete" data-id="${dica.id}">
+        <button class="btn-danger btn-delete" title="Excluir" data-action="delete" data-id="${
+          dica.id
+        }">
           Excluir
         </button>
       </div>
@@ -1611,9 +1636,9 @@ function renderizarDicasAdmin(todasDicas) {
   container.appendChild(dicasContainer);
 
   // Adicionar paginação
-  const paginacaoHTML = gerarPaginacao('dicas');
+  const paginacaoHTML = gerarPaginacao("dicas");
   if (paginacaoHTML) {
-    container.insertAdjacentHTML('beforeend', paginacaoHTML);
+    container.insertAdjacentHTML("beforeend", paginacaoHTML);
   }
 }
 

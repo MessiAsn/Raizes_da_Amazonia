@@ -55,22 +55,23 @@ async function carregarTodasReceitas() {
   mostrarLoading(true);
 
   try {
-    console.log('🔄 Iniciando carregamento de receitas...');
-    
+    console.log("🔄 Iniciando carregamento de receitas...");
+
     // Verificar se o ReceitaManager está disponível
     if (!window.RaizesAmazonia?.ReceitaManager) {
-      console.log('⚠️ ReceitaManager não encontrado, usando fetch direto');
-      
+      console.log("⚠️ ReceitaManager não encontrado, usando fetch direto");
+
       const response = await fetch(`${API_BASE_URL}/api/receitas`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
       todasReceitas = await response.json();
     } else {
-      console.log('✅ Usando ReceitaManager');
-      todasReceitas = await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
+      console.log("✅ Usando ReceitaManager");
+      todasReceitas =
+        await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
     }
-    
+
     console.log(`📖 ${todasReceitas.length} receitas carregadas`);
     receitasFiltradas = [...todasReceitas];
 
@@ -92,16 +93,16 @@ function renderizarReceitas(receitas) {
   paginacao.dados = receitas || [];
   paginacao.totalItens = paginacao.dados.length;
   paginacao.paginaAtual = 1; // Reset para primeira página ao filtrar
-  
+
   renderizarReceitasComPaginacao();
 }
 
 function renderizarReceitasComPaginacao() {
   if (!container) {
-    console.error('Container não encontrado!');
+    console.error("Container não encontrado!");
     return;
   }
-  
+
   container.innerHTML = "";
 
   if (paginacao.dados.length === 0) {
@@ -148,12 +149,12 @@ function renderizarReceitasComPaginacao() {
 
   // Adicionar paginação se necessário
   const paginacaoHTML = gerarPaginacao();
-  
+
   if (paginacaoHTML && paginationWrapper) {
     paginationWrapper.innerHTML = paginacaoHTML;
   } else if (paginacaoHTML && container) {
     // Fallback: adicionar no container principal
-    const paginacaoElement = document.createElement('div');
+    const paginacaoElement = document.createElement("div");
     paginacaoElement.innerHTML = paginacaoHTML;
     container.appendChild(paginacaoElement);
   }
@@ -387,7 +388,7 @@ const paginacao = {
   paginaAtual: 1,
   itensPorPagina: 6,
   totalItens: 0,
-  dados: []
+  dados: [],
 };
 
 // Função para calcular total de páginas
@@ -405,22 +406,30 @@ function obterReceitasPaginaAtual() {
 // Função para gerar HTML da paginação
 function gerarPaginacao() {
   const totalPaginas = calcularTotalPaginas();
-  
-  if (totalPaginas <= 1) {
-    return '';
+
+  // Sempre mostrar paginação, mesmo com 1 página
+  if (paginacao.totalItens === 0) {
+    return "";
   }
 
   let html = `
     <div class="pagination-container">
       <div class="pagination-info">
-        Mostrando ${(paginacao.paginaAtual - 1) * paginacao.itensPorPagina + 1} - 
-        ${Math.min(paginacao.paginaAtual * paginacao.itensPorPagina, paginacao.totalItens)} 
+        Mostrando ${
+          (paginacao.paginaAtual - 1) * paginacao.itensPorPagina + 1
+        } - 
+        ${Math.min(
+          paginacao.paginaAtual * paginacao.itensPorPagina,
+          paginacao.totalItens
+        )} 
         de ${paginacao.totalItens} receitas
       </div>
       <div class="pagination">
-        <button class="pagination-btn pagination-prev ${paginacao.paginaAtual === 1 ? 'disabled' : ''}" 
+        <button class="pagination-btn pagination-prev ${
+          paginacao.paginaAtual === 1 ? "disabled" : ""
+        }" 
                 onclick="irParaPagina(${paginacao.paginaAtual - 1})"
-                ${paginacao.paginaAtual === 1 ? 'disabled' : ''}>
+                ${paginacao.paginaAtual === 1 ? "disabled" : ""}>
           Anterior
         </button>
   `;
@@ -444,7 +453,9 @@ function gerarPaginacao() {
 
   // Páginas do meio
   for (let i = inicio; i <= fim; i++) {
-    html += `<button class="pagination-btn ${i === paginacao.paginaAtual ? 'active' : ''}" 
+    html += `<button class="pagination-btn ${
+      i === paginacao.paginaAtual ? "active" : ""
+    }" 
              onclick="irParaPagina(${i})">${i}</button>`;
   }
 
@@ -457,19 +468,29 @@ function gerarPaginacao() {
   }
 
   html += `
-        <button class="pagination-btn pagination-next ${paginacao.paginaAtual === totalPaginas ? 'disabled' : ''}" 
+        <button class="pagination-btn pagination-next ${
+          paginacao.paginaAtual === totalPaginas ? "disabled" : ""
+        }" 
                 onclick="irParaPagina(${paginacao.paginaAtual + 1})"
-                ${paginacao.paginaAtual === totalPaginas ? 'disabled' : ''}>
+                ${paginacao.paginaAtual === totalPaginas ? "disabled" : ""}>
           Próximo
         </button>
       </div>
       <div class="items-per-page">
         <label for="receitas-per-page">Receitas por página:</label>
         <select id="receitas-per-page" onchange="alterarItensPorPagina(this.value)">
-          <option value="6" ${paginacao.itensPorPagina === 6 ? 'selected' : ''}>6</option>
-          <option value="12" ${paginacao.itensPorPagina === 12 ? 'selected' : ''}>12</option>
-          <option value="18" ${paginacao.itensPorPagina === 18 ? 'selected' : ''}>18</option>
-          <option value="24" ${paginacao.itensPorPagina === 24 ? 'selected' : ''}>24</option>
+          <option value="6" ${
+            paginacao.itensPorPagina === 6 ? "selected" : ""
+          }>6</option>
+          <option value="12" ${
+            paginacao.itensPorPagina === 12 ? "selected" : ""
+          }>12</option>
+          <option value="18" ${
+            paginacao.itensPorPagina === 18 ? "selected" : ""
+          }>18</option>
+          <option value="24" ${
+            paginacao.itensPorPagina === 24 ? "selected" : ""
+          }>24</option>
         </select>
       </div>
     </div>
@@ -481,18 +502,18 @@ function gerarPaginacao() {
 // Função para ir para uma página específica
 function irParaPagina(pagina) {
   const totalPaginas = calcularTotalPaginas();
-  
+
   if (pagina < 1 || pagina > totalPaginas) {
     return;
   }
 
   paginacao.paginaAtual = pagina;
   renderizarReceitasComPaginacao();
-  
+
   // Rolar para o topo dos resultados
-  document.querySelector('.receitas').scrollIntoView({ 
-    behavior: 'smooth',
-    block: 'start'
+  document.querySelector(".receitas").scrollIntoView({
+    behavior: "smooth",
+    block: "start",
   });
 }
 
