@@ -180,14 +180,15 @@ function mostrarLoading(mostrar = true) {
 // Função para mostrar erro
 function mostrarErro(mensagem) {
   // Verificar se é erro de conexão
-  const isConnectionError = mensagem.includes('Failed to fetch') || 
-                           mensagem.includes('NetworkError') || 
-                           mensagem.includes('ERR_CONNECTION') ||
-                           mensagem.includes('Não foi possível carregar') ||
-                           !navigator.onLine;
+  const isConnectionError =
+    mensagem.includes("Failed to fetch") ||
+    mensagem.includes("NetworkError") ||
+    mensagem.includes("ERR_CONNECTION") ||
+    mensagem.includes("Não foi possível carregar") ||
+    !navigator.onLine;
 
   const container = document.querySelector(".receita-container");
-  
+
   if (isConnectionError) {
     // Usar estrutura padrão para erros de conexão
     container.innerHTML = `

@@ -100,14 +100,20 @@ window.RaizesAmazonia.UI = {
           <h3>⚠️ Erro de Conexão</h3>
           <p>Não foi possível conectar com o servidor.</p>
           <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
-          ${retryFunction ? `<button onclick="${retryFunction}()" class="btn-retry">Tentar Novamente</button>` : ''}
+          ${
+            retryFunction
+              ? `<button onclick="${retryFunction}()" class="btn-retry">Tentar Novamente</button>`
+              : ""
+          }
         </div>
       </div>
     `;
 
     // Se um container específico foi fornecido
     if (containerId) {
-      const container = document.getElementById(containerId) || document.querySelector(containerId);
+      const container =
+        document.getElementById(containerId) ||
+        document.querySelector(containerId);
       if (container) {
         container.innerHTML = errorHTML;
         return;
@@ -116,14 +122,14 @@ window.RaizesAmazonia.UI = {
 
     // Tentar containers padrão comuns
     const containers = [
-      '#card-container',
-      '.card-container',
-      '#lista-receitas',
-      '#receitas-lista',
-      '#lista-dicas',
-      '#estatisticas-container',
-      '.receita-container',
-      '.container'
+      "#card-container",
+      ".card-container",
+      "#lista-receitas",
+      "#receitas-lista",
+      "#lista-dicas",
+      "#estatisticas-container",
+      ".receita-container",
+      ".container",
     ];
 
     for (const selector of containers) {
@@ -149,13 +155,13 @@ window.RaizesAmazonia.UI = {
    */
   showMessage(texto, tipo = "info", duracao = 4000) {
     // Remove mensagens existentes
-    const existingToasts = document.querySelectorAll('.toast-message');
-    existingToasts.forEach(toast => toast.remove());
+    const existingToasts = document.querySelectorAll(".toast-message");
+    existingToasts.forEach((toast) => toast.remove());
 
     // Criar toast
-    const toast = document.createElement('div');
+    const toast = document.createElement("div");
     toast.className = `toast-message toast-${tipo}`;
-    
+
     // Estilos inline para garantir que funcione em todas as páginas
     toast.style.cssText = `
       position: fixed;
@@ -174,12 +180,12 @@ window.RaizesAmazonia.UI = {
 
     // Cores por tipo
     const cores = {
-      success: '#10b981',
-      error: '#ef4444', 
-      warning: '#f59e0b',
-      info: '#3b82f6'
+      success: "#10b981",
+      error: "#ef4444",
+      warning: "#f59e0b",
+      info: "#3b82f6",
     };
-    
+
     toast.style.backgroundColor = cores[tipo] || cores.info;
     toast.textContent = texto;
 
@@ -189,17 +195,17 @@ window.RaizesAmazonia.UI = {
     // Remover automaticamente
     setTimeout(() => {
       if (toast.parentNode) {
-        toast.style.animation = 'slideOut 0.3s ease-in';
+        toast.style.animation = "slideOut 0.3s ease-in";
         setTimeout(() => toast.remove(), 300);
       }
     }, duracao);
 
     return toast;
-  }
+  },
 };
 
 // Adicionar estilos CSS apenas para animações dos toasts
-const toastStyles = document.createElement('style');
+const toastStyles = document.createElement("style");
 toastStyles.textContent = `
   @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }
@@ -212,8 +218,8 @@ toastStyles.textContent = `
   }
 `;
 
-if (!document.querySelector('#raizes-toast-styles')) {
-  toastStyles.id = 'raizes-toast-styles';
+if (!document.querySelector("#raizes-toast-styles")) {
+  toastStyles.id = "raizes-toast-styles";
   document.head.appendChild(toastStyles);
 }
 

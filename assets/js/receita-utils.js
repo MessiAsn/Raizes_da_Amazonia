@@ -8,42 +8,47 @@ window.RaizesAmazonia = window.RaizesAmazonia || {};
  * Funções reutilizáveis que funcionam em qualquer página
  */
 window.RaizesAmazonia.ReceitaUtils = {
-  
   /**
    * Editar receita - Função unificada
    */
   async editarReceita(id) {
     // Verificar se é admin com múltiplas fontes
     let isUserAdmin = false;
-    let adminSource = 'Nenhum';
-    
+    let adminSource = "Nenhum";
+
     if (window.RaizesAmazonia?.adminManager) {
       isUserAdmin = window.RaizesAmazonia.adminManager.isLoggedIn;
-      adminSource = 'AdminManager';
-    } else if (typeof isAdmin !== 'undefined') {
+      adminSource = "AdminManager";
+    } else if (typeof isAdmin !== "undefined") {
       isUserAdmin = isAdmin;
-      adminSource = 'Global isAdmin';
-    } else if (sessionStorage.getItem('isAdmin') === 'true') {
+      adminSource = "Global isAdmin";
+    } else if (sessionStorage.getItem("isAdmin") === "true") {
       isUserAdmin = true;
-      adminSource = 'SessionStorage';
+      adminSource = "SessionStorage";
     }
-    
-    console.log(`[ReceitaUtils.editarReceita] Admin check: ${isUserAdmin} via ${adminSource}`);
-    
+
+    console.log(
+      `[ReceitaUtils.editarReceita] Admin check: ${isUserAdmin} via ${adminSource}`
+    );
+
     if (!isUserAdmin) {
       if (window.mostrarMensagem) {
-        window.mostrarMensagem("Acesso negado. Faça login como administrador.", "error");
+        window.mostrarMensagem(
+          "Acesso negado. Faça login como administrador.",
+          "error"
+        );
       } else {
         alert("Acesso negado. Faça login como administrador.");
       }
       return;
     }
 
-    const API_BASE_URL = window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
-    
+    const API_BASE_URL =
+      window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
     try {
       if (window.mostrarMensagem) {
-        window.mostrarMensagem("🔍 Carregando dados da receita...", "info");
+        window.mostrarMensagem("Carregando dados da receita...", "info");
       }
 
       // Buscar dados da receita atual
@@ -56,15 +61,17 @@ window.RaizesAmazonia.ReceitaUtils = {
 
       // Verificar se já existe um modal de edição (páginas com HTML estático)
       let modal = document.getElementById("modal-editar-receita");
-      
+
       if (modal) {
         // Modal já existe (todas-receitas.html), apenas preencher dados
         document.getElementById("edit-nome").value = receita.nome;
         document.getElementById("edit-descricao").value = receita.descricao;
-        document.getElementById("edit-ingredientes").value = receita.ingredientes;
-        document.getElementById("edit-modo_preparo").value = receita.modo_preparo;
+        document.getElementById("edit-ingredientes").value =
+          receita.ingredientes;
+        document.getElementById("edit-modo_preparo").value =
+          receita.modo_preparo;
         document.getElementById("edit-historia").value = receita.historia || "";
-        
+
         // Armazenar ID para uso posterior
         if (document.getElementById("edit-receita-id")) {
           document.getElementById("edit-receita-id").value = receita.id;
@@ -78,11 +85,13 @@ window.RaizesAmazonia.ReceitaUtils = {
         }
 
         // Limpar preview de imagem
-        const previewContainer = document.getElementById("edit-preview-container");
+        const previewContainer = document.getElementById(
+          "edit-preview-container"
+        );
         if (previewContainer) {
           previewContainer.style.display = "none";
         }
-        
+
         const imagemInput = document.getElementById("edit-imagem");
         if (imagemInput) {
           imagemInput.value = "";
@@ -91,15 +100,18 @@ window.RaizesAmazonia.ReceitaUtils = {
         window.RaizesAmazonia.ModalManager.abrirModal("modal-editar-receita");
       } else {
         // Modal não existe (index.html), criar dinamicamente
-        modal = window.RaizesAmazonia.ModalManager.criarModalEditarReceita(receita);
-        modal.classList.add('dynamic-modal'); // Marcar para remoção
+        modal =
+          window.RaizesAmazonia.ModalManager.criarModalEditarReceita(receita);
+        modal.classList.add("dynamic-modal"); // Marcar para remoção
         window.RaizesAmazonia.ModalManager.abrirModal("modal-editar-receita");
       }
-      
     } catch (error) {
       console.error("Erro ao carregar receita para edição:", error);
       if (window.mostrarMensagem) {
-        window.mostrarMensagem("❌ Erro ao carregar receita para edição", "error");
+        window.mostrarMensagem(
+          "❌ Erro ao carregar receita para edição",
+          "error"
+        );
       } else {
         alert("Erro ao carregar receita para edição");
       }
@@ -112,32 +124,38 @@ window.RaizesAmazonia.ReceitaUtils = {
   async deletarReceita(id) {
     // Verificar se é admin com múltiplas fontes
     let isUserAdmin = false;
-    let adminSource = 'Nenhum';
-    
+    let adminSource = "Nenhum";
+
     if (window.RaizesAmazonia?.adminManager) {
       isUserAdmin = window.RaizesAmazonia.adminManager.isLoggedIn;
-      adminSource = 'AdminManager';
-    } else if (typeof isAdmin !== 'undefined') {
+      adminSource = "AdminManager";
+    } else if (typeof isAdmin !== "undefined") {
       isUserAdmin = isAdmin;
-      adminSource = 'Global isAdmin';
-    } else if (sessionStorage.getItem('isAdmin') === 'true') {
+      adminSource = "Global isAdmin";
+    } else if (sessionStorage.getItem("isAdmin") === "true") {
       isUserAdmin = true;
-      adminSource = 'SessionStorage';
+      adminSource = "SessionStorage";
     }
-    
-    console.log(`[ReceitaUtils.deletarReceita] Admin check: ${isUserAdmin} via ${adminSource}`);
-    
+
+    console.log(
+      `[ReceitaUtils.deletarReceita] Admin check: ${isUserAdmin} via ${adminSource}`
+    );
+
     if (!isUserAdmin) {
       if (window.mostrarMensagem) {
-        window.mostrarMensagem("Acesso negado. Faça login como administrador.", "error");
+        window.mostrarMensagem(
+          "Acesso negado. Faça login como administrador.",
+          "error"
+        );
       } else {
         alert("Acesso negado. Faça login como administrador.");
       }
       return;
     }
 
-    const API_BASE_URL = window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
-    
+    const API_BASE_URL =
+      window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+
     // Buscar nome da receita para personalizar a mensagem
     let nomeReceita = "esta receita";
     try {
@@ -165,7 +183,9 @@ window.RaizesAmazonia.ReceitaUtils = {
       );
     } else {
       // Fallback para confirm simples
-      confirmou = confirm(`Tem certeza que deseja excluir a receita ${nomeReceita}?\n\nEsta ação não pode ser desfeita.`);
+      confirmou = confirm(
+        `Tem certeza que deseja excluir a receita ${nomeReceita}?\n\nEsta ação não pode ser desfeita.`
+      );
     }
 
     if (!confirmou) {
@@ -183,11 +203,14 @@ window.RaizesAmazonia.ReceitaUtils = {
 
       if (response.ok) {
         if (window.mostrarMensagem) {
-          window.mostrarMensagem(`✅ Receita ${nomeReceita} excluída com sucesso!`, "success");
+          window.mostrarMensagem(
+            `✅ Receita ${nomeReceita} excluída com sucesso!`,
+            "success"
+          );
         } else {
           alert(`Receita ${nomeReceita} excluída com sucesso!`);
         }
-        
+
         // Recarregar lista de receitas
         if (typeof carregarReceitas === "function") {
           carregarReceitas();
@@ -202,7 +225,10 @@ window.RaizesAmazonia.ReceitaUtils = {
     } catch (error) {
       console.error("Erro ao excluir receita:", error);
       if (window.mostrarMensagem) {
-        window.mostrarMensagem("❌ Erro ao excluir receita: " + error.message, "error");
+        window.mostrarMensagem(
+          "❌ Erro ao excluir receita: " + error.message,
+          "error"
+        );
       } else {
         alert("Erro ao excluir receita: " + error.message);
       }
@@ -215,24 +241,29 @@ window.RaizesAmazonia.ReceitaUtils = {
   abrirModalNovaReceita() {
     // Verificar se é admin com múltiplas fontes
     let isUserAdmin = false;
-    let adminSource = 'Nenhum';
-    
+    let adminSource = "Nenhum";
+
     if (window.RaizesAmazonia?.adminManager) {
       isUserAdmin = window.RaizesAmazonia.adminManager.isLoggedIn;
-      adminSource = 'AdminManager';
-    } else if (typeof isAdmin !== 'undefined') {
+      adminSource = "AdminManager";
+    } else if (typeof isAdmin !== "undefined") {
       isUserAdmin = isAdmin;
-      adminSource = 'Global isAdmin';
-    } else if (sessionStorage.getItem('isAdmin') === 'true') {
+      adminSource = "Global isAdmin";
+    } else if (sessionStorage.getItem("isAdmin") === "true") {
       isUserAdmin = true;
-      adminSource = 'SessionStorage';
+      adminSource = "SessionStorage";
     }
-    
-    console.log(`[ReceitaUtils.abrirModalNovaReceita] Admin check: ${isUserAdmin} via ${adminSource}`);
-    
+
+    console.log(
+      `[ReceitaUtils.abrirModalNovaReceita] Admin check: ${isUserAdmin} via ${adminSource}`
+    );
+
     if (!isUserAdmin) {
       if (window.mostrarMensagem) {
-        window.mostrarMensagem("Acesso negado. Faça login como administrador.", "error");
+        window.mostrarMensagem(
+          "Acesso negado. Faça login como administrador.",
+          "error"
+        );
       } else {
         alert("Acesso negado. Faça login como administrador.");
       }
@@ -241,27 +272,27 @@ window.RaizesAmazonia.ReceitaUtils = {
 
     // Verificar se já existe um modal estático
     let modal = document.getElementById("modal-nova-receita");
-    
+
     if (modal) {
       // Modal já existe (todas-receitas.html), apenas limpar e abrir
       const form = document.getElementById("form-nova-receita");
       if (form) {
         form.reset();
       }
-      
+
       // Limpar preview se existir
       const previewContainer = document.getElementById("preview-container");
       if (previewContainer) {
         previewContainer.style.display = "none";
       }
-      
+
       window.RaizesAmazonia.ModalManager.abrirModal("modal-nova-receita");
     } else {
       // Modal não existe (index.html), criar dinamicamente
       modal = window.RaizesAmazonia.ModalManager.criarModalNovaReceita();
-      modal.classList.add('dynamic-modal'); // Marcar para remoção
+      modal.classList.add("dynamic-modal"); // Marcar para remoção
       window.RaizesAmazonia.ModalManager.abrirModal("modal-nova-receita");
-      
+
       // Focar no primeiro campo após criação
       setTimeout(() => {
         const nomeInput = document.getElementById("nome");
@@ -277,24 +308,27 @@ window.RaizesAmazonia.ReceitaUtils = {
    */
   criarReceita() {
     return this.abrirModalNovaReceita();
-  }
+  },
 };
 
 // Funções globais para compatibilidade
-window.editarReceita = function(id) {
+window.editarReceita = function (id) {
   return window.RaizesAmazonia.ReceitaUtils.editarReceita(id);
 };
 
-window.deletarReceita = function(id) {
+window.deletarReceita = function (id) {
   return window.RaizesAmazonia.ReceitaUtils.deletarReceita(id);
 };
 
-window.abrirModalNovaReceita = function() {
+window.abrirModalNovaReceita = function () {
   return window.RaizesAmazonia.ReceitaUtils.abrirModalNovaReceita();
 };
 
-window.criarReceita = function() {
+window.criarReceita = function () {
   return window.RaizesAmazonia.ReceitaUtils.criarReceita();
 };
 
-console.log("%c[ReceitaUtils] Sistema carregado com sucesso", "color: #17a2b8; font-weight: bold;");
+console.log(
+  "%c[ReceitaUtils] Sistema carregado com sucesso",
+  "color: #17a2b8; font-weight: bold;"
+);

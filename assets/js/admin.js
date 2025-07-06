@@ -11,14 +11,188 @@ let currentTab = "receitas";
 let isAuthenticated = false;
 
 // ========================================
+// PAGINAÇÃO
+// ========================================
+const paginacao = {
+  receitas: {
+    paginaAtual: 1,
+    itensPorPagina: 6,
+    totalItens: 0,
+    dados: []
+  },
+  dicas: {
+    paginaAtual: 1,
+    itensPorPagina: 8,
+    totalItens: 0,
+    dados: []
+  }
+};
+
+// Função para calcular total de páginas
+function calcularTotalPaginas(tipo) {
+  const config = paginacao[tipo];
+  return Math.ceil(config.totalItens / config.itensPorPagina);
+}
+
+// Função para obter itens da página atual
+function obterItensPaginaAtual(tipo) {
+  const config = paginacao[tipo];
+  const inicio = (config.paginaAtual - 1) * config.itensPorPagina;
+  const fim = inicio + config.itensPorPagina;
+  return config.dados.slice(inicio, fim);
+}
+
+// Função para gerar HTML da paginação
+function gerarPaginacao(tipo) {
+  const config = paginacao[tipo];
+  const totalPaginas = calcularTotalPaginas(tipo);
+  
+  if (totalPaginas <= 1) {
+    return '';
+  }
+
+  let html = `
+    <div class="pagination-container">
+      <div class="pagination-info">
+        Mostrando ${(config.paginaAtual - 1) * config.itensPorPagina + 1} - 
+        ${Math.min(config.paginaAtual * config.itensPorPagina, config.totalItens)} 
+        de ${config.totalItens} ${tipo}
+      </div>
+      <div class="pagination">
+        <button class="pagination-btn pagination-prev ${config.paginaAtual === 1 ? 'disabled' : ''}" 
+                onclick="irParaPagina('${tipo}', ${config.paginaAtual - 1})"
+                ${config.paginaAtual === 1 ? 'disabled' : ''}>
+          Anterior
+        </button>
+  `;
+
+  // Lógica para mostrar números das páginas
+  const maxBotoes = 5;
+  let inicio = Math.max(1, config.paginaAtual - Math.floor(maxBotoes / 2));
+  let fim = Math.min(totalPaginas, inicio + maxBotoes - 1);
+
+  if (fim - inicio < maxBotoes - 1) {
+    inicio = Math.max(1, fim - maxBotoes + 1);
+  }
+
+  // Primeira página e reticências se necessário
+  if (inicio > 1) {
+    html += `<button class="pagination-btn" onclick="irParaPagina('${tipo}', 1)">1</button>`;
+    if (inicio > 2) {
+      html += `<span class="pagination-ellipsis">...</span>`;
+    }
+  }
+
+  // Páginas do meio
+  for (let i = inicio; i <= fim; i++) {
+    html += `<button class="pagination-btn ${i === config.paginaAtual ? 'active' : ''}" 
+             onclick="irParaPagina('${tipo}', ${i})">${i}</button>`;
+  }
+
+  // Última página e reticências se necessário
+  if (fim < totalPaginas) {
+    if (fim < totalPaginas - 1) {
+      html += `<span class="pagination-ellipsis">...</span>`;
+    }
+    html += `<button class="pagination-btn" onclick="irParaPagina('${tipo}', ${totalPaginas})">${totalPaginas}</button>`;
+  }
+
+  html += `
+        <button class="pagination-btn pagination-next ${config.paginaAtual === totalPaginas ? 'disabled' : ''}" 
+                onclick="irParaPagina('${tipo}', ${config.paginaAtual + 1})"
+                ${config.paginaAtual === totalPaginas ? 'disabled' : ''}>
+          Próximo
+        </button>
+      </div>
+      <div class="items-per-page">
+        <label for="${tipo}-per-page">Itens por página:</label>
+        <select id="${tipo}-per-page" onchange="alterarItensPorPagina('${tipo}', this.value)">
+          <option value="4" ${config.itensPorPagina === 4 ? 'selected' : ''}>4</option>
+          <option value="6" ${config.itensPorPagina === 6 ? 'selected' : ''}>6</option>
+          <option value="8" ${config.itensPorPagina === 8 ? 'selected' : ''}>8</option>
+          <option value="12" ${config.itensPorPagina === 12 ? 'selected' : ''}>12</option>
+          <option value="20" ${config.itensPorPagina === 20 ? 'selected' : ''}>20</option>
+        </select>
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
+// Função para ir para uma página específica
+function irParaPagina(tipo, pagina) {
+  const totalPaginas = calcularTotalPaginas(tipo);
+  
+  if (pagina < 1 || pagina > totalPaginas) {
+    return;
+  }
+
+  paginacao[tipo].paginaAtual = pagina;
+  
+  if (tipo === 'receitas') {
+    renderizarReceitasAdmin(paginacao.receitas.dados);
+  } else if (tipo === 'dicas') {
+    renderizarDicasAdmin(paginacao.dicas.dados);
+  }
+}
+
+// Função para alterar itens por página
+function alterarItensPorPagina(tipo, novoValor) {
+  paginacao[tipo].itensPorPagina = parseInt(novoValor);
+  paginacao[tipo].paginaAtual = 1; // Voltar para primeira página
+  
+  if (tipo === 'receitas') {
+    renderizarReceitasAdmin(paginacao.receitas.dados);
+  } else if (tipo === 'dicas') {
+    renderizarDicasAdmin(paginacao.dicas.dados);
+  }
+}
+
+// ========================================
+// FUNÇÕES AUXILIARES
+// ========================================
+
+// Função para formatar datas de forma segura
+function formatarDataSegura(dataString, incluirHora = false) {
+  try {
+    if (!dataString || dataString === null || dataString === undefined) {
+      return "Data não disponível";
+    }
+
+    const data = new Date(dataString);
+
+    // Verificar se a data é válida
+    if (isNaN(data.getTime())) {
+      return "Data inválida";
+    }
+
+    if (incluirHora) {
+      return data.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return data.toLocaleDateString("pt-BR");
+    }
+  } catch (error) {
+    console.error("Erro ao formatar data:", error);
+    return "Data inválida";
+  }
+}
+
+// ========================================
 // INICIALIZAÇÃO
 // ========================================
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🚀 Painel Admin inicializando...");
+  console.log("Painel Admin inicializando...");
 
   // Aguardar um pouco para garantir que o DOM está completamente carregado
   setTimeout(() => {
-    console.log("🔧 Configurando painel admin...");
+    console.log("Configurando painel admin...");
 
     // Verificar autenticação
     verificarAutenticacao();
@@ -32,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Carregar dados iniciais
     carregarDadosIniciais();
 
-    console.log("✅ Painel Admin inicializado com sucesso!");
+    console.log("Painel Admin inicializado com sucesso!");
   }, 200);
 });
 
@@ -46,18 +220,18 @@ function verificarAutenticacao() {
   if (!isAdmin) {
     // Se não está autenticado, solicitar senha
     const senha = prompt(
-      "🔐 Digite a senha de administrador para acessar o painel:"
+      "Digite a senha de administrador para acessar o painel:"
     );
 
     if (senha === "admin123") {
       sessionStorage.setItem("isAdmin", "true");
       isAuthenticated = true;
       mostrarMensagem(
-        "✅ Acesso autorizado! Bem-vindo ao painel administrativo.",
+        "Acesso autorizado! Bem-vindo ao painel administrativo.",
         "success"
       );
     } else {
-      mostrarMensagem("❌ Senha incorreta! Redirecionando...", "error");
+      mostrarMensagem("Senha incorreta! Redirecionando...", "error");
       setTimeout(() => {
         window.location.href = "../index.html";
       }, 2000);
@@ -65,13 +239,13 @@ function verificarAutenticacao() {
     }
   } else {
     isAuthenticated = true;
-    mostrarMensagem("👋 Bem-vindo de volta ao painel administrativo!", "info");
+    mostrarMensagem("Bem-vindo de volta ao painel administrativo!", "info");
   }
 }
 
 function logout() {
   sessionStorage.removeItem("isAdmin");
-  mostrarMensagem("👋 Logout realizado com sucesso!", "info");
+  mostrarMensagem("Logout realizado com sucesso!", "info");
   setTimeout(() => {
     window.location.href = "../index.html";
   }, 1500);
@@ -108,7 +282,7 @@ function configurarTabs() {
       // Carregar conteúdo específico da aba
       carregarConteudoAba(tabId);
 
-      console.log(`📑 Mudou para aba: ${tabId}`);
+      console.log(`Mudou para aba: ${tabId}`);
     });
   });
 }
@@ -132,15 +306,15 @@ function carregarConteudoAba(tabId) {
 // CONFIGURAÇÃO DE EVENTOS
 // ========================================
 function configurarEventos() {
-  console.log("🔧 Configurando eventos...");
+  console.log("Configurando eventos...");
 
   // Botão de logout
   const btnLogout = document.getElementById("btn-logout");
   if (btnLogout) {
-    console.log("✅ Botão logout encontrado");
+    console.log("Botão logout encontrado");
     btnLogout.addEventListener("click", logout);
   } else {
-    console.log("❌ Botão logout não encontrado");
+    console.log("Botão logout não encontrado");
   }
 
   // Botão de nova receita
@@ -175,7 +349,7 @@ function configurarEventos() {
 // Função para configurar event listeners dos formulários
 // Função para configurar event listeners dos formulários
 function configurarFormularios() {
-  console.log("📝 Configurando formulários...");
+  console.log("Configurando formulários...");
 
   // Configurar formulários após um pequeno delay
   setTimeout(() => {
@@ -232,7 +406,7 @@ function configurarFormularioEditarDica() {
 // CARREGAMENTO DE DADOS
 // ========================================
 async function carregarDadosIniciais() {
-  console.log("📊 Carregando dados iniciais...");
+  console.log("Carregando dados iniciais...");
 
   try {
     // Verificar se a aba de receitas está ativa
@@ -250,132 +424,9 @@ async function carregarDadosIniciais() {
   }
 }
 
-async function carregarReceitasInicio() {
-  console.log("📖 Carregando receitas...");
-  mostrarCarregamento("receitas", true);
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/receitas`);
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
 
-    const receitas = await response.json();
-    renderizarListaReceitas(receitas);
-  } catch (error) {
-    console.error("❌ Erro ao carregar receitas:", error);
-    
-    // Verificar se é erro de conexão
-    const isConnectionError = error.message.includes('Failed to fetch') || 
-                             error.message.includes('NetworkError') || 
-                             error.message.includes('ERR_CONNECTION') ||
-                             !navigator.onLine;
-    
-    if (isConnectionError) {
-      mostrarErroConexaoAdmin();
-    } else {
-      document.getElementById("lista-receitas").innerHTML =
-        '<div class="message error">❌ Erro ao carregar receitas. Verifique se o backend está rodando.</div>';
-    }
-  } finally {
-    mostrarCarregamento("receitas", false);
-  }
-}
-
-function renderizarListaReceitas(receitas) {
-  const container = document.getElementById("lista-receitas");
-
-  if (receitas.length === 0) {
-    container.innerHTML = `
-      <div class="message info">
-        📝 Nenhuma receita cadastrada ainda.
-        <br><br>
-        <button id="btn-cadastrar-primeira-receita" class="btn-primary">
-          ➕ Cadastrar Primeira Receita
-        </button>
-      </div>
-    `;
-
-    // Adicionar event listener para o botão da primeira receita
-    const btnPrimeiraReceita = document.getElementById(
-      "btn-cadastrar-primeira-receita"
-    );
-    if (btnPrimeiraReceita) {
-      btnPrimeiraReceita.addEventListener("click", abrirModalNovaReceitaAdmin);
-    }
-    return;
-  }
-
-  container.innerHTML = receitas
-    .map((receita) => {
-      const imagemUrl = receita.imagem
-        ? `${API_BASE_URL}${receita.imagem}`
-        : null;
-
-      return `
-      <div class="receita-card" data-id="${receita.id}">
-        <div class="receita-imagem">
-          ${
-            imagemUrl
-              ? `<img src="${imagemUrl}" alt="${receita.nome}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;" />`
-              : `<div class="receita-placeholder" style="width: 80px; height: 80px; border-radius: 8px; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); display: flex; align-items: center; justify-content: center; color: #999; font-size: 24px; border: 2px dashed #ccc;">📷</div>`
-          }
-        </div>
-        <div class="receita-info">
-          <h3>${receita.nome}</h3>
-          <p>${truncarTexto(receita.descricao, 120)}</p>
-          <small style="color: #666;">
-            ID: ${receita.id} | 
-            ${receita.imagem ? "Com imagem" : "Sem imagem"}
-          </small>
-        </div>
-        <div class="receita-actions">
-          <button class="btn-small btn-view" title="Visualizar" data-action="view" data-receita-id="${
-            receita.id
-          }">
-            👁️ Ver
-          </button>
-          <button class="btn-small btn-edit" title="Editar" data-action="edit" data-receita-id="${
-            receita.id
-          }">
-            ✏️ Editar
-          </button>
-          <button class="btn-small btn-delete" title="Excluir" data-action="delete" data-receita-id="${
-            receita.id
-          }">
-            🗑️ Excluir
-          </button>
-        </div>
-      </div>
-    `;
-    })
-    .join("");
-
-  // Adicionar event listeners para os botões de ação
-  container.querySelectorAll('[data-action="view"]').forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const receitaId = e.currentTarget.getAttribute("data-receita-id");
-      verReceitaDetalhes(receitaId);
-    });
-  });
-
-  container.querySelectorAll('[data-action="edit"]').forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const receitaId = e.currentTarget.getAttribute("data-receita-id");
-      editarReceitaAdmin(receitaId);
-    });
-  });
-
-  container.querySelectorAll('[data-action="delete"]').forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const receitaId = e.currentTarget.getAttribute("data-receita-id");
-      deletarReceitaAdmin(receitaId);
-    });
-  });
-
-  console.log(`✅ Renderizadas ${receitas.length} receitas`);
-}
 
 async function carregarEstatisticas() {
   try {
@@ -398,19 +449,20 @@ async function carregarEstatisticas() {
     }
   } catch (error) {
     console.error("❌ Erro ao carregar estatísticas:", error);
-    
+
     // Verificar se é erro de conexão
-    const isConnectionError = error.message.includes('Failed to fetch') || 
-                             error.message.includes('NetworkError') || 
-                             error.message.includes('ERR_CONNECTION') ||
-                             !navigator.onLine;
-    
+    const isConnectionError =
+      error.message.includes("Failed to fetch") ||
+      error.message.includes("NetworkError") ||
+      error.message.includes("ERR_CONNECTION") ||
+      !navigator.onLine;
+
     if (isConnectionError) {
       // Usar função específica para estatísticas
       document.getElementById("estatisticas-container").innerHTML = `
         <div class="erro-conexao">
           <div class="erro-content">
-            <h3>⚠️ Erro de Conexão</h3>
+            <h3>Erro de Conexão</h3>
             <p>Não foi possível conectar com o servidor.</p>
             <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
             <button onclick="carregarEstatisticas()" class="btn-retry">Tentar Novamente</button>
@@ -435,14 +487,22 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
     (r) => r.historia && r.historia.trim().length > 0
   ).length;
   const receitasRecentes = receitas.filter((r) => {
-    const dataReceita = new Date(r.criado_em || r.data_criacao);
-    return dataReceita >= umaSemanaAtras;
+    try {
+      const dataReceita = new Date(r.criado_em || r.data_criacao);
+      return !isNaN(dataReceita.getTime()) && dataReceita >= umaSemanaAtras;
+    } catch (error) {
+      return false;
+    }
   }).length;
 
   // Estatísticas de dicas
   const dicasRecentes = dicas.filter((d) => {
-    const dataDica = new Date(d.criado_em || d.data_criacao);
-    return dataDica >= umaSemanaAtras;
+    try {
+      const dataDica = new Date(d.criado_em || d.data_criacao);
+      return !isNaN(dataDica.getTime()) && dataDica >= umaSemanaAtras;
+    } catch (error) {
+      return false;
+    }
   }).length;
 
   const mediaCaracteresDicas =
@@ -503,7 +563,7 @@ function renderizarEstatisticas(stats) {
   container.innerHTML = `
     <!-- Estatísticas Gerais -->
     <div class="stats-section">
-      <h3>📊 Visão Geral</h3>
+      <h3>Visão Geral</h3>
       <div class="stats-grid">
         <div class="stat-card highlight pulse-animation">
           <div class="stat-number">${stats.total_receitas || 0}</div>
@@ -516,7 +576,7 @@ function renderizarEstatisticas(stats) {
         </div>
         <div class="stat-card highlight pulse-animation">
           <div class="stat-number">${stats.total_dicas || 0}</div>
-          <div class="stat-label">💡 Total de Dicas</div>
+          <div class="stat-label">Total de Dicas</div>
           <div class="stat-progress">
             <div class="progress-bar">
               <div class="progress-fill" style="width: 100%"></div>
@@ -544,7 +604,7 @@ function renderizarEstatisticas(stats) {
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-number">${stats.receitas_com_imagem || 0}</div>
-          <div class="stat-label">📷 Com Imagem</div>
+          <div class="stat-label">Com Imagem</div>
           <div class="stat-percentage">${
             stats.percentual_receitas_com_imagem || 0
           }%</div>
@@ -581,7 +641,7 @@ function renderizarEstatisticas(stats) {
         </div>
         <div class="stat-card">
           <div class="stat-number">${stats.receitas_sem_imagem || 0}</div>
-          <div class="stat-label">📝 Sem Imagem</div>
+          <div class="stat-label">Sem Imagem</div>
           <div class="stat-badge ${
             (stats.receitas_sem_imagem || 0) > 0 ? "warning" : "success"
           }">
@@ -593,7 +653,7 @@ function renderizarEstatisticas(stats) {
     
     <!-- Estatísticas de Dicas -->
     <div class="stats-section">
-      <h3>💡 Dicas</h3>
+      <h3>Dicas</h3>
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-number">${stats.dicas_recentes || 0}</div>
@@ -606,7 +666,7 @@ function renderizarEstatisticas(stats) {
         </div>
         <div class="stat-card">
           <div class="stat-number">${stats.media_caracteres_dicas || 0}</div>
-          <div class="stat-label">📏 Média de Caracteres</div>
+          <div class="stat-label">Média de Caracteres</div>
           <div class="stat-badge ${
             (stats.media_caracteres_dicas || 0) >= 100 ? "success" : "info"
           }">
@@ -639,21 +699,21 @@ function renderizarEstatisticas(stats) {
       <h3>⚡ Ações Rápidas</h3>
       <div class="quick-actions">
         <button class="quick-action-btn" data-action="navigate" data-tab="receitas">
-          <span class="action-icon">📖</span>
+          <span class="action-icon">Receitas</span>
           <span class="action-text">Gerenciar Receitas</span>
           <span class="action-count">${stats.total_receitas || 0}</span>
         </button>
         <button class="quick-action-btn" data-action="navigate" data-tab="dicas">
-          <span class="action-icon">💡</span>
+          <span class="action-icon">Dicas</span>
           <span class="action-text">Gerenciar Dicas</span>
           <span class="action-count">${stats.total_dicas || 0}</span>
         </button>
         <button class="quick-action-btn primary" data-action="nova-receita">
-          <span class="action-icon">➕</span>
+          <span class="action-icon">Nova</span>
           <span class="action-text">Nova Receita</span>
         </button>
         <button class="quick-action-btn primary" data-action="nova-dica">
-          <span class="action-icon">💡</span>
+          <span class="action-icon">Nova</span>
           <span class="action-text">Nova Dica</span>
         </button>
       </div>
@@ -734,10 +794,10 @@ function mostrarMensagem(mensagem, tipo = "info", duracao = 4000) {
 
   // Definir ícones por tipo
   const icones = {
-    success: "✅",
-    error: "❌",
-    warning: "⚠️",
-    info: "ℹ️",
+    success: "✓",
+    error: "✗",
+    warning: "!",
+    info: "i",
   };
 
   const icone = icones[tipo] || "ℹ️";
@@ -947,7 +1007,7 @@ async function carregarReceitasAdmin() {
     return;
   }
 
-  mostrarLoading(true);
+  mostrarCarregamento("receitas", true);
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/receitas`);
@@ -966,18 +1026,22 @@ async function carregarReceitasAdmin() {
     );
     mostrarErroConexaoAdmin();
   } finally {
-    mostrarLoading(false);
+    mostrarCarregamento("receitas", false);
   }
 }
 
 // Função para renderizar receitas na interface admin
-function renderizarReceitasAdmin(receitas) {
+function renderizarReceitasAdmin(todasReceitas) {
   const container = document.getElementById("receitas-lista");
 
-  if (!receitas || receitas.length === 0) {
+  // Atualizar dados na paginação
+  paginacao.receitas.dados = todasReceitas || [];
+  paginacao.receitas.totalItens = paginacao.receitas.dados.length;
+
+  if (!todasReceitas || todasReceitas.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
-        <h3>📝 Nenhuma receita encontrada</h3>
+        <h3>Nenhuma receita encontrada</h3>
         <p>Comece adicionando sua primeira receita amazônica!</p>
         <button id="btn-primeira-receita" class="btn-primary">
           ➕ Adicionar Primeira Receita
@@ -993,49 +1057,48 @@ function renderizarReceitasAdmin(receitas) {
     return;
   }
 
+  // Obter receitas da página atual
+  const receitasPagina = obterItensPaginaAtual('receitas');
+
   // Limpar container
   container.innerHTML = "";
 
-  receitas.forEach((receita) => {
+  // Criar container para as receitas
+  const receitasContainer = document.createElement("div");
+  receitasContainer.className = "lista-items";
+
+  receitasPagina.forEach((receita) => {
     const receitaCard = document.createElement("div");
-    receitaCard.className = "receita-card";
+    receitaCard.className = "item-card receita-card";
     receitaCard.setAttribute("data-receita-id", receita.id);
 
     receitaCard.innerHTML = `
-      <div class="receita-header">
-        <h3>${receita.nome}</h3>
-        <div class="receita-actions">
-          <button class="btn-view" title="Visualizar" data-action="view" data-id="${
-            receita.id
-          }">
-            👁️
-          </button>
-          <button class="btn-edit" title="Editar" data-action="edit" data-id="${
-            receita.id
-          }">
-            ✏️
-          </button>
-          <button class="btn-delete" title="Excluir" data-action="delete" data-id="${
-            receita.id
-          }">
-            🗑️
-          </button>
-        </div>
-      </div>
+      <h3>${receita.nome}</h3>
       <p class="receita-descricao">${receita.descricao}</p>
       <div class="receita-meta">
-        <span class="receita-data">📅 ${new Date(
+        <span class="receita-data">${formatarDataSegura(
           receita.data_criacao || receita.criado_em
-        ).toLocaleDateString("pt-BR")}</span>
+        )}</span>
         ${
           receita.imagem || receita.imagem_url
             ? '<span class="receita-imagem">🖼️ Com imagem</span>'
-            : '<span class="receita-sem-imagem">📷 Sem imagem</span>'
+            : '<span class="receita-sem-imagem">Sem imagem</span>'
         }
+      </div>
+      <div class="card-actions">
+        <button class="btn-secondary btn-view" title="Visualizar" data-action="view" data-id="${receita.id}">
+          Ver
+        </button>
+        <button class="btn-primary btn-edit" title="Editar" data-action="edit" data-id="${receita.id}">
+          Editar
+        </button>
+        <button class="btn-danger btn-delete" title="Excluir" data-action="delete" data-id="${receita.id}">
+          Excluir
+        </button>
       </div>
     `;
 
-    container.appendChild(receitaCard);
+    receitasContainer.appendChild(receitaCard);
 
     // Adicionar event listeners para os botões de ação
     const btnView = receitaCard.querySelector('[data-action="view"]');
@@ -1061,6 +1124,15 @@ function renderizarReceitasAdmin(receitas) {
       receitaCard.classList.add("fade-in");
     }, 50);
   });
+
+  // Adicionar container de receitas
+  container.appendChild(receitasContainer);
+
+  // Adicionar paginação
+  const paginacaoHTML = gerarPaginacao('receitas');
+  if (paginacaoHTML) {
+    container.insertAdjacentHTML('beforeend', paginacaoHTML);
+  }
 }
 
 // Função para abrir modal de nova receita
@@ -1101,14 +1173,14 @@ async function adicionarReceita(event) {
   const submitButton = form.querySelector('button[type="submit"]');
   const originalText = submitButton.textContent;
 
-  console.log("📝 Validando campos...");
+  console.log("Validando campos...");
   // Validar campos obrigatórios
   const nome = formData.get("nome")?.trim();
   const descricao = formData.get("descricao")?.trim();
   const ingredientes = formData.get("ingredientes")?.trim();
   const modoPreparo = formData.get("modo_preparo")?.trim();
 
-  console.log("📊 Dados do formulário:", {
+  console.log("Dados do formulário:", {
     nome,
     descricao,
     ingredientes,
@@ -1144,7 +1216,7 @@ async function adicionarReceita(event) {
 
     // Feedback de sucesso
     setBotaoEstado(submitButton, "success", originalText);
-    mostrarMensagem("✅ Receita criada com sucesso!", "success");
+    mostrarMensagem("Receita criada com sucesso!", "success");
 
     // Animar o fechamento do modal
     const modal = document.getElementById("modal-nova-receita");
@@ -1160,7 +1232,7 @@ async function adicionarReceita(event) {
   } catch (error) {
     console.error("Erro ao criar receita:", error);
     setBotaoEstado(submitButton, "error", originalText);
-    mostrarMensagem("❌ Erro ao criar receita: " + error.message, "error");
+    mostrarMensagem("Erro ao criar receita: " + error.message, "error");
     animarElemento(form, "shake-animation");
   } finally {
     mostrarLoadingOverlay(false);
@@ -1262,7 +1334,7 @@ async function deletarReceitaAdmin(id) {
     modalConfirm.innerHTML = `
       <div class="modal confirm-modal">
         <div class="modal-header">
-          <h3>🗑️ Confirmar Exclusão</h3>
+          <h3>Confirmar Exclusão</h3>
         </div>
         <div class="modal-body">
           <div class="confirm-content">
@@ -1270,20 +1342,20 @@ async function deletarReceitaAdmin(id) {
               ${
                 receita.imagem
                   ? `<img src="${API_BASE_URL}${receita.imagem}" alt="${receita.nome}" class="preview-img">`
-                  : `<div class="preview-placeholder" style="width: 100px; height: 100px; border-radius: 8px; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); display: flex; align-items: center; justify-content: center; color: #999; font-size: 32px; border: 2px dashed #ccc; margin: 0 auto 10px;">📷</div>`
+                  : `<div class="preview-placeholder" style="width: 100px; height: 100px; border-radius: 8px; background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%); display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; border: 2px dashed #ccc; margin: 0 auto 10px;">SEM IMAGEM</div>`
               }
               <h4>${receita.nome}</h4>
               <p>${receita.descricao}</p>
             </div>
             <div class="warning-text">
-              <p><strong>⚠️ Atenção:</strong> Esta ação não pode ser desfeita!</p>
+              <p><strong>Atenção:</strong> Esta ação não pode ser desfeita!</p>
               <p>Todos os dados da receita serão perdidos permanentemente.</p>
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn-secondary" data-action="fechar-confirm">❌ Cancelar</button>
-          <button class="btn-danger" data-action="confirmar-exclusao" data-receita-id="${id}">🗑️ Excluir Receita</button>
+          <button class="btn-danger" data-action="confirmar-exclusao" data-receita-id="${id}">Excluir Receita</button>
         </div>
       </div>
     `;
@@ -1331,7 +1403,7 @@ async function confirmarExclusaoReceita(id) {
       throw new Error(`HTTP ${response.status}`);
     }
 
-    mostrarMensagem("✅ Receita excluída com sucesso!", "success");
+    mostrarMensagem("Receita excluída com sucesso!", "success");
     fecharModalConfirm();
     await carregarReceitasAdmin();
 
@@ -1347,7 +1419,7 @@ async function confirmarExclusaoReceita(id) {
     }
   } catch (error) {
     console.error("Erro ao deletar receita:", error);
-    mostrarMensagem("❌ Erro ao deletar receita", "error");
+    mostrarMensagem("Erro ao deletar receita", "error");
   } finally {
     mostrarLoadingOverlay(false);
   }
@@ -1410,13 +1482,14 @@ async function carregarDicasAdmin() {
     atualizarEstatisticasDicas(dicas);
   } catch (error) {
     console.error("Erro ao carregar dicas:", error);
-    
+
     // Verificar se é erro de conexão
-    const isConnectionError = error.message.includes('Failed to fetch') || 
-                             error.message.includes('NetworkError') || 
-                             error.message.includes('ERR_CONNECTION') ||
-                             !navigator.onLine;
-    
+    const isConnectionError =
+      error.message.includes("Failed to fetch") ||
+      error.message.includes("NetworkError") ||
+      error.message.includes("ERR_CONNECTION") ||
+      !navigator.onLine;
+
     if (isConnectionError) {
       mostrarErroConexaoDicas();
     } else {
@@ -1431,13 +1504,17 @@ async function carregarDicasAdmin() {
 }
 
 // Função para renderizar dicas na interface admin
-function renderizarDicasAdmin(dicas) {
+function renderizarDicasAdmin(todasDicas) {
   const container = document.getElementById("dicas-lista");
 
-  if (!dicas || dicas.length === 0) {
+  // Atualizar dados na paginação
+  paginacao.dicas.dados = todasDicas || [];
+  paginacao.dicas.totalItens = paginacao.dicas.dados.length;
+
+  if (!todasDicas || todasDicas.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
-        <h3>💡 Nenhuma dica encontrada</h3>
+        <h3>Nenhuma dica encontrada</h3>
         <p>Comece adicionando sua primeira dica culinária!</p>
         <button id="btn-cadastrar-primeira-dica" class="btn-primary">
           ➕ Adicionar Primeira Dica
@@ -1455,33 +1532,31 @@ function renderizarDicasAdmin(dicas) {
     return;
   }
 
+  // Obter dicas da página atual
+  const dicasPagina = obterItensPaginaAtual('dicas');
+
   // Limpar container
   container.innerHTML = "";
 
-  dicas.forEach((dica) => {
-    const dataFormatada = new Date(
-      dica.created_at || dica.criado_em
-    ).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  // Criar container para as dicas
+  const dicasContainer = document.createElement("div");
+  dicasContainer.className = "lista-items";
+
+  dicasPagina.forEach((dica) => {
+    const dataFormatada = formatarDataSegura(
+      dica.created_at || dica.criado_em,
+      true // incluir hora
+    );
 
     const tamanhoTexto = (dica.texto || dica.conteudo || "").length;
-    let classeCard = "dica-card";
     let tamanhoLabel = "";
 
     if (tamanhoTexto > 200) {
-      classeCard += " dica-muito-longa";
-      tamanhoLabel = "📏 Muito longa";
+      tamanhoLabel = "Muito longa";
     } else if (tamanhoTexto > 100) {
-      classeCard += " dica-longa";
-      tamanhoLabel = "📏 Longa";
+      tamanhoLabel = "Longa";
     } else {
-      classeCard += " dica-curta";
-      tamanhoLabel = "📏 Curta";
+      tamanhoLabel = "Curta";
     }
 
     // Truncar texto se muito longo para preview
@@ -1492,37 +1567,27 @@ function renderizarDicasAdmin(dicas) {
         : textoCompleto;
 
     const dicaCard = document.createElement("div");
-    dicaCard.className = classeCard;
+    dicaCard.className = "item-card dica-card";
     dicaCard.setAttribute("data-dica-id", dica.id);
 
     dicaCard.innerHTML = `
-      <div class="dica-header">
-        <div class="dica-id">ID: ${String(dica.id).substring(0, 8)}...</div>
-        <div class="dica-actions">
-          <button class="btn-edit" title="Editar" data-action="edit" data-id="${
-            dica.id
-          }">
-            ✏️
-          </button>
-          <button class="btn-delete" title="Excluir" data-action="delete" data-id="${
-            dica.id
-          }">
-            🗑️
-          </button>
-        </div>
-      </div>
-      <div class="dica-texto">${textoPreview}</div>
+      <h3>Dica #${String(dica.id).substring(0, 8)}</h3>
+      <p class="dica-texto">${textoPreview}</p>
       <div class="dica-meta">
-        <div class="dica-data">
-          <span>📅 ${dataFormatada}</span>
-        </div>
-        <div class="dica-stats">
-          <span>${tamanhoLabel} (${tamanhoTexto} caracteres)</span>
-        </div>
+        <span class="dica-data">${dataFormatada}</span>
+        <span class="dica-tamanho">${tamanhoLabel} (${tamanhoTexto} caracteres)</span>
+      </div>
+      <div class="card-actions">
+        <button class="btn-primary btn-edit" title="Editar" data-action="edit" data-id="${dica.id}">
+          Editar
+        </button>
+        <button class="btn-danger btn-delete" title="Excluir" data-action="delete" data-id="${dica.id}">
+          Excluir
+        </button>
       </div>
     `;
 
-    container.appendChild(dicaCard);
+    dicasContainer.appendChild(dicaCard);
 
     // Adicionar event listeners para os botões de ação
     const btnEdit = dicaCard.querySelector('[data-action="edit"]');
@@ -1541,6 +1606,15 @@ function renderizarDicasAdmin(dicas) {
       dicaCard.classList.add("fade-in");
     }, 50);
   });
+
+  // Adicionar container de dicas
+  container.appendChild(dicasContainer);
+
+  // Adicionar paginação
+  const paginacaoHTML = gerarPaginacao('dicas');
+  if (paginacaoHTML) {
+    container.insertAdjacentHTML('beforeend', paginacaoHTML);
+  }
 }
 
 // Função para abrir modal de nova dica
@@ -1573,14 +1647,14 @@ async function adicionarDica(event) {
     form.querySelector('input[name="texto"]') ||
     form.querySelector('textarea[name="texto"]');
 
-  console.log("📝 Validando campo texto...");
+  console.log("Validando campo texto...");
   // Validar campo obrigatório
   const texto = formData.get("texto")?.trim();
-  console.log("📊 Texto da dica:", texto);
+  console.log("Texto da dica:", texto);
 
   if (!texto) {
     console.log("❌ Texto da dica não preenchido");
-    mostrarMensagem("💡 Por favor, digite o texto da dica.", "error");
+    mostrarMensagem("Por favor, digite o texto da dica.", "error");
     animarElemento(textoInput, "shake-animation");
     textoInput.focus();
     return;
@@ -1588,7 +1662,7 @@ async function adicionarDica(event) {
 
   if (texto.length < 10) {
     console.log("❌ Texto da dica muito curto");
-    mostrarMensagem("📏 A dica deve ter pelo menos 10 caracteres.", "error");
+    mostrarMensagem("A dica deve ter pelo menos 10 caracteres.", "error");
     animarElemento(textoInput, "shake-animation");
     textoInput.focus();
     return;
@@ -1616,7 +1690,7 @@ async function adicionarDica(event) {
 
     // Feedback de sucesso
     setBotaoEstado(submitButton, "success", originalText);
-    mostrarMensagem("✅ Dica criada com sucesso!", "success");
+    mostrarMensagem("Dica criada com sucesso!", "success");
 
     // Animar fechamento do modal
     const modal = document.getElementById("modal-nova-dica");
@@ -1632,7 +1706,7 @@ async function adicionarDica(event) {
   } catch (error) {
     console.error("Erro ao criar dica:", error);
     setBotaoEstado(submitButton, "error", originalText);
-    mostrarMensagem("❌ Erro ao criar dica: " + error.message, "error");
+    mostrarMensagem("Erro ao criar dica: " + error.message, "error");
     animarElemento(form, "shake-animation");
   } finally {
     mostrarLoadingOverlay(false);
@@ -1759,9 +1833,14 @@ function atualizarEstatisticasDicas(dicas) {
   // Dicas recentes (últimos 7 dias)
   const agora = new Date();
   const seteDiasAtras = new Date(agora.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const dicasRecentes = dicas.filter(
-    (dica) => new Date(dica.created_at) > seteDiasAtras
-  ).length;
+  const dicasRecentes = dicas.filter((dica) => {
+    try {
+      const dataDica = new Date(dica.created_at);
+      return !isNaN(dataDica.getTime()) && dataDica > seteDiasAtras;
+    } catch (error) {
+      return false;
+    }
+  }).length;
 
   // Média de caracteres
   const mediaCaracteres =
@@ -1783,17 +1862,7 @@ function atualizarEstatisticasDicas(dicas) {
 
 // Função para mostrar loading de dicas
 function mostrarLoadingDicas(mostrar) {
-  const container = document.getElementById("dicas-lista");
-  if (!container) return;
-
-  if (mostrar) {
-    container.innerHTML = `
-      <div class="loading-state">
-        <div class="spinner"></div>
-        <p>Carregando dicas...</p>
-      </div>
-    `;
-  }
+  mostrarCarregamento("dicas", mostrar);
 }
 
 // Função para mostrar erro de conexão de dicas
@@ -1802,7 +1871,7 @@ function mostrarErroConexaoDicas() {
   container.innerHTML = `
     <div class="erro-conexao">
       <div class="erro-content">
-        <h3>⚠️ Erro de Conexão</h3>
+        <h3>Erro de Conexão</h3>
         <p>Não foi possível conectar com o servidor.</p>
         <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
         <button onclick="carregarDicasAdmin()" class="btn-retry">Tentar Novamente</button>
@@ -1905,7 +1974,7 @@ function mostrarErroConexaoAdmin() {
   container.innerHTML = `
     <div class="erro-conexao">
       <div class="erro-content">
-        <h3>⚠️ Erro de Conexão</h3>
+        <h3>Erro de Conexão</h3>
         <p>Não foi possível conectar com o servidor.</p>
         <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
         <button onclick="carregarReceitasAdmin()" class="btn-retry">Tentar Novamente</button>
@@ -1967,7 +2036,7 @@ async function testarCarregamentoReceitas() {
 
 // Função para testar carregamento de dicas
 async function testarCarregamentoDicas() {
-  console.log("💡 Testando carregamento de dicas...");
+  console.log("Testando carregamento de dicas...");
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/dicas`);

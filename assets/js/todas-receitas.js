@@ -4,6 +4,7 @@
 const API_BASE_URL =
   window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
 const container = document.getElementById("card-container");
+const paginationWrapper = document.getElementById("pagination-wrapper");
 const loadingElement = document.getElementById("loading");
 
 // Cache das receitas para filtros
@@ -38,7 +39,7 @@ async function confirmarDelecao(itemNome, itemTipo = "item") {
       titulo,
       mensagem,
       null, // onConfirm será tratado pelo retorno da Promise
-      () => mostrarMensagem("❌ Exclusão cancelada", "info")
+      () => mostrarMensagem("Exclusão cancelada", "info")
     );
   }
 
@@ -54,9 +55,23 @@ async function carregarTodasReceitas() {
   mostrarLoading(true);
 
   try {
-    // Usar o ReceitaManager centralizado
-    todasReceitas =
-      await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
+    console.log('🔄 Iniciando carregamento de receitas...');
+    
+    // Verificar se o ReceitaManager está disponível
+    if (!window.RaizesAmazonia?.ReceitaManager) {
+      console.log('⚠️ ReceitaManager não encontrado, usando fetch direto');
+      
+      const response = await fetch(`${API_BASE_URL}/api/receitas`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      todasReceitas = await response.json();
+    } else {
+      console.log('✅ Usando ReceitaManager');
+      todasReceitas = await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
+    }
+    
+    console.log(`📖 ${todasReceitas.length} receitas carregadas`);
     receitasFiltradas = [...todasReceitas];
 
     renderizarReceitas(receitasFiltradas);
@@ -65,7 +80,7 @@ async function carregarTodasReceitas() {
     // Calcular e mostrar estatísticas
     mostrarEstatisticasLocal();
   } catch (error) {
-    console.error("Erro ao carregar receitas:", error);
+    console.error("❌ Erro ao carregar receitas:", error);
     mostrarErroConexao();
   } finally {
     mostrarLoading(false);
@@ -73,14 +88,32 @@ async function carregarTodasReceitas() {
 }
 
 function renderizarReceitas(receitas) {
+  // Atualizar dados na paginação
+  paginacao.dados = receitas || [];
+  paginacao.totalItens = paginacao.dados.length;
+  paginacao.paginaAtual = 1; // Reset para primeira página ao filtrar
+  
+  renderizarReceitasComPaginacao();
+}
+
+function renderizarReceitasComPaginacao() {
+  if (!container) {
+    console.error('Container não encontrado!');
+    return;
+  }
+  
   container.innerHTML = "";
 
-  if (receitas.length === 0) {
+  if (paginacao.dados.length === 0) {
     mostrarMensagemVazia();
     return;
   }
 
-  receitas.forEach((r) => {
+  // Obter receitas da página atual
+  const receitasPagina = obterReceitasPaginaAtual();
+
+  // Renderizar receitas da página atual
+  receitasPagina.forEach((r) => {
     const card = document.createElement("div");
     card.className = "card";
 
@@ -107,13 +140,30 @@ function renderizarReceitas(receitas) {
 
     container.appendChild(card);
   });
+
+  // Limpar paginação anterior
+  if (paginationWrapper) {
+    paginationWrapper.innerHTML = "";
+  }
+
+  // Adicionar paginação se necessário
+  const paginacaoHTML = gerarPaginacao();
+  
+  if (paginacaoHTML && paginationWrapper) {
+    paginationWrapper.innerHTML = paginacaoHTML;
+  } else if (paginacaoHTML && container) {
+    // Fallback: adicionar no container principal
+    const paginacaoElement = document.createElement('div');
+    paginacaoElement.innerHTML = paginacaoHTML;
+    container.appendChild(paginacaoElement);
+  }
 }
 
 function mostrarMensagemVazia() {
   const mensagemVazia = document.createElement("div");
   mensagemVazia.className = "mensagem-vazia";
   mensagemVazia.innerHTML = `
-        <h3>📝 Nenhuma receita encontrada</h3>
+        <h3>Nenhuma receita encontrada</h3>
         <p>Não há receitas disponíveis no momento.</p>
         <p>As receitas podem ser gerenciadas através do <a href="admin.html">painel administrativo</a>.</p>
     `;
@@ -123,7 +173,10 @@ function mostrarMensagemVazia() {
 function mostrarErroConexao() {
   // Usar sistema centralizado de erro de conexão
   if (window.RaizesAmazonia?.UI?.mostrarErroConexao) {
-    window.RaizesAmazonia.UI.mostrarErroConexao('#card-container', 'carregarTodasReceitas');
+    window.RaizesAmazonia.UI.mostrarErroConexao(
+      "#card-container",
+      "carregarTodasReceitas"
+    );
   } else {
     // Fallback para caso o config.js não esteja carregado
     container.innerHTML = `
@@ -197,8 +250,16 @@ function atualizarContadorResultados(termoBusca) {
     }
   } else {
     const total = todasReceitas.length;
-    contador.innerHTML =
-      total > 0 ? `📚 Mostrando todas as ${total} receitas` : "";
+    if (total > 0) {
+      const totalPaginas = calcularTotalPaginas();
+      if (totalPaginas > 1) {
+        contador.innerHTML = `📚 ${total} receitas disponíveis (${totalPaginas} páginas)`;
+      } else {
+        contador.innerHTML = `📚 Mostrando todas as ${total} receitas`;
+      }
+    } else {
+      contador.innerHTML = "";
+    }
     contador.className = "search-results-info";
   }
 }
@@ -246,9 +307,9 @@ function mostrarEstatisticasLocal() {
     if (statsElement) {
       statsElement.innerHTML = `
         <div class="stats-content">
-          <span class="stat-item">📊 Total: ${todasReceitas.length}</span>
+          <span class="stat-item">Total: ${todasReceitas.length}</span>
           <span class="stat-item">📷 Com imagem: ${comImagem}</span>
-          <span class="stat-item">📝 Sem imagem: ${semImagem}</span>
+          <span class="stat-item">Sem imagem: ${semImagem}</span>
         </div>
       `;
       console.log("Estatísticas locais inseridas no DOM"); // Debug
@@ -305,7 +366,7 @@ window.toggleAdmin = function () {
         window.location.href = "admin.html";
       }, 1500);
     } else {
-      mostrarMensagem("❌ Senha incorreta!", "error");
+      mostrarMensagem("Senha incorreta!", "error");
     }
   } else {
     // Já está autenticado, redirecionar direto
@@ -318,3 +379,128 @@ window.toggleAdmin = function () {
     }, 1000);
   }
 };
+
+// ========================================
+// SISTEMA DE PAGINAÇÃO
+// ========================================
+const paginacao = {
+  paginaAtual: 1,
+  itensPorPagina: 6,
+  totalItens: 0,
+  dados: []
+};
+
+// Função para calcular total de páginas
+function calcularTotalPaginas() {
+  return Math.ceil(paginacao.totalItens / paginacao.itensPorPagina);
+}
+
+// Função para obter receitas da página atual
+function obterReceitasPaginaAtual() {
+  const inicio = (paginacao.paginaAtual - 1) * paginacao.itensPorPagina;
+  const fim = inicio + paginacao.itensPorPagina;
+  return paginacao.dados.slice(inicio, fim);
+}
+
+// Função para gerar HTML da paginação
+function gerarPaginacao() {
+  const totalPaginas = calcularTotalPaginas();
+  
+  if (totalPaginas <= 1) {
+    return '';
+  }
+
+  let html = `
+    <div class="pagination-container">
+      <div class="pagination-info">
+        Mostrando ${(paginacao.paginaAtual - 1) * paginacao.itensPorPagina + 1} - 
+        ${Math.min(paginacao.paginaAtual * paginacao.itensPorPagina, paginacao.totalItens)} 
+        de ${paginacao.totalItens} receitas
+      </div>
+      <div class="pagination">
+        <button class="pagination-btn pagination-prev ${paginacao.paginaAtual === 1 ? 'disabled' : ''}" 
+                onclick="irParaPagina(${paginacao.paginaAtual - 1})"
+                ${paginacao.paginaAtual === 1 ? 'disabled' : ''}>
+          Anterior
+        </button>
+  `;
+
+  // Lógica para mostrar números das páginas
+  const maxBotoes = 5;
+  let inicio = Math.max(1, paginacao.paginaAtual - Math.floor(maxBotoes / 2));
+  let fim = Math.min(totalPaginas, inicio + maxBotoes - 1);
+
+  if (fim - inicio < maxBotoes - 1) {
+    inicio = Math.max(1, fim - maxBotoes + 1);
+  }
+
+  // Primeira página e reticências se necessário
+  if (inicio > 1) {
+    html += `<button class="pagination-btn" onclick="irParaPagina(1)">1</button>`;
+    if (inicio > 2) {
+      html += `<span class="pagination-ellipsis">...</span>`;
+    }
+  }
+
+  // Páginas do meio
+  for (let i = inicio; i <= fim; i++) {
+    html += `<button class="pagination-btn ${i === paginacao.paginaAtual ? 'active' : ''}" 
+             onclick="irParaPagina(${i})">${i}</button>`;
+  }
+
+  // Última página e reticências se necessário
+  if (fim < totalPaginas) {
+    if (fim < totalPaginas - 1) {
+      html += `<span class="pagination-ellipsis">...</span>`;
+    }
+    html += `<button class="pagination-btn" onclick="irParaPagina(${totalPaginas})">${totalPaginas}</button>`;
+  }
+
+  html += `
+        <button class="pagination-btn pagination-next ${paginacao.paginaAtual === totalPaginas ? 'disabled' : ''}" 
+                onclick="irParaPagina(${paginacao.paginaAtual + 1})"
+                ${paginacao.paginaAtual === totalPaginas ? 'disabled' : ''}>
+          Próximo
+        </button>
+      </div>
+      <div class="items-per-page">
+        <label for="receitas-per-page">Receitas por página:</label>
+        <select id="receitas-per-page" onchange="alterarItensPorPagina(this.value)">
+          <option value="6" ${paginacao.itensPorPagina === 6 ? 'selected' : ''}>6</option>
+          <option value="12" ${paginacao.itensPorPagina === 12 ? 'selected' : ''}>12</option>
+          <option value="18" ${paginacao.itensPorPagina === 18 ? 'selected' : ''}>18</option>
+          <option value="24" ${paginacao.itensPorPagina === 24 ? 'selected' : ''}>24</option>
+        </select>
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
+// Função para ir para uma página específica
+function irParaPagina(pagina) {
+  const totalPaginas = calcularTotalPaginas();
+  
+  if (pagina < 1 || pagina > totalPaginas) {
+    return;
+  }
+
+  paginacao.paginaAtual = pagina;
+  renderizarReceitasComPaginacao();
+  
+  // Rolar para o topo dos resultados
+  document.querySelector('.receitas').scrollIntoView({ 
+    behavior: 'smooth',
+    block: 'start'
+  });
+}
+
+// Função para alterar itens por página
+function alterarItensPorPagina(novoValor) {
+  paginacao.itensPorPagina = parseInt(novoValor);
+  paginacao.paginaAtual = 1; // Voltar para primeira página
+  renderizarReceitasComPaginacao();
+}
+
+// ========================================

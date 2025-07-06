@@ -161,6 +161,133 @@
   color: #1f4025;
 }
 
+/* Container de cards com paginação */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* ========================================
+   PAGINAÇÃO
+======================================== */
+
+.pagination-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding: 2rem 1rem;
+  border-top: 2px solid #e8f5e8;
+  background: linear-gradient(135deg, #f8fdf8 0%, #f1f8f1 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  clear: both;
+  width: 100%;
+}
+
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.pagination-info {
+  margin-right: 1rem;
+  color: #4a5d6a;
+  font-size: calc(0.9 * var(--font-size, 16px));
+  font-weight: 500;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0.5rem;
+  border: 2px solid #e0e7e0;
+  background: white;
+  color: #1f4025;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: calc(0.9 * var(--font-size, 16px));
+}
+
+.pagination-btn:hover:not(.disabled) {
+  border-color: var(--primary-green);
+  background: #f8fdf8;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(47, 125, 50, 0.15);
+}
+
+.pagination-btn.active {
+  background: var(--primary-green);
+  color: white;
+  border-color: var(--primary-green);
+  box-shadow: 0 3px 8px rgba(47, 125, 50, 0.3);
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f5f5f5;
+  color: #999;
+}
+
+.pagination-ellipsis {
+  padding: 0 0.5rem;
+  color: #666;
+  font-weight: bold;
+}
+
+.pagination-prev,
+.pagination-next {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+.pagination-prev::before {
+  content: "←";
+  margin-right: 0.5rem;
+}
+
+.pagination-next::after {
+  content: "→";
+  margin-left: 0.5rem;
+}
+
+.items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+  color: #4a5d6a;
+  font-size: calc(0.9 * var(--font-size, 16px));
+}
+
+.items-per-page select {
+  padding: 0.5rem;
+  border: 2px solid #e0e7e0;
+  border-radius: 6px;
+  background: white;
+  color: #1f4025;
+  font-size: calc(0.9 * var(--font-size, 16px));
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.items-per-page select:focus {
+  outline: none;
+  border-color: var(--primary-green);
+}
+
 /* Responsividade específica para página de receitas */
 
 /* Estilos específicos da página todas-receitas */
@@ -192,40 +319,59 @@
   .btn-voltar {
     text-align: center;
   }
+
+  .pagination-container {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem 1rem;
+  }
+  
+  .pagination-info,
+  .items-per-page {
+    text-align: center;
+    margin: 0;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pagination-btn {
+    min-width: 35px;
+    height: 35px;
+    font-size: calc(0.8 * var(--font-size, 16px));
+  }
+  
+  .pagination-prev,
+  .pagination-next {
+    padding: 0.4rem 0.8rem;
+    font-size: calc(0.8 * var(--font-size, 16px));
+  }
 }
 
-/* Navegação e busca customizada para todas-receitas */
-.navigation-section .navigation-container {
-  justify-content: space-between;
+@media (max-width: 480px) {
+  .pagination-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0.3rem;
+  }
+  
+  .pagination-prev,
+  .pagination-next {
+    padding: 0.3rem 0.6rem;
+    font-size: calc(0.75 * var(--font-size, 16px));
+  }
 }
 
-.busca-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex-grow: 1;
-  max-width: 400px;
-  margin-left: 2rem;
-}
+/* ========================================
+   WRAPPER DE PAGINAÇÃO
+======================================== */
 
-.search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.busca-container input {
+.pagination-wrapper {
+  margin-top: 2rem;
+  clear: both;
   width: 100%;
-  padding: 0.75rem 1rem;
-  padding-right: 3rem;
-  border: 2px solid #e0e0e0;
-  border-radius: var(--border-radius-small);
-  font-size: calc(0.95 * var(--font-size, 16px));
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.busca-container input:focus {
-  outline: none;
-  border-color: var(--primary-green);
-  box-shadow: 0 0 0 3px rgba(47, 125, 50, 0.1);
-}
+/* Garantir que a paginação sempre apareça abaixo dos cards */

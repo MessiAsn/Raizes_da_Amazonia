@@ -23,7 +23,7 @@ function mostrarMensagem(texto, tipo = "info", duracao = 3000) {
   if (window.RaizesAmazonia?.UI?.showMessage) {
     return window.RaizesAmazonia.UI.showMessage(texto, tipo, duracao);
   }
-  
+
   // Implementação local como fallback
   // Remover mensagem existente se houver
   const mensagemExistente = document.querySelector(".mensagem");
@@ -117,7 +117,10 @@ async function carregarReceitas() {
 function mostrarErroConexao() {
   // Usar sistema centralizado de erro de conexão
   if (window.RaizesAmazonia?.UI?.mostrarErroConexao) {
-    window.RaizesAmazonia.UI.mostrarErroConexao('.card-container', 'carregarReceitas');
+    window.RaizesAmazonia.UI.mostrarErroConexao(
+      ".card-container",
+      "carregarReceitas"
+    );
   } else {
     // Fallback para caso o config.js não esteja carregado
     const container = document.querySelector(".card-container");
@@ -227,7 +230,6 @@ function renderizarDicas(dicas, container) {
     const dicaElement = document.createElement("li");
     dicaElement.innerHTML = `
       <div class="dica-content">
-        <span class="dica-icon">💡</span>
         <span class="dica-text">${dica.conteudo || dica.texto || ""}</span>
       </div>
     `;

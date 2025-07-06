@@ -1,339 +1,397 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel Administrativo - Raízes da Amazônia</title>
-  
-  <!-- Fontes -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Jersey+25&family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="../assets/css/aumento-fonte.css" />
-  <link rel="stylesheet" href="../assets/css/common.css" />
-  <link rel="stylesheet" href="../assets/css/admin.css" />
-</head>
-<body>
-  <!-- Controles de Acessibilidade -->
-  <div class="accessibilidade-container">
-    <button data-font-size="0.9rem">-A</button>
-    <button data-font-size="1.0rem">A</button>
-    <button data-font-size="1.2rem">+A</button>
-    <button data-font-size="1.4rem">+A+</button>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo - Raízes da Amazônia</title>
 
-  <!-- Header -->
-  <header class="admin-header">
-    <div class="container">
-      <div class="header-content">
-        <div class="logo-section">
-          <h1>🌿 Painel Administrativo</h1>
-          <p>Raízes da Amazônia</p>
-        </div>
-        <div class="header-actions">
-          <a href="../index.html" class="btn-voltar">← Voltar ao Site</a>
-          <button id="btn-logout" class="btn-logout">🚪 Sair</button>
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jersey+25&family=Source+Serif+Pro:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../assets/css/aumento-fonte.css" />
+    <link rel="stylesheet" href="../assets/css/common.css" />
+    <link rel="stylesheet" href="../assets/css/admin.css" />
+  </head>
+  <body>
+    <!-- Controles de Acessibilidade -->
+    <div class="accessibilidade-container">
+      <button data-font-size="0.9rem">-A</button>
+      <button data-font-size="1.0rem">A</button>
+      <button data-font-size="1.2rem">+A</button>
+      <button data-font-size="1.4rem">+A+</button>
+    </div>
+
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo-section">
+            <h1>Painel Administrativo</h1>
+            <p>Raízes da Amazônia</p>
+          </div>
+          <div class="header-actions">
+            <a href="../index.html" class="btn-voltar">Voltar ao Site</a>
+            <button id="btn-logout" class="btn-logout">Sair</button>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Navegação por Tabs -->
-  <nav class="admin-nav">
-    <div class="container">
-      <div class="nav-tabs">
-        <button class="tab-button active" data-tab="receitas">
-          📖 Gerenciar Receitas
-        </button>
-        <button class="tab-button" data-tab="dicas">
-          💡 Gerenciar Dicas
-        </button>
-        <button class="tab-button" data-tab="estatisticas">
-          📊 Estatísticas
-        </button>
+    <!-- Navegação por Tabs -->
+    <nav class="admin-nav">
+      <div class="container">
+        <div class="nav-tabs">
+          <button class="tab-button active" data-tab="receitas">
+            Gerenciar Receitas
+          </button>
+          <button class="tab-button" data-tab="dicas">Gerenciar Dicas</button>
+          <button class="tab-button" data-tab="estatisticas">
+            Estatísticas
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="admin-main">
+      <div class="container">
+        <!-- Seção de Receitas -->
+        <section id="tab-receitas" class="tab-content active">
+          <div class="section-header">
+            <h2>Gerenciar Receitas</h2>
+            <button id="btn-nova-receita" class="btn-primary">
+              Nova Receita
+            </button>
+          </div>
+
+          <!-- Estatísticas de Receitas -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="total-receitas">0</div>
+              <div class="stat-label">Total de Receitas</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="receitas-com-imagem">0</div>
+              <div class="stat-label">Com Imagem</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="receitas-com-historia">0</div>
+              <div class="stat-label">Com História</div>
+            </div>
+          </div>
+
+          <div class="content-area">
+            <div id="loading-receitas" class="loading" style="display: none">
+              <div class="loading-spinner"></div>
+              <p>Carregando receitas...</p>
+            </div>
+
+            <div id="receitas-lista">
+              <!-- Lista de receitas será carregada aqui -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Seção de Dicas -->
+        <section id="tab-dicas" class="tab-content">
+          <div class="section-header">
+            <h2>Gerenciar Dicas</h2>
+            <button
+              id="btn-nova-dica"
+              class="btn-primary"
+              onclick="abrirModalNovaDicaAdmin()"
+            >
+              Nova Dica
+            </button>
+          </div>
+
+          <!-- Estatísticas de Dicas -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="total-dicas">0</div>
+              <div class="stat-label">Total de Dicas</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="dicas-recentes">0</div>
+              <div class="stat-label">Dicas Recentes (7 dias)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="media-caracteres-dicas">0</div>
+              <div class="stat-label">Média de Caracteres</div>
+            </div>
+          </div>
+
+          <div class="content-area">
+            <div id="loading-dicas" class="loading" style="display: none">
+              <div class="loading-spinner"></div>
+              <p>Carregando dicas...</p>
+            </div>
+
+            <div id="dicas-lista">
+              <!-- Lista de dicas será carregada aqui -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Seção de Estatísticas -->
+        <section id="tab-estatisticas" class="tab-content">
+          <div class="section-header">
+            <h2>Estatísticas do Sistema</h2>
+          </div>
+
+          <div class="content-area">
+            <div id="estatisticas-container" class="stats-grid">
+              <!-- Estatísticas serão carregadas aqui -->
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="admin-footer">
+      <div class="container">
+        <p>&copy; 2025 Raízes da Amazônia - Painel Administrativo</p>
+      </div>
+    </footer>
+
+    <!-- MODAIS PARA RECEITAS -->
+
+    <!-- Modal para Editar Receita -->
+    <div id="modal-editar-receita" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Editar Receita</h2>
+          <button class="modal-close" data-close-modal="modal-editar-receita">
+            &times;
+          </button>
+        </div>
+        <form id="form-editar-receita">
+          <div class="form-group">
+            <label for="edit-nome">Nome da Receita:</label>
+            <input type="text" id="edit-nome" name="nome" required />
+          </div>
+          <div class="form-group">
+            <label for="edit-descricao">Descrição:</label>
+            <textarea
+              id="edit-descricao"
+              name="descricao"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-ingredientes">Ingredientes:</label>
+            <textarea
+              id="edit-ingredientes"
+              name="ingredientes"
+              rows="4"
+              required
+              placeholder="Liste os ingredientes, um por linha"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-modo_preparo">Modo de Preparo:</label>
+            <textarea
+              id="edit-modo_preparo"
+              name="modo_preparo"
+              rows="6"
+              required
+              placeholder="Descreva o passo a passo do preparo"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-historia">História da Receita:</label>
+            <textarea
+              id="edit-historia"
+              name="historia"
+              rows="4"
+              placeholder="Conte a origem e história desta receita tradicional"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-imagem">Nova Imagem (opcional):</label>
+            <input
+              type="file"
+              id="edit-imagem"
+              name="imagem"
+              accept="image/*"
+            />
+            <div
+              id="edit-preview-container"
+              class="preview-container"
+              style="display: none"
+            >
+              <img id="edit-preview-image" alt="Preview" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              data-close-modal="modal-editar-receita"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">Salvar Alterações</button>
+          </div>
+        </form>
       </div>
     </div>
-  </nav>
 
-  <!-- Conteúdo Principal -->
-  <main class="admin-main">
-    <div class="container">
-      
-      <!-- Seção de Receitas -->
-      <section id="tab-receitas" class="tab-content active">
-        <div class="section-header">
-          <h2>📖 Gerenciar Receitas</h2>
-          <button id="btn-nova-receita" class="btn-primary">
-            ➕ Nova Receita
+    <!-- Modal para Nova Receita -->
+    <div id="modal-nova-receita" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Adicionar Nova Receita</h2>
+          <button class="modal-close" data-close-modal="modal-nova-receita">
+            &times;
           </button>
         </div>
-        
-        <!-- Estatísticas de Receitas -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number" id="total-receitas">0</div>
-            <div class="stat-label">Total de Receitas</div>
+        <form id="form-nova-receita">
+          <div class="form-group">
+            <label for="nome">Nome da Receita:</label>
+            <input type="text" id="nome" name="nome" required />
           </div>
-          <div class="stat-card">
-            <div class="stat-number" id="receitas-com-imagem">0</div>
-            <div class="stat-label">Com Imagem</div>
+          <div class="form-group">
+            <label for="descricao">Descrição:</label>
+            <textarea
+              id="descricao"
+              name="descricao"
+              rows="3"
+              required
+            ></textarea>
           </div>
-          <div class="stat-card">
-            <div class="stat-number" id="receitas-com-historia">0</div>
-            <div class="stat-label">Com História</div>
+          <div class="form-group">
+            <label for="ingredientes">Ingredientes:</label>
+            <textarea
+              id="ingredientes"
+              name="ingredientes"
+              rows="4"
+              required
+              placeholder="Liste os ingredientes, um por linha"
+            ></textarea>
           </div>
-        </div>
-        
-        <div class="content-area">
-          <div id="loading-receitas" class="loading" style="display: none;">
-            <div class="loading-spinner"></div>
-            <p>Carregando receitas...</p>
+          <div class="form-group">
+            <label for="modo_preparo">Modo de Preparo:</label>
+            <textarea
+              id="modo_preparo"
+              name="modo_preparo"
+              rows="6"
+              required
+              placeholder="Descreva o passo a passo do preparo"
+            ></textarea>
           </div>
-          
-          <div id="receitas-lista" class="lista-items">
-            <!-- Lista de receitas será carregada aqui -->
+          <div class="form-group">
+            <label for="historia">História da Receita:</label>
+            <textarea
+              id="historia"
+              name="historia"
+              rows="4"
+              placeholder="Conte a origem e história desta receita tradicional"
+            ></textarea>
           </div>
-        </div>
-      </section>
-
-      <!-- Seção de Dicas -->
-      <section id="tab-dicas" class="tab-content">
-        <div class="section-header">
-          <h2>💡 Gerenciar Dicas</h2>
-          <button id="btn-nova-dica" class="btn-primary" onclick="abrirModalNovaDicaAdmin()">
-            ➕ Nova Dica
-          </button>
-        </div>
-        
-        <!-- Estatísticas de Dicas -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number" id="total-dicas">0</div>
-            <div class="stat-label">Total de Dicas</div>
+          <div class="form-group">
+            <label for="imagem">Imagem (opcional):</label>
+            <input type="file" id="imagem" name="imagem" accept="image/*" />
+            <div
+              id="preview-container"
+              class="preview-container"
+              style="display: none"
+            >
+              <img id="preview-image" alt="Preview" />
+            </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-number" id="dicas-recentes">0</div>
-            <div class="stat-label">Dicas Recentes (7 dias)</div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              data-close-modal="modal-nova-receita"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-primary">Adicionar Receita</button>
           </div>
-          <div class="stat-card">
-            <div class="stat-number" id="media-caracteres-dicas">0</div>
-            <div class="stat-label">Média de Caracteres</div>
-          </div>
-        </div>
-        
-        <div class="content-area">
-          <div id="loading-dicas" class="loading" style="display: none;">
-            <div class="loading-spinner"></div>
-            <p>Carregando dicas...</p>
-          </div>
-          
-          <div id="dicas-lista" class="lista-items">
-            <!-- Lista de dicas será carregada aqui -->
-          </div>
-        </div>
-      </section>
-
-      <!-- Seção de Estatísticas -->
-      <section id="tab-estatisticas" class="tab-content">
-        <div class="section-header">
-          <h2>📊 Estatísticas do Sistema</h2>
-        </div>
-        
-        <div class="content-area">
-          <div id="estatisticas-container" class="stats-grid">
-            <!-- Estatísticas serão carregadas aqui -->
-          </div>
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="admin-footer">
-    <div class="container">
-      <p>&copy; 2025 Raízes da Amazônia - Painel Administrativo</p>
-    </div>
-  </footer>
-
-  <!-- MODAIS PARA RECEITAS -->
-  
-  <!-- Modal para Editar Receita -->
-  <div id="modal-editar-receita" class="modal-overlay" style="display: none">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>✏️ Editar Receita</h2>
-        <button class="modal-close" data-close-modal="modal-editar-receita">
-          &times;
-        </button>
+        </form>
       </div>
-      <form id="form-editar-receita">
-        <div class="form-group">
-          <label for="edit-nome">Nome da Receita:</label>
-          <input type="text" id="edit-nome" name="nome" required />
+    </div>
+
+    <!-- MODAIS PARA DICAS -->
+
+    <!-- Modal para Nova Dica -->
+    <div id="modal-nova-dica" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Adicionar Nova Dica</h2>
+          <button class="modal-close" data-close-modal="modal-nova-dica">
+            &times;
+          </button>
         </div>
-        <div class="form-group">
-          <label for="edit-descricao">Descrição:</label>
-          <textarea id="edit-descricao" name="descricao" rows="3" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="edit-ingredientes">Ingredientes:</label>
-          <textarea id="edit-ingredientes" name="ingredientes" rows="4" required 
-            placeholder="Liste os ingredientes, um por linha"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="edit-modo_preparo">Modo de Preparo:</label>
-          <textarea id="edit-modo_preparo" name="modo_preparo" rows="6" required 
-            placeholder="Descreva o passo a passo do preparo"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="edit-historia">História da Receita:</label>
-          <textarea id="edit-historia" name="historia" rows="4" 
-            placeholder="Conte a origem e história desta receita tradicional"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="edit-imagem">Nova Imagem (opcional):</label>
-          <input type="file" id="edit-imagem" name="imagem" accept="image/*" />
-          <div id="edit-preview-container" class="preview-container" style="display: none">
-            <img id="edit-preview-image" alt="Preview" />
+        <form id="form-nova-dica">
+          <div class="form-group">
+            <label for="texto-dica">Texto da Dica:</label>
+            <textarea
+              id="texto-dica"
+              name="texto"
+              rows="4"
+              required
+              placeholder="Digite aqui a dica culinária..."
+            ></textarea>
+            <small class="form-help"
+              >Compartilhe uma dica útil sobre culinária amazônica</small
+            >
           </div>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" data-close-modal="modal-editar-receita">
-            Cancelar
-          </button>
-          <button type="submit" class="btn-primary">Salvar Alterações</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal para Nova Receita -->
-  <div id="modal-nova-receita" class="modal-overlay" style="display: none">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>➕ Adicionar Nova Receita</h2>
-        <button class="modal-close" data-close-modal="modal-nova-receita">
-          &times;
-        </button>
-      </div>
-      <form id="form-nova-receita">
-        <div class="form-group">
-          <label for="nome">Nome da Receita:</label>
-          <input type="text" id="nome" name="nome" required />
-        </div>
-        <div class="form-group">
-          <label for="descricao">Descrição:</label>
-          <textarea id="descricao" name="descricao" rows="3" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="ingredientes">Ingredientes:</label>
-          <textarea id="ingredientes" name="ingredientes" rows="4" required 
-            placeholder="Liste os ingredientes, um por linha"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="modo_preparo">Modo de Preparo:</label>
-          <textarea id="modo_preparo" name="modo_preparo" rows="6" required 
-            placeholder="Descreva o passo a passo do preparo"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="historia">História da Receita:</label>
-          <textarea id="historia" name="historia" rows="4" 
-            placeholder="Conte a origem e história desta receita tradicional"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="imagem">Imagem (opcional):</label>
-          <input type="file" id="imagem" name="imagem" accept="image/*" />
-          <div id="preview-container" class="preview-container" style="display: none">
-            <img id="preview-image" alt="Preview" />
+          <div class="form-actions">
+            <button type="button" data-close-modal="modal-nova-dica">
+              Cancelar
+            </button>
+            <button type="submit">Adicionar Dica</button>
           </div>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" data-close-modal="modal-nova-receita">
-            Cancelar
-          </button>
-          <button type="submit" class="btn-primary">Adicionar Receita</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAIS PARA DICAS -->
-
-  <!-- Modal para Nova Dica -->
-  <div id="modal-nova-dica" class="modal-overlay" style="display: none">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Adicionar Nova Dica</h2>
-        <button
-          class="modal-close"
-          data-close-modal="modal-nova-dica"
-        >
-          &times;
-        </button>
+        </form>
       </div>
-      <form id="form-nova-dica">
-        <div class="form-group">
-          <label for="texto-dica">Texto da Dica:</label>
-          <textarea
-            id="texto-dica"
-            name="texto"
-            rows="4"
-            required
-            placeholder="Digite aqui a dica culinária..."
-          ></textarea>
-          <small class="form-help">Compartilhe uma dica útil sobre culinária amazônica</small>
-        </div>
-        <div class="form-actions">
-          <button type="button" data-close-modal="modal-nova-dica">
-            Cancelar
-          </button>
-          <button type="submit">Adicionar Dica</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <!-- Modal para Editar Dica -->
-  <div id="modal-editar-dica" class="modal-overlay" style="display: none">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Editar Dica</h2>
-        <button
-          class="modal-close"
-          data-close-modal="modal-editar-dica"
-        >
-          &times;
-        </button>
+    <!-- Modal para Editar Dica -->
+    <div id="modal-editar-dica" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Editar Dica</h2>
+          <button class="modal-close" data-close-modal="modal-editar-dica">
+            &times;
+          </button>
+        </div>
+        <form id="form-editar-dica">
+          <div class="form-group">
+            <label for="edit-texto-dica">Texto da Dica:</label>
+            <textarea
+              id="edit-texto-dica"
+              name="texto"
+              rows="4"
+              required
+            ></textarea>
+            <small class="form-help">Edite o texto da dica culinária</small>
+          </div>
+          <div class="form-actions">
+            <button type="button" data-close-modal="modal-editar-dica">
+              Cancelar
+            </button>
+            <button type="submit">Salvar Alterações</button>
+          </div>
+        </form>
       </div>
-      <form id="form-editar-dica">
-        <div class="form-group">
-          <label for="edit-texto-dica">Texto da Dica:</label>
-          <textarea
-            id="edit-texto-dica"
-            name="texto"
-            rows="4"
-            required
-          ></textarea>
-          <small class="form-help">Edite o texto da dica culinária</small>
-        </div>
-        <div class="form-actions">
-          <button type="button" data-close-modal="modal-editar-dica">
-            Cancelar
-          </button>
-          <button type="submit">Salvar Alterações</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="../assets/js/config.js"></script>
-  <script src="../assets/js/admin-system.js"></script>
-  <script src="../assets/js/modal-manager.js"></script>
-  <script src="../assets/js/admin.js"></script>
-  <script src="../assets/js/aumento-fonte.js"></script>
-</body>
+    <!-- Scripts -->
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/admin-system.js"></script>
+    <script src="../assets/js/modal-manager.js"></script>
+    <script src="../assets/js/admin.js"></script>
+    <script src="../assets/js/aumento-fonte.js"></script>
+  </body>
 </html>
