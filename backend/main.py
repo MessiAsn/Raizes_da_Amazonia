@@ -74,7 +74,7 @@ app = FastAPI(title="Raízes da Amazônia API", version="1.0.0")
 if ENVIRONMENT == "production":
     allowed_origins = [
         "https://*.vercel.app",
-        "https://raizes-da-amazonia.vercel.app",
+        "https://raizes-da-amazonia.vercel.app",  # Substitua pela URL real do Vercel
     ]
 else:
     allowed_origins = [

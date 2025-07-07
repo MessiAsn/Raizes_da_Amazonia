@@ -3,6 +3,7 @@
 ## 📖 Visão Geral
 
 Este tutorial ensina como fazer o deploy híbrido da aplicação:
+
 - **Frontend** → Vercel (estático, rápido, CDN global)
 - **Backend** → Railway (API Python FastAPI)
 
@@ -47,20 +48,24 @@ git push origin main
 ### Passo 2: Deploy no Railway
 
 1. **Acessar Railway:**
+
    - Ir para [railway.app](https://railway.app/)
    - Fazer login com GitHub
 
 2. **Criar Projeto:**
+
    - Clicar em "New Project"
    - Selecionar "Deploy from GitHub repo"
    - Escolher o repositório `raizes_da_amazonia`
 
 3. **Configurar Deploy:**
+
    - **Root Directory**: `backend`
    - **Build Command**: Detectado automaticamente
    - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
 4. **Variáveis de Ambiente (Opcional):**
+
    ```
    ENVIRONMENT=production
    ```
@@ -72,6 +77,7 @@ git push origin main
 ### Passo 3: Obter URL do Backend
 
 1. **Copiar URL:**
+
    - Na dashboard do Railway, copiar a URL gerada
    - Exemplo: `https://raizes-amazonia-backend-production.up.railway.app`
    - **⚠️ IMPORTANTE: Anotar esta URL!**
@@ -92,10 +98,12 @@ Editar `assets/js/config.js`:
 
 ```javascript
 window.RaizesAmazonia.Config = {
-  API_BASE_URL: window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://127.0.0.1:8000" 
-    : "https://SUA-URL-RAILWAY.up.railway.app", // 👈 SUBSTITUIR AQUI
-  
+  API_BASE_URL:
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+      ? "http://127.0.0.1:8000"
+      : "https://SUA-URL-RAILWAY.up.railway.app", // 👈 SUBSTITUIR AQUI
+
   // ...rest of config
 };
 ```
@@ -115,14 +123,17 @@ git push origin main
 ### Passo 1: Deploy no Vercel
 
 1. **Acessar Vercel:**
+
    - Ir para [vercel.com](https://vercel.com/)
    - Fazer login com GitHub
 
 2. **Criar Projeto:**
+
    - Clicar em "New Project"
    - Selecionar o repositório `raizes_da_amazonia`
 
 3. **Configurar Projeto:**
+
    - **Framework Preset**: `Other`
    - **Root Directory**: `/` (raiz)
    - **Build Command**: (deixar vazio)
@@ -207,6 +218,7 @@ Railway fará redeploy automaticamente.
 **Sintoma:** Frontend não consegue conectar com backend
 
 **Solução:**
+
 1. Verificar se URL do Vercel está em `allowed_origins` no `main.py`
 2. Verificar se `ENVIRONMENT=production` está configurado no Railway
 3. Fazer redeploy do backend
@@ -216,6 +228,7 @@ Railway fará redeploy automaticamente.
 **Sintoma:** `fetch failed` ou `404 Not Found`
 
 **Solução:**
+
 1. Verificar se URL do backend está correta no `config.js`
 2. Testar API diretamente: `https://sua-url.railway.app/api`
 3. Verificar logs no Railway
@@ -225,6 +238,7 @@ Railway fará redeploy automaticamente.
 **Sintoma:** Imagens aparecem quebradas
 
 **Solução:**
+
 1. Verificar se upload funciona no painel admin
 2. Imagens são servidas pelo backend: `https://sua-url.railway.app/uploads/nome-da-imagem.jpg`
 3. Verificar permissões de arquivo
@@ -234,6 +248,7 @@ Railway fará redeploy automaticamente.
 **Sintoma:** Erro no backend
 
 **Solução:**
+
 1. Verificar logs no Railway Dashboard
 2. Verificar se todas as dependências estão em `requirements.txt`
 3. Verificar se banco SQLite está sendo criado corretamente
@@ -243,6 +258,7 @@ Railway fará redeploy automaticamente.
 ## 🔄 Atualizações Futuras
 
 ### Para o Backend:
+
 ```bash
 # Fazer mudanças no código
 git add .
@@ -252,6 +268,7 @@ git push origin main
 ```
 
 ### Para o Frontend:
+
 ```bash
 # Fazer mudanças no código
 git add .
@@ -265,21 +282,25 @@ git push origin main
 ## 💡 Dicas Importantes
 
 ### 🔒 Segurança
+
 - Nunca commitar senhas ou chaves no código
 - Usar variáveis de ambiente para configurações sensíveis
 - Manter backup do banco de dados local
 
 ### 📊 Monitoramento
+
 - Usar dashboards do Railway e Vercel para monitorar
 - Configurar alertas para problemas
 - Verificar logs regularmente
 
 ### 🚀 Performance
+
 - Vercel otimiza automaticamente o frontend
 - Imagens são servidas via CDN
 - Backend tem cache automático
 
 ### 💰 Custos
+
 - **Railway**: 500h/mês grátis
 - **Vercel**: 100GB/mês grátis
 - Suficiente para projetos acadêmicos
@@ -312,4 +333,4 @@ Parabéns! Seu projeto **Raízes da Amazônia** agora está disponível na inter
 
 ---
 
-*Tutorial criado para o projeto acadêmico "Raízes da Amazônia" - Desenvolvimento Web*
+_Tutorial criado para o projeto acadêmico "Raízes da Amazônia" - Desenvolvimento Web_
