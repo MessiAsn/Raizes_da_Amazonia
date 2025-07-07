@@ -26,10 +26,10 @@ Base = declarative_base()
 PORT = int(os.environ.get("PORT", 8000))
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 
-# Debug: mostrar ambiente detectado
-print(f"🔍 DEBUG: Ambiente detectado = '{ENVIRONMENT}'")
-print(f"🔍 DEBUG: Tipo = {type(ENVIRONMENT)}")
-print(f"🔍 DEBUG: Comparação production = {ENVIRONMENT == 'production'}")
+# Detectar Railway automaticamente se ENVIRONMENT não estiver definida corretamente
+RAILWAY_ENVIRONMENT = os.environ.get("RAILWAY_ENVIRONMENT_NAME")
+if RAILWAY_ENVIRONMENT or (os.environ.get("PORT") and ENVIRONMENT == "development"):
+    ENVIRONMENT = "production"
 
 
 class ReceitaDB(Base):
