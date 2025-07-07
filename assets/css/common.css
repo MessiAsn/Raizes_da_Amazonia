@@ -1,4 +1,4 @@
-/* Variáveis CSS para consistência de cores e facilidade de manutenção */
+/* Variáveis CSS */
 :root {
   /* Cores principais */
   --primary-green: #1f4025;
@@ -45,8 +45,7 @@
   --border-radius-large: 15px;
 }
 
-/* Estilos comuns para todas as páginas */
-
+/* Estilos comuns */
 html {
   scroll-behavior: smooth;
   font-size: var(--font-size, 16px);
@@ -59,7 +58,7 @@ body {
   color: var(--text-dark);
 }
 
-/* Container principal */
+/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -899,11 +898,7 @@ footer p {
   box-shadow: 0 0 5px rgba(31, 64, 37, 0.3);
 }
 
-/* =================================================
- * SEÇÃO DE NAVEGAÇÃO PADRONIZADA
- * ================================================= */
-
-/* Seção de navegação no topo das páginas */
+/* SEÇÃO DE NAVEGAÇÃO PADRONIZADA */
 .navigation-section {
   background: linear-gradient(135deg, #f8fdf8 0%, #f1f8f1 100%);
   padding: 2rem 0;

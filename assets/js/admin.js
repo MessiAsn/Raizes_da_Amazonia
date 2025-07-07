@@ -1,18 +1,8 @@
-/* Script dedicado para o Painel Administrativo */
-
-// ========================================
-// CONFIGURAÇÃO E CONSTANTES
-// ========================================
 const API_BASE_URL =
-  window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
+  window.RaizesAmazonia?.Config?.API_BASE_URL || "http://127.0.0.1:8000";
 
-// Estado global do admin
 let currentTab = "receitas";
 let isAuthenticated = false;
-
-// ========================================
-// PAGINAÇÃO
-// ========================================
 const paginacao = {
   receitas: {
     paginaAtual: 1,
@@ -28,13 +18,12 @@ const paginacao = {
   },
 };
 
-// Função para calcular total de páginas
 function calcularTotalPaginas(tipo) {
   const config = paginacao[tipo];
-  return Math.ceil(config.totalItens / config.itensPorPagina);
+  const totalPaginas = Math.ceil(config.totalItens / config.itensPorPagina);
+  return Math.max(1, totalPaginas);
 }
 
-// Função para obter itens da página atual
 function obterItensPaginaAtual(tipo) {
   const config = paginacao[tipo];
   const inicio = (config.paginaAtual - 1) * config.itensPorPagina;
@@ -42,24 +31,27 @@ function obterItensPaginaAtual(tipo) {
   return config.dados.slice(inicio, fim);
 }
 
-// Função para gerar HTML da paginação
 function gerarPaginacao(tipo) {
   const config = paginacao[tipo];
   const totalPaginas = calcularTotalPaginas(tipo);
 
-  if (totalPaginas <= 1) {
-    return "";
-  }
+  const itemInicio =
+    config.totalItens > 0
+      ? (config.paginaAtual - 1) * config.itensPorPagina + 1
+      : 0;
+  const itemFim = Math.min(
+    config.paginaAtual * config.itensPorPagina,
+    config.totalItens
+  );
 
   let html = `
     <div class="pagination-container">
       <div class="pagination-info">
-        Mostrando ${(config.paginaAtual - 1) * config.itensPorPagina + 1} - 
-        ${Math.min(
-          config.paginaAtual * config.itensPorPagina,
-          config.totalItens
-        )} 
-        de ${config.totalItens} ${tipo}
+        ${
+          config.totalItens > 0
+            ? `Mostrando ${itemInicio} - ${itemFim} de ${config.totalItens} ${tipo}`
+            : `Nenhum item encontrado`
+        }
       </div>
       <div class="pagination">
         <button class="pagination-btn pagination-prev ${
@@ -71,33 +63,34 @@ function gerarPaginacao(tipo) {
         </button>
   `;
 
-  // Lógica para mostrar números das páginas
   const maxBotoes = 5;
   let inicio = Math.max(1, config.paginaAtual - Math.floor(maxBotoes / 2));
   let fim = Math.min(totalPaginas, inicio + maxBotoes - 1);
+
+  if (totalPaginas === 0) {
+    fim = 1;
+  }
 
   if (fim - inicio < maxBotoes - 1) {
     inicio = Math.max(1, fim - maxBotoes + 1);
   }
 
-  // Primeira página e reticências se necessário
-  if (inicio > 1) {
+  if (inicio > 1 && totalPaginas > 1) {
     html += `<button class="pagination-btn" onclick="irParaPagina('${tipo}', 1)">1</button>`;
     if (inicio > 2) {
       html += `<span class="pagination-ellipsis">...</span>`;
     }
   }
 
-  // Páginas do meio
-  for (let i = inicio; i <= fim; i++) {
+  const paginasParaMostrar = totalPaginas > 0 ? fim : 1;
+  for (let i = inicio; i <= paginasParaMostrar; i++) {
     html += `<button class="pagination-btn ${
       i === config.paginaAtual ? "active" : ""
     }" 
              onclick="irParaPagina('${tipo}', ${i})">${i}</button>`;
   }
 
-  // Última página e reticências se necessário
-  if (fim < totalPaginas) {
+  if (fim < totalPaginas && totalPaginas > 1) {
     if (fim < totalPaginas - 1) {
       html += `<span class="pagination-ellipsis">...</span>`;
     }
@@ -106,10 +99,16 @@ function gerarPaginacao(tipo) {
 
   html += `
         <button class="pagination-btn pagination-next ${
-          config.paginaAtual === totalPaginas ? "disabled" : ""
+          config.paginaAtual >= totalPaginas || totalPaginas <= 1
+            ? "disabled"
+            : ""
         }" 
                 onclick="irParaPagina('${tipo}', ${config.paginaAtual + 1})"
-                ${config.paginaAtual === totalPaginas ? "disabled" : ""}>
+                ${
+                  config.paginaAtual >= totalPaginas || totalPaginas <= 1
+                    ? "disabled"
+                    : ""
+                }>
           Próximo
         </button>
       </div>
@@ -139,12 +138,13 @@ function gerarPaginacao(tipo) {
   return html;
 }
 
-// Função para ir para uma página específica
 function irParaPagina(tipo, pagina) {
   const totalPaginas = calcularTotalPaginas(tipo);
 
-  if (pagina < 1 || pagina > totalPaginas) {
-    return;
+  if (pagina < 1) {
+    pagina = 1;
+  } else if (pagina > totalPaginas) {
+    pagina = totalPaginas;
   }
 
   paginacao[tipo].paginaAtual = pagina;
@@ -156,10 +156,9 @@ function irParaPagina(tipo, pagina) {
   }
 }
 
-// Função para alterar itens por página
 function alterarItensPorPagina(tipo, novoValor) {
   paginacao[tipo].itensPorPagina = parseInt(novoValor);
-  paginacao[tipo].paginaAtual = 1; // Voltar para primeira página
+  paginacao[tipo].paginaAtual = 1;
 
   if (tipo === "receitas") {
     renderizarReceitasAdmin(paginacao.receitas.dados);
@@ -168,11 +167,6 @@ function alterarItensPorPagina(tipo, novoValor) {
   }
 }
 
-// ========================================
-// FUNÇÕES AUXILIARES
-// ========================================
-
-// Função para formatar datas de forma segura
 function formatarDataSegura(dataString, incluirHora = false) {
   try {
     if (!dataString || dataString === null || dataString === undefined) {
@@ -181,7 +175,6 @@ function formatarDataSegura(dataString, incluirHora = false) {
 
     const data = new Date(dataString);
 
-    // Verificar se a data é válida
     if (isNaN(data.getTime())) {
       return "Data inválida";
     }
@@ -203,41 +196,67 @@ function formatarDataSegura(dataString, incluirHora = false) {
   }
 }
 
-// ========================================
-// INICIALIZAÇÃO
-// ========================================
+document.addEventListener("DOMContentLoaded", () => {
+  const searchReceitas = document.getElementById("search-receitas");
+  if (searchReceitas) {
+    searchReceitas.addEventListener("input", (e) => {
+      const termo = e.target.value.trim().toLowerCase();
+      const todasReceitas =
+        paginacao.receitas.dadosOriginais || paginacao.receitas.dados;
+      if (!paginacao.receitas.dadosOriginais) {
+        paginacao.receitas.dadosOriginais = [...paginacao.receitas.dados];
+      }
+      let filtradas = todasReceitas;
+      if (termo.length > 0) {
+        filtradas = todasReceitas.filter(
+          (r) =>
+            (r.nome && r.nome.toLowerCase().includes(termo)) ||
+            (r.id && r.id.toLowerCase().includes(termo))
+        );
+      }
+      renderizarReceitasAdmin(filtradas);
+    });
+  }
+
+  const searchDicas = document.getElementById("search-dicas");
+  if (searchDicas) {
+    searchDicas.addEventListener("input", (e) => {
+      const termo = e.target.value.trim().toLowerCase();
+      const todasDicas =
+        paginacao.dicas.dadosOriginais || paginacao.dicas.dados;
+      if (!paginacao.dicas.dadosOriginais) {
+        paginacao.dicas.dadosOriginais = [...paginacao.dicas.dados];
+      }
+      let filtradas = todasDicas;
+      if (termo.length > 0) {
+        filtradas = todasDicas.filter(
+          (d) => d.id && d.id.toLowerCase().includes(termo)
+        );
+      }
+      renderizarDicasAdmin(filtradas);
+    });
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Painel Admin inicializando...");
 
-  // Aguardar um pouco para garantir que o DOM está completamente carregado
   setTimeout(() => {
     console.log("Configurando painel admin...");
 
-    // Verificar autenticação
     verificarAutenticacao();
-
-    // Configurar navegação por tabs
     configurarTabs();
-
-    // Configurar eventos
     configurarEventos();
-
-    // Carregar dados iniciais
     carregarDadosIniciais();
 
     console.log("Painel Admin inicializado com sucesso!");
   }, 200);
 });
 
-// ========================================
-// AUTENTICAÇÃO
-// ========================================
 function verificarAutenticacao() {
-  // Verificar se o usuário está autenticado como admin
   const isAdmin = sessionStorage.getItem("isAdmin") === "true";
 
   if (!isAdmin) {
-    // Se não está autenticado, solicitar senha
     const senha = prompt(
       "Digite a senha de administrador para acessar o painel:"
     );
@@ -270,9 +289,6 @@ function logout() {
   }, 1500);
 }
 
-// ========================================
-// NAVEGAÇÃO POR TABS
-// ========================================
 function configurarTabs() {
   const tabButtons = document.querySelectorAll(".tab-button");
   const tabContents = document.querySelectorAll(".tab-content");
@@ -281,24 +297,19 @@ function configurarTabs() {
     button.addEventListener("click", function () {
       const tabId = this.getAttribute("data-tab");
 
-      // Remover classe active de todos os botões e conteúdos
       tabButtons.forEach((btn) => btn.classList.remove("active"));
       tabContents.forEach((content) => content.classList.remove("active"));
 
-      // Adicionar classe active ao botão clicado
       this.classList.add("active");
 
-      // Mostrar o conteúdo correspondente
       const targetContent = document.getElementById(`tab-${tabId}`);
       if (targetContent) {
         targetContent.classList.add("active");
         targetContent.classList.add("fade-in");
       }
 
-      // Atualizar estado atual
       currentTab = tabId;
 
-      // Carregar conteúdo específico da aba
       carregarConteudoAba(tabId);
 
       console.log(`Mudou para aba: ${tabId}`);
@@ -306,7 +317,6 @@ function configurarTabs() {
   });
 }
 
-// Função para carregar conteúdo específico de cada aba
 function carregarConteudoAba(tabId) {
   switch (tabId) {
     case "receitas":
@@ -321,13 +331,9 @@ function carregarConteudoAba(tabId) {
   }
 }
 
-// ========================================
-// CONFIGURAÇÃO DE EVENTOS
-// ========================================
 function configurarEventos() {
   console.log("Configurando eventos...");
 
-  // Botão de logout
   const btnLogout = document.getElementById("btn-logout");
   if (btnLogout) {
     console.log("Botão logout encontrado");
@@ -336,7 +342,6 @@ function configurarEventos() {
     console.log("Botão logout não encontrado");
   }
 
-  // Botão de nova receita
   const btnNovaReceita = document.getElementById("btn-nova-receita");
   if (btnNovaReceita) {
     console.log("✅ Botão nova receita encontrado");
@@ -345,7 +350,6 @@ function configurarEventos() {
     console.log("❌ Botão nova receita não encontrado");
   }
 
-  // Botão de nova dica
   const btnNovaDica = document.getElementById("btn-nova-dica");
   if (btnNovaDica) {
     console.log("✅ Botão nova dica encontrado");
@@ -354,23 +358,14 @@ function configurarEventos() {
     console.log("❌ Botão nova dica não encontrado");
   }
 
-  // Configurar formulários
   configurarFormularios();
-
-  // Configurar event listeners para fechar modals
   configurarBotoesFecharModal();
-
-  // Configurar previews de imagem
   configurarPreviewsImagem();
 }
 
-// Função para configurar event listeners dos formulários
-// Função para configurar event listeners dos formulários
-// Função para configurar event listeners dos formulários
 function configurarFormularios() {
   console.log("Configurando formulários...");
 
-  // Configurar formulários após um pequeno delay
   setTimeout(() => {
     configurarFormularioNovaReceita();
     configurarFormularioNovaDica();
@@ -421,21 +416,16 @@ function configurarFormularioEditarDica() {
   }
 }
 
-// ========================================
-// CARREGAMENTO DE DADOS
-// ========================================
 async function carregarDadosIniciais() {
   console.log("Carregando dados iniciais...");
 
   try {
-    // Verificar se a aba de receitas está ativa
     const receitasTab = document.getElementById("tab-receitas");
     if (receitasTab && receitasTab.classList.contains("active")) {
       console.log("📖 Carregando receitas...");
       await carregarReceitasAdmin();
     }
 
-    // Carregar estatísticas sempre
     await carregarEstatisticas();
   } catch (error) {
     console.error("❌ Erro ao carregar dados:", error);
@@ -451,21 +441,18 @@ async function carregarEstatisticas() {
       const stats = await response.json();
       renderizarEstatisticas(stats);
     } else {
-      // Se a API de stats não existe, calcular manualmente
       const receitasResponse = await fetch(`${API_BASE_URL}/api/receitas`);
       const dicasResponse = await fetch(`${API_BASE_URL}/api/dicas`);
 
       const receitas = receitasResponse.ok ? await receitasResponse.json() : [];
       const dicas = dicasResponse.ok ? await dicasResponse.json() : [];
 
-      // Calcular estatísticas detalhadas
       const stats = calcularEstatisticasDetalhadas(receitas, dicas);
       renderizarEstatisticas(stats);
     }
   } catch (error) {
     console.error("❌ Erro ao carregar estatísticas:", error);
 
-    // Verificar se é erro de conexão
     const isConnectionError =
       error.message.includes("Failed to fetch") ||
       error.message.includes("NetworkError") ||
@@ -473,13 +460,12 @@ async function carregarEstatisticas() {
       !navigator.onLine;
 
     if (isConnectionError) {
-      // Usar função específica para estatísticas
       document.getElementById("estatisticas-container").innerHTML = `
         <div class="erro-conexao">
           <div class="erro-content">
             <h3>Erro de Conexão</h3>
             <p>Não foi possível conectar com o servidor.</p>
-            <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+            <p>Certifique-se de que o backend está rodando em <code>http://127.0.0.1:8000</code></p>
             <button onclick="carregarEstatisticas()" class="btn-retry">Tentar Novamente</button>
           </div>
         </div>
@@ -492,7 +478,6 @@ async function carregarEstatisticas() {
 }
 
 function calcularEstatisticasDetalhadas(receitas, dicas) {
-  // Garantir que receitas e dicas são arrays válidos
   const receitasArray = Array.isArray(receitas) ? receitas : [];
   const dicasArray = Array.isArray(dicas) ? dicas : [];
 
@@ -503,16 +488,14 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
     dicasArray.length
   );
 
-  // Configurar datas corretamente
   const agora = new Date();
   const umaSemanaAtras = new Date();
   umaSemanaAtras.setDate(agora.getDate() - 7);
-  umaSemanaAtras.setHours(0, 0, 0, 0); // Início do dia há 7 dias
+  umaSemanaAtras.setHours(0, 0, 0, 0);
 
   console.log("🕰️ Data atual:", agora.toISOString());
   console.log("🕰️ Uma semana atrás:", umaSemanaAtras.toISOString());
 
-  // Estatísticas de receitas - corrigir o filtro de imagem
   const receitasComImagem = receitasArray.filter((r) => r && r.imagem).length;
   const receitasComHistoria = receitasArray.filter(
     (r) => r && r.historia && r.historia.trim().length > 0
@@ -527,7 +510,6 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
     try {
       const dataReceita = new Date(r.created_at);
 
-      // Verificar se a data é válida
       if (isNaN(dataReceita.getTime())) {
         console.log(
           "❌ Data inválida para receita:",
@@ -554,7 +536,6 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
 
   console.log("📊 TOTAL RECEITAS RECENTES:", receitasRecentes);
 
-  // Estatísticas de dicas
   const dicasRecentes = dicasArray.filter((d) => {
     if (!d || !d.created_at) {
       console.log(
@@ -567,7 +548,6 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
     try {
       const dataDica = new Date(d.created_at);
 
-      // Verificar se a data é válida
       if (isNaN(dataDica.getTime())) {
         console.log(
           "❌ Data inválida para dica:",
@@ -599,17 +579,6 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
 
   console.log("📊 TOTAL DICAS RECENTES:", dicasRecentes);
 
-  const mediaCaracteresDicas =
-    dicasArray.length > 0
-      ? Math.round(
-          dicasArray.reduce(
-            (sum, d) => sum + (d && (d.conteudo || d.texto || "")).length,
-            0
-          ) / dicasArray.length
-        )
-      : 0;
-
-  // Classificar dicas por tamanho
   const dicasCurtas = dicasArray.filter(
     (d) => d && (d.conteudo || d.texto || "").length <= 100
   ).length;
@@ -617,7 +586,6 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
     (d) => d && (d.conteudo || d.texto || "").length > 100
   ).length;
 
-  // Estatísticas de ingredientes (se existir no campo ingredientes)
   const todosIngredientes = receitasArray.flatMap((r) => {
     if (r && r.ingredientes) {
       return r.ingredientes.split("\n").filter((i) => i.trim().length > 0);
@@ -639,7 +607,6 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
     dicas_recentes: Number(dicasRecentes) || 0,
     dicas_curtas: Number(dicasCurtas) || 0,
     dicas_longas: Number(dicasLongas) || 0,
-    media_caracteres_dicas: Number(mediaCaracteresDicas) || 0,
     total_ingredientes_unicos: Number(ingredientesUnicos.length) || 0,
     percentual_receitas_com_imagem:
       receitasArray.length > 0
@@ -653,7 +620,6 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
 }
 
 function renderizarEstatisticas(stats) {
-  // Garantir que stats é um objeto válido e todos os valores são números
   const safeStats = {
     total_receitas: Number(stats?.total_receitas) || 0,
     total_dicas: Number(stats?.total_dicas) || 0,
@@ -664,7 +630,6 @@ function renderizarEstatisticas(stats) {
     dicas_recentes: Number(stats?.dicas_recentes) || 0,
     dicas_curtas: Number(stats?.dicas_curtas) || 0,
     dicas_longas: Number(stats?.dicas_longas) || 0,
-    media_caracteres_dicas: Number(stats?.media_caracteres_dicas) || 0,
     total_ingredientes_unicos: Number(stats?.total_ingredientes_unicos) || 0,
     percentual_receitas_com_imagem:
       Number(stats?.percentual_receitas_com_imagem) || 0,
@@ -702,21 +667,10 @@ function renderizarEstatisticas(stats) {
         <div class="stat-card success">
           <div class="stat-number">${safeStats.receitas_com_imagem}</div>
           <div class="stat-label">Receitas com Imagem</div>
-          <div class="stat-percentage">${
-            safeStats.percentual_receitas_com_imagem
-          }%</div>
         </div>
         <div class="stat-card accent">
           <div class="stat-number">${safeStats.receitas_com_historia}</div>
           <div class="stat-label">Receitas Documentadas</div>
-          <div class="stat-percentage">${
-            safeStats.percentual_receitas_com_historia
-          }%</div>
-        </div>
-        <div class="stat-card metric">
-          <div class="stat-number">${safeStats.media_caracteres_dicas}</div>
-          <div class="stat-label">Caracteres por Dica</div>
-          <div class="stat-subtext">Média do conteúdo</div>
         </div>
       </div>
     </div>
@@ -741,7 +695,6 @@ function renderizarEstatisticas(stats) {
     </div>
   `;
 
-  // Adicionar animações aos elementos
   const statCards = container.querySelectorAll(".stat-card");
   statCards.forEach((card, index) => {
     setTimeout(() => {
@@ -749,7 +702,6 @@ function renderizarEstatisticas(stats) {
     }, index * 100);
   });
 
-  // Adicionar event listeners para ações administrativas
   container.querySelectorAll(".admin-action-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const action = e.currentTarget.getAttribute("data-action");
@@ -766,7 +718,6 @@ function renderizarEstatisticas(stats) {
   });
 }
 
-// Função para navegar entre abas do dashboard
 function navegarPara(aba) {
   const tabButton = document.querySelector(`[data-tab="${aba}"]`);
   if (tabButton) {
@@ -782,19 +733,11 @@ function mostrarCarregamento(tipo, mostrar) {
   }
 }
 
-// ========================================
-// SISTEMA DE MENSAGENS E FEEDBACK VISUAL
-// ========================================
-
-// Sistema de notificações Toast melhorado
 function mostrarMensagem(mensagem, tipo = "info", duracao = 4000) {
-  // Use a função global se disponível, senão implementa localmente
   if (window.RaizesAmazonia?.UI?.showMessage) {
     return window.RaizesAmazonia.UI.showMessage(mensagem, tipo, duracao);
   }
 
-  // Implementação local como fallback
-  // Criar container de toasts se não existir
   let toastContainer = document.querySelector(".toast-container");
   if (!toastContainer) {
     toastContainer = document.createElement("div");
@@ -802,14 +745,12 @@ function mostrarMensagem(mensagem, tipo = "info", duracao = 4000) {
     document.body.appendChild(toastContainer);
   }
 
-  // Criar toast
   const toast = document.createElement("div");
   toast.className = `toast ${tipo}`;
 
   const toastId = "toast-" + Date.now();
   toast.id = toastId;
 
-  // Definir ícones por tipo
   const icones = {
     success: "✓",
     error: "✗",
@@ -830,29 +771,24 @@ function mostrarMensagem(mensagem, tipo = "info", duracao = 4000) {
     <div class="toast-progress" id="progress-${toastId}"></div>
   `;
 
-  // Adicionar event listener para fechar
   const closeButton = toast.querySelector(".toast-close");
   if (closeButton) {
     closeButton.addEventListener("click", () => fecharToast(toastId));
   }
 
-  // Adicionar animação de entrada
   toast.classList.add("slide-in");
   toastContainer.appendChild(toast);
 
-  // Animar barra de progresso
   const progressBar = document.getElementById(`progress-${toastId}`);
   setTimeout(() => {
     progressBar.style.width = "0%";
     progressBar.style.transition = `width ${duracao}ms linear`;
   }, 50);
 
-  // Auto-remover após duração especificada
   const timeoutId = setTimeout(() => {
     fecharToast(toastId);
   }, duracao);
 
-  // Pausar timer ao hover
   toast.addEventListener("mouseenter", () => {
     clearTimeout(timeoutId);
     progressBar.style.animationPlayState = "paused";
@@ -877,14 +813,9 @@ function fecharToast(toastId) {
   }
 }
 
-// Função para compatibilidade com código existente
 function mostrarMensagemAdmin(mensagem, tipo = "info") {
   mostrarMensagem(mensagem, tipo);
 }
-
-// ========================================
-// SISTEMA DE LOADING E FEEDBACK VISUAL
-// ========================================
 
 function mostrarCarregamento(secao, mostrar = true) {
   const elemento = document.getElementById(`loading-${secao}`);
@@ -929,17 +860,13 @@ function mostrarLoadingOverlay(mostrar = true) {
   }
 }
 
-// Estados visuais para botões
 function setBotaoEstado(botaoOuId, estado, textoOriginal = null) {
   let botao;
 
-  // Verificar se é um elemento HTML ou um ID/seletor
   if (typeof botaoOuId === "string") {
-    // É um ID ou seletor
     botao =
       document.getElementById(botaoOuId) || document.querySelector(botaoOuId);
   } else if (botaoOuId && botaoOuId.nodeType === Node.ELEMENT_NODE) {
-    // É um elemento HTML
     botao = botaoOuId;
   }
 
@@ -948,7 +875,6 @@ function setBotaoEstado(botaoOuId, estado, textoOriginal = null) {
     return;
   }
 
-  // Salvar texto original se fornecido
   if (textoOriginal) {
     botao.dataset.textoOriginal = textoOriginal;
   }
@@ -990,7 +916,6 @@ function setBotaoEstado(botaoOuId, estado, textoOriginal = null) {
   }
 }
 
-// Animações para elementos
 function animarElemento(elemento, animacao = "fade-in") {
   if (typeof elemento === "string") {
     elemento = document.querySelector(elemento);
@@ -1008,14 +933,8 @@ function animarElemento(elemento, animacao = "fade-in") {
   }
 }
 
-// ========================================
-// CRUD DE RECEITAS
-// ========================================
-
-// Variável global para armazenar o ID da receita sendo editada
 let receitaEditandoId = null;
 
-// Função para carregar e exibir receitas no painel admin
 async function carregarReceitasAdmin() {
   const container = document.getElementById("receitas-lista");
 
@@ -1047,11 +966,9 @@ async function carregarReceitasAdmin() {
   }
 }
 
-// Função para renderizar receitas na interface admin
 function renderizarReceitasAdmin(todasReceitas) {
   const container = document.getElementById("receitas-lista");
 
-  // Atualizar dados na paginação
   paginacao.receitas.dados = todasReceitas || [];
   paginacao.receitas.totalItens = paginacao.receitas.dados.length;
 
@@ -1059,28 +976,15 @@ function renderizarReceitasAdmin(todasReceitas) {
     container.innerHTML = `
       <div class="empty-state">
         <h3>Nenhuma receita encontrada</h3>
-        <p>Comece adicionando sua primeira receita amazônica!</p>
-        <button id="btn-primeira-receita" class="btn-primary">
-          ➕ Adicionar Primeira Receita
-        </button>
       </div>
     `;
-
-    // Adicionar event listener para o botão da primeira receita
-    const btnPrimeiraReceita = document.getElementById("btn-primeira-receita");
-    if (btnPrimeiraReceita) {
-      btnPrimeiraReceita.addEventListener("click", abrirModalNovaReceitaAdmin);
-    }
     return;
   }
 
-  // Obter receitas da página atual
   const receitasPagina = obterItensPaginaAtual("receitas");
 
-  // Limpar container
   container.innerHTML = "";
 
-  // Criar container para as receitas
   const receitasContainer = document.createElement("div");
   receitasContainer.className = "lista-items";
 
@@ -1123,7 +1027,6 @@ function renderizarReceitasAdmin(todasReceitas) {
 
     receitasContainer.appendChild(receitaCard);
 
-    // Adicionar event listeners para os botões de ação
     const btnView = receitaCard.querySelector('[data-action="view"]');
     const btnEdit = receitaCard.querySelector('[data-action="edit"]');
     const btnDelete = receitaCard.querySelector('[data-action="delete"]');
@@ -1142,27 +1045,22 @@ function renderizarReceitasAdmin(todasReceitas) {
       );
     }
 
-    // Adicionar animação de entrada
     setTimeout(() => {
       receitaCard.classList.add("fade-in");
     }, 50);
   });
 
-  // Adicionar container de receitas
   container.appendChild(receitasContainer);
 
-  // Adicionar paginação
   const paginacaoHTML = gerarPaginacao("receitas");
   if (paginacaoHTML) {
     container.insertAdjacentHTML("beforeend", paginacaoHTML);
   }
 }
 
-// Função para abrir modal de nova receita
 function abrirModalNovaReceitaAdmin() {
   console.log("🟢 Abrindo modal de nova receita...");
 
-  // Limpar o formulário
   const form = document.getElementById("form-nova-receita");
   if (form) {
     console.log("✅ Formulário encontrado, limpando...");
@@ -1171,7 +1069,6 @@ function abrirModalNovaReceitaAdmin() {
     console.log("❌ Formulário não encontrado");
   }
 
-  // Limpar preview de imagem
   const previewContainer = document.getElementById("preview-container");
   const imagemInput = document.getElementById("imagem");
 
@@ -1186,7 +1083,6 @@ function abrirModalNovaReceitaAdmin() {
   abrirModal("modal-nova-receita");
 }
 
-// Função para adicionar nova receita
 async function adicionarReceita(event) {
   console.log("🟢 Função adicionarReceita chamada");
   event.preventDefault();
@@ -1197,7 +1093,6 @@ async function adicionarReceita(event) {
   const originalText = submitButton.textContent;
 
   console.log("Validando campos...");
-  // Validar campos obrigatórios
   const nome = formData.get("nome")?.trim();
   const descricao = formData.get("descricao")?.trim();
   const ingredientes = formData.get("ingredientes")?.trim();
@@ -1220,7 +1115,6 @@ async function adicionarReceita(event) {
     return;
   }
 
-  // Mostrar estado de carregamento
   setBotaoEstado(submitButton, "loading", originalText);
   mostrarLoadingOverlay(true);
 
@@ -1237,11 +1131,9 @@ async function adicionarReceita(event) {
 
     const receita = await response.json();
 
-    // Feedback de sucesso
     setBotaoEstado(submitButton, "success", originalText);
     mostrarMensagem("Receita criada com sucesso!", "success");
 
-    // Animar o fechamento do modal
     const modal = document.getElementById("modal-nova-receita");
     if (modal) {
       animarElemento(modal, "bounce-animation");
@@ -1250,7 +1142,6 @@ async function adicionarReceita(event) {
       }, 600);
     }
 
-    // Recarregar dados com animação
     await carregarReceitasAdmin();
   } catch (error) {
     console.error("Erro ao criar receita:", error);
@@ -1265,7 +1156,6 @@ async function adicionarReceita(event) {
   }
 }
 
-// Função para editar receita
 function editarReceitaAdmin(id) {
   fetch(`${API_BASE_URL}/api/receitas/${id}`)
     .then((response) => response.json())
@@ -1278,7 +1168,6 @@ function editarReceitaAdmin(id) {
     });
 }
 
-// Função para abrir modal de edição
 function abrirModalEditarReceitaAdmin(receita) {
   receitaEditandoId = receita.id;
 
@@ -1288,14 +1177,12 @@ function abrirModalEditarReceitaAdmin(receita) {
   document.getElementById("edit-modo_preparo").value = receita.modo_preparo;
   document.getElementById("edit-historia").value = receita.historia || "";
 
-  // Limpar preview de imagem
   document.getElementById("edit-preview-container").style.display = "none";
   document.getElementById("edit-imagem").value = "";
 
   abrirModal("modal-editar-receita");
 }
 
-// Função para salvar edição de receita
 async function salvarEdicaoReceita(event) {
   event.preventDefault();
 
@@ -1343,15 +1230,12 @@ async function salvarEdicaoReceita(event) {
   }
 }
 
-// Função para deletar receita
 async function deletarReceitaAdmin(id) {
   try {
-    // Carregar dados da receita para mostrar no modal de confirmação
     const receita = await fetch(`${API_BASE_URL}/api/receitas/${id}`).then(
       (r) => r.json()
     );
 
-    // Criar modal de confirmação personalizado
     const modalConfirm = document.createElement("div");
     modalConfirm.className = "modal-overlay";
     modalConfirm.innerHTML = `
@@ -1386,7 +1270,6 @@ async function deletarReceitaAdmin(id) {
     document.body.appendChild(modalConfirm);
     animarElemento(modalConfirm, "fade-in");
 
-    // Adicionar event listeners para os botões do modal
     const btnFechar = modalConfirm.querySelector(
       '[data-action="fechar-confirm"]'
     );
@@ -1406,14 +1289,12 @@ async function deletarReceitaAdmin(id) {
     }
   } catch (error) {
     console.error("Erro ao carregar receita para confirmação:", error);
-    // Fallback para confirmação simples
     if (confirm("Tem certeza que deseja excluir esta receita?")) {
       await confirmarExclusaoReceita(id);
     }
   }
 }
 
-// Função para confirmar exclusão de receita
 async function confirmarExclusaoReceita(id) {
   mostrarLoadingOverlay(true);
 
@@ -1430,7 +1311,6 @@ async function confirmarExclusaoReceita(id) {
     fecharModalConfirm();
     await carregarReceitasAdmin();
 
-    // Animar a remoção
     const receitaCard = document.querySelector(`[data-receita-id="${id}"]`);
     if (receitaCard) {
       animarElemento(receitaCard, "fadeOut");
@@ -1448,7 +1328,6 @@ async function confirmarExclusaoReceita(id) {
   }
 }
 
-// Função para fechar modal de confirmação
 function fecharModalConfirm() {
   const modal = document.querySelector(".modal-overlay");
   if (modal) {
@@ -1461,22 +1340,18 @@ function fecharModalConfirm() {
   }
 }
 
-// Função para atualizar estatísticas de receitas
 function atualizarEstatisticasReceitas(receitas) {
   const totalReceitas = receitas.length;
   const receitasComImagem = receitas.filter((r) => r.imagem).length;
 
-  // Calcular percentual de receitas com imagem
   const percentualComImagem =
     totalReceitas > 0
       ? Math.round((receitasComImagem / totalReceitas) * 100)
       : 0;
-
-  // Receitas recentes (últimos 7 dias) - usar a mesma lógica das estatísticas gerais
   const agora = new Date();
   const seteDiasAtras = new Date();
   seteDiasAtras.setDate(agora.getDate() - 7);
-  seteDiasAtras.setHours(0, 0, 0, 0); // Início do dia há 7 dias
+  seteDiasAtras.setHours(0, 0, 0, 0);
 
   console.log("🔍 DEBUG RECEITAS - Data atual:", agora.toLocaleDateString());
   console.log(
@@ -1528,12 +1403,10 @@ function atualizarEstatisticasReceitas(receitas) {
     receitasRecentes
   );
 
-  // Atualizar elementos no DOM
   document.getElementById("total-receitas").textContent = totalReceitas;
   document.getElementById("receitas-com-imagem").textContent =
     receitasComImagem;
 
-  // Adicionar percentual se o elemento existir
   const percentualElement = document.getElementById(
     "percentual-receitas-imagem"
   );
@@ -1541,21 +1414,14 @@ function atualizarEstatisticasReceitas(receitas) {
     percentualElement.textContent = `${percentualComImagem}%`;
   }
 
-  // Adicionar receitas recentes se o elemento existir
   const recentesElement = document.getElementById("receitas-recentes");
   if (recentesElement) {
     recentesElement.textContent = receitasRecentes;
   }
 }
 
-// ========================================
-// CRUD DE DICAS
-// ========================================
-
-// Variável global para armazenar o ID da dica sendo editada
 let dicaEditandoId = null;
 
-// Função para carregar e exibir dicas no painel admin
 async function carregarDicasAdmin() {
   const container = document.getElementById("dicas-lista");
 
@@ -1578,7 +1444,6 @@ async function carregarDicasAdmin() {
   } catch (error) {
     console.error("Erro ao carregar dicas:", error);
 
-    // Verificar se é erro de conexão
     const isConnectionError =
       error.message.includes("Failed to fetch") ||
       error.message.includes("NetworkError") ||
@@ -1598,11 +1463,9 @@ async function carregarDicasAdmin() {
   }
 }
 
-// Função para renderizar dicas na interface admin
 function renderizarDicasAdmin(todasDicas) {
   const container = document.getElementById("dicas-lista");
 
-  // Atualizar dados na paginação
   paginacao.dicas.dados = todasDicas || [];
   paginacao.dicas.totalItens = paginacao.dicas.dados.length;
 
@@ -1610,38 +1473,20 @@ function renderizarDicasAdmin(todasDicas) {
     container.innerHTML = `
       <div class="empty-state">
         <h3>Nenhuma dica encontrada</h3>
-        <p>Comece adicionando sua primeira dica culinária!</p>
-        <button id="btn-cadastrar-primeira-dica" class="btn-primary">
-          ➕ Adicionar Primeira Dica
-        </button>
       </div>
     `;
-
-    // Adicionar event listener para o botão da primeira dica
-    const btnPrimeiraDica = document.getElementById(
-      "btn-cadastrar-primeira-dica"
-    );
-    if (btnPrimeiraDica) {
-      btnPrimeiraDica.addEventListener("click", abrirModalNovaDicaAdmin);
-    }
     return;
   }
 
-  // Obter dicas da página atual
   const dicasPagina = obterItensPaginaAtual("dicas");
 
-  // Limpar container
   container.innerHTML = "";
 
-  // Criar container para as dicas
   const dicasContainer = document.createElement("div");
   dicasContainer.className = "lista-items";
 
   dicasPagina.forEach((dica) => {
-    const dataFormatada = formatarDataSegura(
-      dica.created_at,
-      true // incluir hora
-    );
+    const dataFormatada = formatarDataSegura(dica.created_at, true);
 
     const tamanhoTexto = (dica.texto || dica.conteudo || "").length;
     let tamanhoLabel = "";
@@ -1654,7 +1499,6 @@ function renderizarDicasAdmin(todasDicas) {
       tamanhoLabel = "Curta";
     }
 
-    // Truncar texto se muito longo para preview
     const textoCompleto = dica.texto || dica.conteudo || "";
     const textoPreview =
       tamanhoTexto > 150
@@ -1688,7 +1532,6 @@ function renderizarDicasAdmin(todasDicas) {
 
     dicasContainer.appendChild(dicaCard);
 
-    // Adicionar event listeners para os botões de ação
     const btnEdit = dicaCard.querySelector('[data-action="edit"]');
     const btnDelete = dicaCard.querySelector('[data-action="delete"]');
 
@@ -1700,27 +1543,22 @@ function renderizarDicasAdmin(todasDicas) {
       btnDelete.addEventListener("click", () => deletarDicaAdmin(dica.id));
     }
 
-    // Adicionar animação de entrada
     setTimeout(() => {
       dicaCard.classList.add("fade-in");
     }, 50);
   });
 
-  // Adicionar container de dicas
   container.appendChild(dicasContainer);
 
-  // Adicionar paginação
   const paginacaoHTML = gerarPaginacao("dicas");
   if (paginacaoHTML) {
     container.insertAdjacentHTML("beforeend", paginacaoHTML);
   }
 }
 
-// Função para abrir modal de nova dica
 function abrirModalNovaDicaAdmin() {
   console.log("🟢 Abrindo modal de nova dica...");
 
-  // Limpar o formulário
   const form = document.getElementById("form-nova-dica");
   if (form) {
     console.log("✅ Formulário encontrado, limpando...");
@@ -1733,7 +1571,6 @@ function abrirModalNovaDicaAdmin() {
   abrirModal("modal-nova-dica");
 }
 
-// Função para adicionar nova dica
 async function adicionarDica(event) {
   console.log("🟢 Função adicionarDica chamada");
   event.preventDefault();
@@ -1747,7 +1584,6 @@ async function adicionarDica(event) {
     form.querySelector('textarea[name="texto"]');
 
   console.log("Validando campo texto...");
-  // Validar campo obrigatório
   const texto = formData.get("texto")?.trim();
   console.log("Texto da dica:", texto);
 
@@ -1767,7 +1603,6 @@ async function adicionarDica(event) {
     return;
   }
 
-  // Mostrar loading com feedback visual
   setBotaoEstado(submitButton, "loading", originalText);
   mostrarLoadingOverlay(true);
 
@@ -1787,11 +1622,9 @@ async function adicionarDica(event) {
 
     const dica = await response.json();
 
-    // Feedback de sucesso
     setBotaoEstado(submitButton, "success", originalText);
     mostrarMensagem("Dica criada com sucesso!", "success");
 
-    // Animar fechamento do modal
     const modal = document.getElementById("modal-nova-dica");
     if (modal) {
       animarElemento(modal, "bounce-animation");
@@ -1800,7 +1633,6 @@ async function adicionarDica(event) {
       }, 600);
     }
 
-    // Recarregar dados
     await carregarDicasAdmin();
   } catch (error) {
     console.error("Erro ao criar dica:", error);
@@ -1815,7 +1647,6 @@ async function adicionarDica(event) {
   }
 }
 
-// Função para editar dica
 function editarDicaAdmin(id) {
   fetch(`${API_BASE_URL}/api/dicas`)
     .then((response) => response.json())
@@ -1833,7 +1664,6 @@ function editarDicaAdmin(id) {
     });
 }
 
-// Função para abrir modal de edição
 function abrirModalEditarDicaAdmin(dica) {
   dicaEditandoId = dica.id;
 
@@ -1842,7 +1672,6 @@ function abrirModalEditarDicaAdmin(dica) {
   abrirModal("modal-editar-dica");
 }
 
-// Função para salvar edição de dica
 async function salvarEdicaoDica(event) {
   event.preventDefault();
 
@@ -1887,9 +1716,7 @@ async function salvarEdicaoDica(event) {
   }
 }
 
-// Função para deletar dica
 async function deletarDicaAdmin(id) {
-  // Buscar o texto da dica para confirmação
   try {
     const response = await fetch(`${API_BASE_URL}/api/dicas`);
     const dicas = await response.json();
@@ -1925,15 +1752,13 @@ async function deletarDicaAdmin(id) {
   }
 }
 
-// Função para atualizar estatísticas de dicas
 function atualizarEstatisticasDicas(dicas) {
   const totalDicas = dicas.length;
 
-  // Dicas recentes (últimos 7 dias) - usar a mesma lógica das estatísticas gerais
   const agora = new Date();
   const seteDiasAtras = new Date();
   seteDiasAtras.setDate(agora.getDate() - 7);
-  seteDiasAtras.setHours(0, 0, 0, 0); // Início do dia há 7 dias
+  seteDiasAtras.setHours(0, 0, 0, 0);
 
   console.log("🔍 DEBUG DICAS - Data atual:", agora.toLocaleDateString());
   console.log(
@@ -1983,7 +1808,6 @@ function atualizarEstatisticasDicas(dicas) {
 
   console.log("🔍 DEBUG DICAS - TOTAL RECENTES ENCONTRADAS:", dicasRecentes);
 
-  // Atualizar elementos no DOM
   const totalElement = document.getElementById("total-dicas");
   const recentesElement = document.getElementById("dicas-recentes");
 
@@ -1991,12 +1815,10 @@ function atualizarEstatisticasDicas(dicas) {
   if (recentesElement) recentesElement.textContent = dicasRecentes;
 }
 
-// Função para mostrar loading de dicas
 function mostrarLoadingDicas(mostrar) {
   mostrarCarregamento("dicas", mostrar);
 }
 
-// Função para mostrar erro de conexão de dicas
 function mostrarErroConexaoDicas() {
   const container = document.getElementById("dicas-lista");
   container.innerHTML = `
@@ -2004,18 +1826,13 @@ function mostrarErroConexaoDicas() {
       <div class="erro-content">
         <h3>Erro de Conexão</h3>
         <p>Não foi possível conectar com o servidor.</p>
-        <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+        <p>Certifique-se de que o backend está rodando em <code>http://127.0.0.1:8000</code></p>
         <button onclick="carregarDicasAdmin()" class="btn-retry">Tentar Novamente</button>
       </div>
     </div>
   `;
 }
 
-// ========================================
-// FUNÇÕES AUXILIARES PARA MODAIS
-// ========================================
-
-// Função para abrir modal
 function abrirModal(modalId) {
   console.log(`🔵 Tentando abrir modal: ${modalId}`);
   const modal = document.getElementById(modalId);
@@ -2029,7 +1846,6 @@ function abrirModal(modalId) {
   }
 }
 
-// Função para fechar modal
 function fecharModal(modalId) {
   console.log(`🔴 Tentando fechar modal: ${modalId}`);
   const modal = document.getElementById(modalId);
@@ -2043,7 +1859,6 @@ function fecharModal(modalId) {
   }
 }
 
-// Preview de imagem para nova receita
 function previewImage(event) {
   const file = event.target.files[0];
   const container = document.getElementById("preview-container");
@@ -2061,7 +1876,6 @@ function previewImage(event) {
   }
 }
 
-// Preview de imagem para edição
 function previewEditImage(event) {
   const file = event.target.files[0];
   const container = document.getElementById("edit-preview-container");
@@ -2079,12 +1893,10 @@ function previewEditImage(event) {
   }
 }
 
-// Função para ver detalhes da receita
 function verReceitaDetalhesAdmin(id) {
   window.open(`receita.html?id=${id}`, "_blank");
 }
 
-// Função para mostrar loading
 function mostrarLoading(mostrar) {
   const container = document.getElementById("receitas-lista");
   if (!container) return;
@@ -2093,13 +1905,12 @@ function mostrarLoading(mostrar) {
     container.innerHTML = `
       <div class="loading-state">
         <div class="spinner"></div>
-        <p>Carregando receitas...</p>
+               <p>Carregando receitas...</p>
       </div>
     `;
   }
 }
 
-// Função para mostrar erro de conexão
 function mostrarErroConexaoAdmin() {
   const container = document.getElementById("receitas-lista");
   container.innerHTML = `
@@ -2107,18 +1918,13 @@ function mostrarErroConexaoAdmin() {
       <div class="erro-content">
         <h3>Erro de Conexão</h3>
         <p>Não foi possível conectar com o servidor.</p>
-        <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+        <p>Certifique-se de que o backend está rodando em <code>http://127.0.0.1:8000</code></p>
         <button onclick="carregarReceitasAdmin()" class="btn-retry">Tentar Novamente</button>
       </div>
     </div>
   `;
 }
 
-// ========================================
-// FUNÇÕES DE TESTE E DEBUG
-// ========================================
-
-// Função para testar conexão com API
 async function testarConexaoAPI() {
   console.log("🔗 Testando conexão com API...");
 
@@ -2138,7 +1944,6 @@ async function testarConexaoAPI() {
   }
 }
 
-// Função para testar carregamento de receitas
 async function testarCarregamentoReceitas() {
   console.log("📖 Testando carregamento de receitas...");
 
@@ -2165,7 +1970,6 @@ async function testarCarregamentoReceitas() {
   }
 }
 
-// Função para testar carregamento de dicas
 async function testarCarregamentoDicas() {
   console.log("Testando carregamento de dicas...");
 
@@ -2189,15 +1993,9 @@ async function testarCarregamentoDicas() {
   }
 }
 
-// ========================================
-// FUNÇÕES DE DEBUG E TESTE
-// ========================================
-
-// Função para testar manualmente os event listeners
 function testarEventListeners() {
   console.log("🧪 Testando event listeners...");
 
-  // Testar formulários
   const formNovaReceita = document.getElementById("form-nova-receita");
   const formNovaDica = document.getElementById("form-nova-dica");
 
@@ -2205,11 +2003,9 @@ function testarEventListeners() {
   console.log("- Nova receita:", formNovaReceita ? "SIM" : "NÃO");
   console.log("- Nova dica:", formNovaDica ? "SIM" : "NÃO");
 
-  // Testar botões de fechar
   const botoesFechar = document.querySelectorAll("[data-close-modal]");
   console.log(`🔘 Botões de fechar encontrados: ${botoesFechar.length}`);
 
-  // Testar botões principais
   const btnNovaReceita = document.getElementById("btn-nova-receita");
   const btnNovaDica = document.getElementById("btn-nova-dica");
 
@@ -2226,11 +2022,9 @@ function testarEventListeners() {
   };
 }
 
-// Função para reconfigurar tudo manualmente
 function reconfigurarTudo() {
   console.log("🔧 Reconfigurando todos os event listeners...");
 
-  // Reconfigurar botões principais
   setTimeout(() => {
     configurarEventos();
     configurarFormularios();
@@ -2240,7 +2034,6 @@ function reconfigurarTudo() {
   }, 500);
 }
 
-// Expor funções no console para debug
 window.adminDebug = {
   testar: testarEventListeners,
   reconfigurar: reconfigurarTudo,
@@ -2248,34 +2041,15 @@ window.adminDebug = {
   abrirDica: () => abrirModalNovaDicaAdmin(),
 };
 
-// ========================================
-// FUNÇÕES GLOBAIS (para compatibilidade)
-// ========================================
 window.mostrarMensagem = mostrarMensagem;
 window.logout = logout;
 
-// Alias para compatibilidade
 window.mostrarMensagemAdmin = mostrarMensagem;
 
-// ========================================
-// LOG DE INICIALIZAÇÃO
-// ========================================
-console.log(`
-🌿 ====================================
-   PAINEL ADMINISTRATIVO
-   Raízes da Amazônia
-   Versão: 1.0.0
-   Ambiente: ${API_BASE_URL}
-==================================== 🌿
-`);
-
-// Função para configurar botões de fechar modal
 function configurarBotoesFecharModal() {
   console.log("🔧 Configurando botões de fechar modal...");
 
-  // Aguardar um pouco para garantir que o DOM está completamente carregado
   setTimeout(() => {
-    // Botões de fechar modal com data-close-modal
     const botoesFechar = document.querySelectorAll("[data-close-modal]");
     console.log(`📋 Encontrados ${botoesFechar.length} botões de fechar modal`);
 
@@ -2289,7 +2063,6 @@ function configurarBotoesFecharModal() {
       });
     });
 
-    // Configurar fechamento ao clicar fora do modal (remover listener anterior se existir)
     document.removeEventListener("click", fecharModalAoClicarFora);
     document.addEventListener("click", fecharModalAoClicarFora);
 
@@ -2297,7 +2070,6 @@ function configurarBotoesFecharModal() {
   }, 100);
 }
 
-// Função separada para fechar modal ao clicar fora
 function fecharModalAoClicarFora(event) {
   if (event.target.classList.contains("modal-overlay")) {
     const modal = event.target;
@@ -2307,11 +2079,9 @@ function fecharModalAoClicarFora(event) {
   }
 }
 
-// Função para configurar previews de imagem
 function configurarPreviewsImagem() {
   console.log("🖼️ Configurando previews de imagem...");
 
-  // Preview para nova receita
   const imagemNovaReceita = document.getElementById("imagem");
   if (imagemNovaReceita) {
     console.log("✅ Configurando preview para nova receita");
@@ -2320,7 +2090,6 @@ function configurarPreviewsImagem() {
     console.log("❌ Input de imagem para nova receita não encontrado");
   }
 
-  // Preview para editar receita
   const imagemEditarReceita = document.getElementById("edit-imagem");
   if (imagemEditarReceita) {
     console.log("✅ Configurando preview para editar receita");

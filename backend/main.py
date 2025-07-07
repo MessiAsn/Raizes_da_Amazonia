@@ -13,11 +13,8 @@ import smtplib
 import traceback
 from email import message
 
-# Configuração do banco de dados
-# SQLite é ideal para projetos acadêmicos por ser simples e não precisar de instalação
 import os
 
-# Garantir que o banco seja sempre criado na pasta backend, independente de onde o script é executado
 DB_PATH = os.path.join(os.path.dirname(__file__), "receitas.db")
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 engine = create_engine(
@@ -26,8 +23,10 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+PORT = int(os.environ.get("PORT", 8000))
+ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 
-# Modelo do banco de dados
+
 class ReceitaDB(Base):
     __tablename__ = "receitas"
 
@@ -72,23 +71,42 @@ except ImportError:
 
 app = FastAPI(title="Raízes da Amazônia API", version="1.0.0")
 
-# Configurar CORS
+if ENVIRONMENT == "production":
+    allowed_origins = [
+        "https://*.vercel.app",
+        "https://raizes-da-amazonia.vercel.app",
+    ]
+else:
+    allowed_origins = [
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "http://localhost",
+        "http://127.0.0.1",
+        "file://*",
+        "*",
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Em produção, especifique os domínios permitidos
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Servir arquivos estáticos (imagens das receitas)
-UPLOAD_DIR = "../uploads"  # Diretório uploads na raiz do projeto
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # Diretório raiz do projeto
+UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 # Servir arquivos estáticos do site (HTML, CSS, JS)
-app.mount("/assets", StaticFiles(directory="../assets"), name="assets")
-app.mount("/pages", StaticFiles(directory="../pages"), name="pages")
+app.mount(
+    "/assets", StaticFiles(directory=os.path.join(BASE_DIR, "assets")), name="assets"
+)
+app.mount(
+    "/pages", StaticFiles(directory=os.path.join(BASE_DIR, "pages")), name="pages"
+)
 
 
 # Servir a página principal
@@ -96,7 +114,7 @@ app.mount("/pages", StaticFiles(directory="../pages"), name="pages")
 async def serve_index():
     from fastapi.responses import FileResponse
 
-    return FileResponse("../index.html")
+    return FileResponse(os.path.join(BASE_DIR, "index.html"))
 
 
 # Modelos Pydantic
@@ -504,4 +522,6 @@ Data: {datetime.now().strftime('%d/%m/%Y as %H:%M')}
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="localhost", port=8000)
+    # Configuração para permitir acesso local e externo
+    host = "0.0.0.0" if ENVIRONMENT == "production" else "127.0.0.1"
+    uvicorn.run(app, host=host, port=PORT)

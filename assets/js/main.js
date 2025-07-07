@@ -1,31 +1,22 @@
 /* Sistema Principal - Raízes da Amazônia */
 
-// Aguardar que todos os scripts sejam carregados
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 Iniciando aplicação...");
 
-  // Carregar receitas
   carregarReceitas();
-
-  // Carregar dicas
   carregarDicas();
 
-  // Configurar formulário de contato
   const formContato = document.getElementById("form-contato");
   if (formContato) {
     formContato.addEventListener("submit", enviarContato);
   }
 });
 
-// Sistema de mensagens simples
 function mostrarMensagem(texto, tipo = "info", duracao = 3000) {
-  // Use a função global se disponível, senão implementa localmente
   if (window.RaizesAmazonia?.UI?.showMessage) {
     return window.RaizesAmazonia.UI.showMessage(texto, tipo, duracao);
   }
 
-  // Implementação local como fallback
-  // Remover mensagem existente se houver
   const mensagemExistente = document.querySelector(".mensagem");
   if (mensagemExistente) {
     mensagemExistente.remove();
@@ -34,7 +25,6 @@ function mostrarMensagem(texto, tipo = "info", duracao = 3000) {
   const mensagem = document.createElement("div");
   mensagem.className = `mensagem mensagem-${tipo}`;
 
-  // Definir cores por tipo
   const cores = {
     success: "#28a745",
     error: "#dc3545",
@@ -65,7 +55,6 @@ function mostrarMensagem(texto, tipo = "info", duracao = 3000) {
 
   document.body.appendChild(mensagem);
 
-  // Auto-remover
   setTimeout(() => {
     if (mensagem.parentElement) {
       mensagem.remove();
@@ -73,17 +62,14 @@ function mostrarMensagem(texto, tipo = "info", duracao = 3000) {
   }, duracao);
 }
 
-// Configuração da API
 function getApiBaseUrl() {
-  return "http://localhost:8000";
+  return window.RaizesAmazonia?.Config?.API_BASE_URL || "http://127.0.0.1:8000";
 }
 
-// Carregamento de Receitas
 async function carregarReceitas() {
   try {
     console.log("Carregando receitas...");
 
-    // Usar o ReceitaManager se disponível
     if (window.RaizesAmazonia?.ReceitaManager) {
       const receitas =
         await window.RaizesAmazonia.ReceitaManager.carregarReceitas();
@@ -95,7 +81,6 @@ async function carregarReceitas() {
       return;
     }
 
-    // Fallback para fetch direto
     const response = await fetch(`${getApiBaseUrl()}/api/receitas`);
 
     if (!response.ok) {
@@ -115,14 +100,12 @@ async function carregarReceitas() {
 }
 
 function mostrarErroConexao() {
-  // Usar sistema centralizado de erro de conexão
   if (window.RaizesAmazonia?.UI?.mostrarErroConexao) {
     window.RaizesAmazonia.UI.mostrarErroConexao(
       ".card-container",
       "carregarReceitas"
     );
   } else {
-    // Fallback para caso o config.js não esteja carregado
     const container = document.querySelector(".card-container");
     if (container) {
       container.innerHTML = `
@@ -130,7 +113,7 @@ function mostrarErroConexao() {
           <div class="erro-content">
             <h3>⚠️ Erro de Conexão</h3>
             <p>Não foi possível conectar com o servidor.</p>
-            <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+            <p>Certifique-se de que o backend está rodando em <code>http://127.0.0.1:8000</code></p>
             <button onclick="carregarReceitas()" class="btn-retry">Tentar Novamente</button>
           </div>
         </div>
@@ -183,12 +166,10 @@ function verReceita(id) {
   window.location.href = `pages/receita.html?id=${id}`;
 }
 
-// Carregamento de Dicas
 async function carregarDicas() {
   try {
     console.log("Carregando dicas...");
 
-    // Usar o DicaManager se disponível
     if (window.RaizesAmazonia?.DicaManager) {
       const dicas = await window.RaizesAmazonia.DicaManager.carregarDicas();
       const container = document.querySelector(".dicas-scroll ul");
@@ -199,7 +180,6 @@ async function carregarDicas() {
       return;
     }
 
-    // Fallback para fetch direto
     const response = await fetch(`${getApiBaseUrl()}/api/dicas`);
 
     if (!response.ok) {
@@ -252,7 +232,6 @@ function mostrarErroDicas() {
   }
 }
 
-// Função para enviar formulário de contato
 async function enviarContato(event) {
   event.preventDefault();
 
@@ -290,13 +269,7 @@ async function enviarContato(event) {
   }
 }
 
-// ========================================
-// SISTEMA DE ADMINISTRAÇÃO
-// ========================================
-
-// Função para alternar para o modo admin (redireciona para painel dedicado)
 window.toggleAdmin = function () {
-  // Verificar se já está autenticado
   const isAdmin = sessionStorage.getItem("isAdmin") === "true";
 
   if (!isAdmin) {
@@ -314,7 +287,6 @@ window.toggleAdmin = function () {
       mostrarMensagem("❌ Senha incorreta!", "error");
     }
   } else {
-    // Já está autenticado, redirecionar direto
     mostrarMensagem(
       "🔄 Redirecionando para o painel administrativo...",
       "info"
@@ -324,5 +296,3 @@ window.toggleAdmin = function () {
     }, 1000);
   }
 };
-
-// Inicialização da página

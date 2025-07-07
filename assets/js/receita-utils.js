@@ -1,18 +1,9 @@
-/* Receita Utils - Funções Reutilizáveis para Gestão de Receitas */
+/* Receita Utils */
 
-// Namespace principal da aplicação
 window.RaizesAmazonia = window.RaizesAmazonia || {};
 
-/**
- * ReceitaUtils - Utilitários para gestão de receitas
- * Funções reutilizáveis que funcionam em qualquer página
- */
 window.RaizesAmazonia.ReceitaUtils = {
-  /**
-   * Editar receita - Função unificada
-   */
   async editarReceita(id) {
-    // Verificar se é admin com múltiplas fontes
     let isUserAdmin = false;
     let adminSource = "Nenhum";
 
@@ -51,7 +42,6 @@ window.RaizesAmazonia.ReceitaUtils = {
         window.mostrarMensagem("Carregando dados da receita...", "info");
       }
 
-      // Buscar dados da receita atual
       const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`);
       if (!response.ok) {
         throw new Error("Erro ao carregar dados da receita");
@@ -59,11 +49,9 @@ window.RaizesAmazonia.ReceitaUtils = {
 
       const receita = await response.json();
 
-      // Verificar se já existe um modal de edição (páginas com HTML estático)
       let modal = document.getElementById("modal-editar-receita");
 
       if (modal) {
-        // Modal já existe (todas-receitas.html), apenas preencher dados
         document.getElementById("edit-nome").value = receita.nome;
         document.getElementById("edit-descricao").value = receita.descricao;
         document.getElementById("edit-ingredientes").value =
@@ -72,11 +60,9 @@ window.RaizesAmazonia.ReceitaUtils = {
           receita.modo_preparo;
         document.getElementById("edit-historia").value = receita.historia || "";
 
-        // Armazenar ID para uso posterior
         if (document.getElementById("edit-receita-id")) {
           document.getElementById("edit-receita-id").value = receita.id;
         } else {
-          // Criar campo hidden se não existir
           const hiddenInput = document.createElement("input");
           hiddenInput.type = "hidden";
           hiddenInput.id = "edit-receita-id";
@@ -84,7 +70,6 @@ window.RaizesAmazonia.ReceitaUtils = {
           modal.querySelector("form").appendChild(hiddenInput);
         }
 
-        // Limpar preview de imagem
         const previewContainer = document.getElementById(
           "edit-preview-container"
         );
@@ -99,10 +84,9 @@ window.RaizesAmazonia.ReceitaUtils = {
 
         window.RaizesAmazonia.ModalManager.abrirModal("modal-editar-receita");
       } else {
-        // Modal não existe (index.html), criar dinamicamente
         modal =
           window.RaizesAmazonia.ModalManager.criarModalEditarReceita(receita);
-        modal.classList.add("dynamic-modal"); // Marcar para remoção
+        modal.classList.add("dynamic-modal");
         window.RaizesAmazonia.ModalManager.abrirModal("modal-editar-receita");
       }
     } catch (error) {
@@ -118,11 +102,7 @@ window.RaizesAmazonia.ReceitaUtils = {
     }
   },
 
-  /**
-   * Deletar receita - Função unificada
-   */
   async deletarReceita(id) {
-    // Verificar se é admin com múltiplas fontes
     let isUserAdmin = false;
     let adminSource = "Nenhum";
 
@@ -156,7 +136,6 @@ window.RaizesAmazonia.ReceitaUtils = {
     const API_BASE_URL =
       window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
 
-    // Buscar nome da receita para personalizar a mensagem
     let nomeReceita = "esta receita";
     try {
       const response = await fetch(`${API_BASE_URL}/api/receitas/${id}`);
@@ -168,7 +147,6 @@ window.RaizesAmazonia.ReceitaUtils = {
       console.log("Não foi possível buscar o nome da receita");
     }
 
-    // Usar função de confirmação se disponível
     let confirmou = false;
     if (window.mostrarConfirmacao) {
       confirmou = await window.mostrarConfirmacao(
@@ -182,7 +160,6 @@ window.RaizesAmazonia.ReceitaUtils = {
         }
       );
     } else {
-      // Fallback para confirm simples
       confirmou = confirm(
         `Tem certeza que deseja excluir a receita ${nomeReceita}?\n\nEsta ação não pode ser desfeita.`
       );
@@ -211,7 +188,6 @@ window.RaizesAmazonia.ReceitaUtils = {
           alert(`Receita ${nomeReceita} excluída com sucesso!`);
         }
 
-        // Recarregar lista de receitas
         if (typeof carregarReceitas === "function") {
           carregarReceitas();
         }
@@ -235,11 +211,7 @@ window.RaizesAmazonia.ReceitaUtils = {
     }
   },
 
-  /**
-   * Abrir modal para nova receita - Função unificada
-   */
   abrirModalNovaReceita() {
-    // Verificar se é admin com múltiplas fontes
     let isUserAdmin = false;
     let adminSource = "Nenhum";
 
@@ -270,17 +242,14 @@ window.RaizesAmazonia.ReceitaUtils = {
       return;
     }
 
-    // Verificar se já existe um modal estático
     let modal = document.getElementById("modal-nova-receita");
 
     if (modal) {
-      // Modal já existe (todas-receitas.html), apenas limpar e abrir
       const form = document.getElementById("form-nova-receita");
       if (form) {
         form.reset();
       }
 
-      // Limpar preview se existir
       const previewContainer = document.getElementById("preview-container");
       if (previewContainer) {
         previewContainer.style.display = "none";
@@ -288,12 +257,10 @@ window.RaizesAmazonia.ReceitaUtils = {
 
       window.RaizesAmazonia.ModalManager.abrirModal("modal-nova-receita");
     } else {
-      // Modal não existe (index.html), criar dinamicamente
       modal = window.RaizesAmazonia.ModalManager.criarModalNovaReceita();
-      modal.classList.add("dynamic-modal"); // Marcar para remoção
+      modal.classList.add("dynamic-modal");
       window.RaizesAmazonia.ModalManager.abrirModal("modal-nova-receita");
 
-      // Focar no primeiro campo após criação
       setTimeout(() => {
         const nomeInput = document.getElementById("nome");
         if (nomeInput) {
@@ -303,9 +270,6 @@ window.RaizesAmazonia.ReceitaUtils = {
     }
   },
 
-  /**
-   * Criar nova receita - Função unificada
-   */
   criarReceita() {
     return this.abrirModalNovaReceita();
   },

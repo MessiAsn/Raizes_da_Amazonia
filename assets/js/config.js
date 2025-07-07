@@ -1,62 +1,42 @@
-/* Configuração Global Centralizada - Raízes da Amazônia */
+/* Configuração Global - Raízes da Amazônia */
 
-// Namespace principal da aplicação
 window.RaizesAmazonia = window.RaizesAmazonia || {};
 
-// ==============================================
-// CONFIGURAÇÕES GLOBAIS
-// ==============================================
 window.RaizesAmazonia.Config = {
-  // API Configuration
-  API_BASE_URL: "http://localhost:8000",
+  API_BASE_URL:
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+      ? "http://127.0.0.1:8000"
+      : "https://seu-backend-railway.railway.app",
 
-  // Performance Settings
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,
-  CACHE_TIMEOUT: 5 * 60 * 1000, // 5 minutos
+  CACHE_TIMEOUT: 5 * 60 * 1000,
 
-  // UI Settings
   MESSAGE_DURATION: 6000,
   ANIMATION_DURATION: 300,
 
-  // Admin Settings
-  ADMIN_PASSWORD: "admin123", // TODO: Mover para variável de ambiente
+  ADMIN_PASSWORD: "admin123",
   MAX_LOGIN_ATTEMPTS: 3,
-  LOCKOUT_TIME: 5 * 60 * 1000, // 5 minutos
+  LOCKOUT_TIME: 5 * 60 * 1000,
 
-  // File Upload Settings
-  MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+  MAX_FILE_SIZE: 5 * 1024 * 1024,
   ALLOWED_IMAGE_TYPES: ["image/jpeg", "image/png", "image/webp"],
 
-  // Pagination
   ITEMS_PER_PAGE: 6,
-
-  // Debug Mode
-  DEBUG: false,
+  DEBUG: window.location.hostname === "localhost",
 };
 
-// ==============================================
-// UTILITÁRIOS GLOBAIS
-// ==============================================
 window.RaizesAmazonia.Utils = {
-  /**
-   * Validar email
-   */
   isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   },
 
-  /**
-   * Formatar texto
-   */
   formatText(text) {
     return text ? text.trim() : "";
   },
 
-  /**
-   * Debounce para performance
-   */
   debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -69,16 +49,10 @@ window.RaizesAmazonia.Utils = {
     };
   },
 
-  /**
-   * Sleep utility para delays
-   */
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   },
 
-  /**
-   * Log condicional baseado no modo debug
-   */
   log(message, data = null) {
     if (window.RaizesAmazonia.Config.DEBUG) {
       console.log("[RaizesAmazonia]", message, data || "");
@@ -86,20 +60,14 @@ window.RaizesAmazonia.Utils = {
   },
 };
 
-// ==============================================
-// SISTEMA DE NOTIFICAÇÕES E ERROS
-// ==============================================
 window.RaizesAmazonia.UI = {
-  /**
-   * Mostrar erro de conexão padronizado
-   */
   mostrarErroConexao(containerId = null, retryFunction = null) {
     const errorHTML = `
       <div class="erro-conexao">
         <div class="erro-content">
           <h3>⚠️ Erro de Conexão</h3>
           <p>Não foi possível conectar com o servidor.</p>
-          <p>Certifique-se de que o backend está rodando em <code>http://localhost:8000</code></p>
+          <p>Certifique-se de que o backend está rodando em <code>http://127.0.0.1:8000</code></p>
           ${
             retryFunction
               ? `<button onclick="${retryFunction}()" class="btn-retry">Tentar Novamente</button>`
@@ -109,7 +77,6 @@ window.RaizesAmazonia.UI = {
       </div>
     `;
 
-    // Se um container específico foi fornecido
     if (containerId) {
       const container =
         document.getElementById(containerId) ||
@@ -120,7 +87,6 @@ window.RaizesAmazonia.UI = {
       }
     }
 
-    // Tentar containers padrão comuns
     const containers = [
       "#card-container",
       ".card-container",
@@ -140,7 +106,6 @@ window.RaizesAmazonia.UI = {
       }
     }
 
-    // Fallback: mostrar toast se não encontrar container
     if (window.RaizesAmazonia.UI.showMessage) {
       window.RaizesAmazonia.UI.showMessage(
         "❌ Erro de conexão com o servidor. Verifique se o backend está rodando.",
@@ -150,19 +115,13 @@ window.RaizesAmazonia.UI = {
     }
   },
 
-  /**
-   * Sistema de mensagens toast centralizado
-   */
   showMessage(texto, tipo = "info", duracao = 4000) {
-    // Remove mensagens existentes
     const existingToasts = document.querySelectorAll(".toast-message");
     existingToasts.forEach((toast) => toast.remove());
 
-    // Criar toast
     const toast = document.createElement("div");
     toast.className = `toast-message toast-${tipo}`;
 
-    // Estilos inline para garantir que funcione em todas as páginas
     toast.style.cssText = `
       position: fixed;
       top: 20px;
@@ -178,7 +137,6 @@ window.RaizesAmazonia.UI = {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     `;
 
-    // Cores por tipo
     const cores = {
       success: "#10b981",
       error: "#ef4444",
@@ -189,10 +147,8 @@ window.RaizesAmazonia.UI = {
     toast.style.backgroundColor = cores[tipo] || cores.info;
     toast.textContent = texto;
 
-    // Adicionar ao DOM
     document.body.appendChild(toast);
 
-    // Remover automaticamente
     setTimeout(() => {
       if (toast.parentNode) {
         toast.style.animation = "slideOut 0.3s ease-in";
@@ -204,7 +160,6 @@ window.RaizesAmazonia.UI = {
   },
 };
 
-// Adicionar estilos CSS apenas para animações dos toasts
 const toastStyles = document.createElement("style");
 toastStyles.textContent = `
   @keyframes slideIn {
@@ -223,13 +178,7 @@ if (!document.querySelector("#raizes-toast-styles")) {
   document.head.appendChild(toastStyles);
 }
 
-// ==============================================
-// API HELPER CENTRALIZADO
-// ==============================================
 window.RaizesAmazonia.API = {
-  /**
-   * Fazer requisição com retry automático
-   */
   async request(endpoint, options = {}) {
     const config = window.RaizesAmazonia.Config;
     const url = `${config.API_BASE_URL}${endpoint}`;
@@ -258,17 +207,11 @@ window.RaizesAmazonia.API = {
     }
   },
 
-  /**
-   * GET request
-   */
   async get(endpoint) {
     const response = await this.request(endpoint);
     return response.json();
   },
 
-  /**
-   * POST request
-   */
   async post(endpoint, data) {
     const response = await this.request(endpoint, {
       method: "POST",
@@ -283,9 +226,6 @@ window.RaizesAmazonia.API = {
     return response.json();
   },
 
-  /**
-   * PUT request
-   */
   async put(endpoint, data) {
     const response = await this.request(endpoint, {
       method: "PUT",
@@ -300,9 +240,6 @@ window.RaizesAmazonia.API = {
     return response.json();
   },
 
-  /**
-   * DELETE request
-   */
   async delete(endpoint) {
     const response = await this.request(endpoint, {
       method: "DELETE",
@@ -311,24 +248,15 @@ window.RaizesAmazonia.API = {
   },
 };
 
-// ==============================================
-// GERENCIADOR DE DEPENDÊNCIAS
-// ==============================================
 window.RaizesAmazonia.DependencyManager = {
   _loadedModules: new Set(),
   _moduleQueue: [],
 
-  /**
-   * Registrar que um módulo foi carregado
-   */
   registerModule(moduleName) {
     this._loadedModules.add(moduleName);
     this._processQueue();
   },
 
-  /**
-   * Aguardar módulo ser carregado
-   */
   waitForModule(moduleName) {
     return new Promise((resolve) => {
       if (this._loadedModules.has(moduleName)) {
@@ -339,9 +267,6 @@ window.RaizesAmazonia.DependencyManager = {
     });
   },
 
-  /**
-   * Processar fila de dependências
-   */
   _processQueue() {
     this._moduleQueue = this._moduleQueue.filter((item) => {
       if (this._loadedModules.has(item.moduleName)) {
@@ -353,26 +278,18 @@ window.RaizesAmazonia.DependencyManager = {
   },
 };
 
-// ==============================================
-// INICIALIZAÇÃO
-// ==============================================
 window.RaizesAmazonia.Core = {
-  /**
-   * Inicializar sistema principal
-   */
   init() {
     const utils = window.RaizesAmazonia.Utils;
 
     utils.log("Inicializando Raízes da Amazônia...");
 
-    // Registrar módulo principal
     window.RaizesAmazonia.DependencyManager.registerModule("core");
 
     utils.log("Sistema inicializado com sucesso!");
   },
 };
 
-// Auto-inicializar quando DOM estiver pronto
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     window.RaizesAmazonia.Core.init();
@@ -381,7 +298,6 @@ if (document.readyState === "loading") {
   window.RaizesAmazonia.Core.init();
 }
 
-// Exportar para debug
 if (window.RaizesAmazonia.Config.DEBUG) {
-  window.RaizesApp = window.RaizesAmazonia; // Alias mais curto para debug
+  window.RaizesApp = window.RaizesAmazonia;
 }

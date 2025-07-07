@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const buttons = document.querySelectorAll('.accessibilidade-container button[data-font-size]');
   
-  // Limites de tamanhos permitidos
   const allowedSizes = ['0.9rem', '1.0rem', '1.2rem', '1.4rem'];
 
   buttons.forEach(button => {

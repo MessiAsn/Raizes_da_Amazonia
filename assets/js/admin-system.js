@@ -1,9 +1,7 @@
 /* Sistema de Administração Centralizado - Versão Modular */
 
-// Namespace principal da aplicação
 window.RaizesAmazonia = window.RaizesAmazonia || {};
 
-// Módulo de Cache DOM para melhor performance
 window.RaizesAmazonia.DOMCache = {
   _cache: new Map(),
 
@@ -38,7 +36,6 @@ window.RaizesAmazonia.DOMCache = {
   },
 };
 
-// Módulo de Logging Estruturado
 window.RaizesAmazonia.Logger = {
   _logs: [],
 
@@ -48,12 +45,10 @@ window.RaizesAmazonia.Logger = {
 
     this._logs.push(logEntry);
 
-    // Manter apenas os últimos 100 logs
     if (this._logs.length > 100) {
       this._logs.shift();
     }
 
-    // Console output com cores
     const colors = {
       error: "color: #dc3545; font-weight: bold;",
       warn: "color: #ffc107; font-weight: bold;",
@@ -93,21 +88,17 @@ window.RaizesAmazonia.Logger = {
   },
 };
 
-// Módulo de Administração
 window.RaizesAmazonia.Admin = {
-  // Variável de estado
   _isAdmin: sessionStorage.getItem("isAdmin") === "true",
 
-  // Configurações
   config: {
-    password: "admin123", // Altere aqui
+    password: "admin123",
     sessionKey: "isAdmin",
     loginAttempts: 0,
     maxAttempts: 3,
-    lockoutTime: 5 * 60 * 1000, // 5 minutos
+    lockoutTime: 5 * 60 * 1000,
   },
 
-  // Getter/Setter para isAdmin
   get isAdmin() {
     return this._isAdmin;
   },
@@ -122,29 +113,24 @@ window.RaizesAmazonia.Admin = {
     this.updateInterface();
   },
 
-  // Método para mostrar mensagens com melhor performance
   showMessage(texto, tipo = "info", duracao = 3000) {
     const Logger = window.RaizesAmazonia.Logger;
     const DOMCache = window.RaizesAmazonia.DOMCache;
 
     Logger.info(`Admin Message: ${texto}`, { tipo, duracao });
 
-    // Remover mensagem existente se houver (usando cache)
     let mensagemExistente = DOMCache.get(".admin-message");
     if (mensagemExistente) {
       mensagemExistente.remove();
       DOMCache.remove(".admin-message");
     }
 
-    // Criar nova mensagem
     const mensagem = document.createElement("div");
     mensagem.className = `admin-message ${tipo}`;
     mensagem.textContent = texto;
 
-    // Adicionar ao DOM
     document.body.appendChild(mensagem);
 
-    // Remover após o tempo especificado
     setTimeout(() => {
       if (mensagem.parentNode) {
         mensagem.classList.add("slide-out");
@@ -158,7 +144,6 @@ window.RaizesAmazonia.Admin = {
     }, duracao);
   },
 
-  // Método para verificar bloqueio por tentativas
   isLocked() {
     const lockTime = parseInt(sessionStorage.getItem("adminLockTime") || "0");
     if (lockTime && Date.now() < lockTime) {
@@ -168,24 +153,20 @@ window.RaizesAmazonia.Admin = {
     return false;
   },
 
-  // Método para bloquear acesso
   lockAccess() {
     const lockTime = Date.now() + this.config.lockoutTime;
     sessionStorage.setItem("adminLockTime", lockTime.toString());
     this.config.loginAttempts = 0;
   },
 
-  // Método principal para alternar modo admin com melhor segurança
   toggle() {
     const Logger = window.RaizesAmazonia.Logger;
 
     if (this.isAdmin) {
-      // Logout admin
       this.isAdmin = false;
       Logger.info("Admin logout realizado");
       this.showMessage("Modo visitante ativado", "info");
     } else {
-      // Verificar se está bloqueado
       const lockedTime = this.isLocked();
       if (lockedTime) {
         this.showMessage(
@@ -195,7 +176,6 @@ window.RaizesAmazonia.Admin = {
         return;
       }
 
-      // Login admin
       const senha = prompt("Digite a senha de administrador:");
       if (senha === this.config.password) {
         this.isAdmin = true;
@@ -230,59 +210,52 @@ window.RaizesAmazonia.Admin = {
     }
   },
 
-  // Método para atualizar interface com cache otimizado
   updateInterface() {
     const Logger = window.RaizesAmazonia.Logger;
     const DOMCache = window.RaizesAmazonia.DOMCache;
 
     Logger.debug("Atualizando interface admin", { isAdmin: this.isAdmin });
 
-    // Tentar chamar funções específicas da página se existirem
     if (typeof carregarReceitas === "function") {
-      carregarReceitas(); // Página principal
+      carregarReceitas();
     }
 
     if (typeof carregarDicas === "function") {
-      carregarDicas(); // Atualizar dicas para mostrar/esconder botões de admin
+      carregarDicas();
     }
 
     if (
       typeof renderizarReceitas === "function" &&
       typeof receitasFiltradas !== "undefined"
     ) {
-      renderizarReceitas(receitasFiltradas); // Página todas-receitas
+      renderizarReceitas(receitasFiltradas);
     }
 
     if (
       typeof carregarTodasReceitas === "function" &&
       typeof carregarReceitas === "undefined"
     ) {
-      carregarTodasReceitas(); // Página todas-receitas (se não for página principal)
+      carregarTodasReceitas();
     }
 
-    // Mostrar/esconder botão de adicionar dica na página principal (usando cache)
     const btnAdicionarDica = DOMCache.get("#btn-adicionar-dica");
     if (btnAdicionarDica) {
       btnAdicionarDica.style.display = this.isAdmin ? "block" : "none";
     }
   },
 
-  // Método para inicialização com melhor estrutura
   init() {
     const Logger = window.RaizesAmazonia.Logger;
     const DOMCache = window.RaizesAmazonia.DOMCache;
 
     Logger.info("Inicializando sistema de administração");
 
-    // Verificar se já está logado
     this._isAdmin = sessionStorage.getItem(this.config.sessionKey) === "true";
 
-    // Atualizar interface inicial se necessário
     if (this.isAdmin) {
       this.updateInterface();
     }
 
-    // Configurar event listener para o botão de adicionar dica (usando cache)
     const btnAdicionarDica = DOMCache.get(".dicas-culinarias .btn-admin");
     if (btnAdicionarDica) {
       btnAdicionarDica.addEventListener("click", () => {
@@ -302,7 +275,6 @@ window.RaizesAmazonia.Admin = {
     }
   },
 
-  // Método utilitário para verificar se é admin (compatibilidade)
   verify() {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -347,7 +319,6 @@ window.RaizesAmazonia.Admin = {
     return false;
   },
 
-  // Método para logout
   logout() {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -357,22 +328,14 @@ window.RaizesAmazonia.Admin = {
   },
 };
 
-// ==============================================
-// GERENCIADOR DE RECEITAS
-// ==============================================
 window.RaizesAmazonia.ReceitaManager = {
-  // Cache de receitas
   _cache: new Map(),
-  _cacheTimeout: 5 * 60 * 1000, // 5 minutos
+  _cacheTimeout: 5 * 60 * 1000,
 
-  /**
-   * Carregar receitas da API com cache
-   */
   async carregarReceitas(forceRefresh = false) {
     const Logger = window.RaizesAmazonia.Logger;
     const cacheKey = "receitas_list";
 
-    // Verificar cache se não for refresh forçado
     if (!forceRefresh && this._cache.has(cacheKey)) {
       const cached = this._cache.get(cacheKey);
       const now = Date.now();
@@ -396,7 +359,6 @@ window.RaizesAmazonia.ReceitaManager = {
 
       const receitas = await response.json();
 
-      // Atualizar cache
       this._cache.set(cacheKey, {
         data: receitas,
         timestamp: Date.now(),
@@ -410,9 +372,6 @@ window.RaizesAmazonia.ReceitaManager = {
     }
   },
 
-  /**
-   * Carregar receita específica por ID
-   */
   async carregarReceita(id) {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -435,9 +394,6 @@ window.RaizesAmazonia.ReceitaManager = {
     }
   },
 
-  /**
-   * Criar nova receita
-   */
   async criarReceita(formData) {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -457,7 +413,6 @@ window.RaizesAmazonia.ReceitaManager = {
 
       const receita = await response.json();
 
-      // Limpar cache para forçar atualização
       this._cache.delete("receitas_list");
 
       Logger.success("Receita criada:", receita.nome);
@@ -468,9 +423,6 @@ window.RaizesAmazonia.ReceitaManager = {
     }
   },
 
-  /**
-   * Atualizar receita existente
-   */
   async atualizarReceita(id, formData) {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -490,7 +442,6 @@ window.RaizesAmazonia.ReceitaManager = {
 
       const receita = await response.json();
 
-      // Limpar cache para forçar atualização
       this._cache.delete("receitas_list");
 
       Logger.success("Receita atualizada:", receita.nome);
@@ -501,9 +452,6 @@ window.RaizesAmazonia.ReceitaManager = {
     }
   },
 
-  /**
-   * Deletar receita
-   */
   async deletarReceita(id) {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -519,7 +467,6 @@ window.RaizesAmazonia.ReceitaManager = {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      // Limpar cache para forçar atualização
       this._cache.delete("receitas_list");
 
       Logger.success(`Receita ${id} deletada com sucesso`);
@@ -530,31 +477,20 @@ window.RaizesAmazonia.ReceitaManager = {
     }
   },
 
-  /**
-   * Limpar cache
-   */
   clearCache() {
     this._cache.clear();
     window.RaizesAmazonia.Logger.info("Cache de receitas limpo");
   },
 };
 
-// ==============================================
-// GERENCIADOR DE DICAS
-// ==============================================
 window.RaizesAmazonia.DicaManager = {
-  // Cache de dicas
   _cache: new Map(),
-  _cacheTimeout: 5 * 60 * 1000, // 5 minutos
+  _cacheTimeout: 5 * 60 * 1000,
 
-  /**
-   * Carregar dicas da API com cache
-   */
   async carregarDicas(forceRefresh = false) {
     const Logger = window.RaizesAmazonia.Logger;
     const cacheKey = "dicas_list";
 
-    // Verificar cache se não for refresh forçado
     if (!forceRefresh && this._cache.has(cacheKey)) {
       const cached = this._cache.get(cacheKey);
       const now = Date.now();
@@ -578,7 +514,6 @@ window.RaizesAmazonia.DicaManager = {
 
       const dicas = await response.json();
 
-      // Atualizar cache
       this._cache.set(cacheKey, {
         data: dicas,
         timestamp: Date.now(),
@@ -592,9 +527,6 @@ window.RaizesAmazonia.DicaManager = {
     }
   },
 
-  /**
-   * Criar nova dica
-   */
   async criarDica(conteudo) {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -617,7 +549,6 @@ window.RaizesAmazonia.DicaManager = {
 
       const dica = await response.json();
 
-      // Limpar cache para forçar atualização
       this._cache.delete("dicas_list");
 
       Logger.success("Dica criada:", dica.conteudo.substring(0, 50) + "...");
@@ -628,9 +559,6 @@ window.RaizesAmazonia.DicaManager = {
     }
   },
 
-  /**
-   * Atualizar dica existente
-   */
   async atualizarDica(id, conteudo) {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -653,7 +581,6 @@ window.RaizesAmazonia.DicaManager = {
 
       const dica = await response.json();
 
-      // Limpar cache para forçar atualização
       this._cache.delete("dicas_list");
 
       Logger.success(
@@ -667,9 +594,6 @@ window.RaizesAmazonia.DicaManager = {
     }
   },
 
-  /**
-   * Deletar dica
-   */
   async deletarDica(id) {
     const Logger = window.RaizesAmazonia.Logger;
 
@@ -685,7 +609,6 @@ window.RaizesAmazonia.DicaManager = {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      // Limpar cache para forçar atualização
       this._cache.delete("dicas_list");
 
       Logger.success(`Dica ${id} deletada com sucesso`);
@@ -696,16 +619,12 @@ window.RaizesAmazonia.DicaManager = {
     }
   },
 
-  /**
-   * Limpar cache
-   */
   clearCache() {
     this._cache.clear();
     window.RaizesAmazonia.Logger.info("Cache de dicas limpo");
   },
 };
 
-// Funções de compatibilidade com código existente
 function toggleAdmin() {
   window.RaizesAmazonia.Admin.toggle();
 }
@@ -726,7 +645,6 @@ function showAdminMessage(texto, tipo = "info", duracao = 3000) {
   window.RaizesAmazonia.Admin.showMessage(texto, tipo, duracao);
 }
 
-// Getter para compatibilidade
 Object.defineProperty(window, "isAdmin", {
   get() {
     return window.RaizesAmazonia.Admin.isAdmin;
@@ -736,17 +654,14 @@ Object.defineProperty(window, "isAdmin", {
   },
 });
 
-// Inicializar o sistema quando o DOM estiver carregado
 document.addEventListener("DOMContentLoaded", () => {
   window.RaizesAmazonia.Admin.init();
 });
 
-// Função de compatibilidade
 function initAdminSystem() {
   window.RaizesAmazonia.Admin.init();
 }
 
-// Exportar para debug (console)
 window.RaizesAmazonia.debug = {
   getLogs: () => window.RaizesAmazonia.Logger.getLogs(),
   clearLogs: () => window.RaizesAmazonia.Logger.clearLogs(),

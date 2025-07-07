@@ -1,4 +1,3 @@
-# Configurações de Email - Exemplo
 # Copie este arquivo para config_email.py e configure com seus dados
 
 # Para Gmail:

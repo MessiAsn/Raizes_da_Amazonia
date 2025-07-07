@@ -65,6 +65,15 @@
         <section id="tab-receitas" class="tab-content active">
           <div class="section-header">
             <h2>Gerenciar Receitas</h2>
+            <div class="search-group">
+              <input
+                type="text"
+                id="search-receitas"
+                class="input-search"
+                placeholder="Buscar por nome ou ID..."
+                autocomplete="off"
+              />
+            </div>
             <button id="btn-nova-receita" class="btn-primary">
               Nova Receita
             </button>
@@ -86,6 +95,7 @@
             <div class="stat-card info">
               <div class="stat-number" id="receitas-recentes">0</div>
               <div class="stat-label">Receitas Recentes</div>
+              <div class="stat-subtext">Últimos 7 dias</div>
             </div>
           </div>
 
@@ -105,6 +115,15 @@
         <section id="tab-dicas" class="tab-content">
           <div class="section-header">
             <h2>Gerenciar Dicas</h2>
+            <div class="search-group">
+              <input
+                type="text"
+                id="search-dicas"
+                class="input-search"
+                placeholder="Buscar por ID..."
+                autocomplete="off"
+              />
+            </div>
             <button
               id="btn-nova-dica"
               class="btn-primary"
@@ -123,6 +142,7 @@
             <div class="stat-card accent">
               <div class="stat-number" id="dicas-recentes">0</div>
               <div class="stat-label">Dicas Recentes</div>
+              <div class="stat-subtext">Últimos 7 dias</div>
             </div>
           </div>
 

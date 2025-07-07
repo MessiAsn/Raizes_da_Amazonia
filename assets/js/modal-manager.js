@@ -1,16 +1,8 @@
 /* Modal Utilities - Sistema de Modais Reutilizável */
 
-// Namespace principal da aplicação
 window.RaizesAmazonia = window.RaizesAmazonia || {};
 
-/**
- * ModalManager - Gerenciador de Modais Reutilizável
- * Centraliza a criação e gestão de modais para todo o sistema
- */
 window.RaizesAmazonia.ModalManager = {
-  /**
-   * Criar modal de edição de receita
-   */
   criarModalEditarReceita(receita) {
     const API_BASE_URL =
       window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
@@ -105,9 +97,6 @@ window.RaizesAmazonia.ModalManager = {
     return modal;
   },
 
-  /**
-   * Criar modal de nova receita
-   */
   criarModalNovaReceita() {
     const modal = document.createElement("div");
     modal.className = "modal-overlay";
@@ -169,9 +158,6 @@ window.RaizesAmazonia.ModalManager = {
     return modal;
   },
 
-  /**
-   * Configurar preview de imagem para edição
-   */
   configurarPreviewImagem() {
     const inputImagem = document.getElementById("edit-imagem");
     if (inputImagem) {
@@ -208,9 +194,6 @@ window.RaizesAmazonia.ModalManager = {
     }
   },
 
-  /**
-   * Configurar preview de imagem para nova receita
-   */
   configurarPreviewImagemNova() {
     const inputImagem = document.getElementById("imagem");
     if (inputImagem) {
@@ -247,9 +230,6 @@ window.RaizesAmazonia.ModalManager = {
     }
   },
 
-  /**
-   * Configurar formulário de edição
-   */
   configurarFormularioEdicao() {
     const form = document.getElementById("form-editar-receita");
     if (form) {
@@ -257,9 +237,6 @@ window.RaizesAmazonia.ModalManager = {
     }
   },
 
-  /**
-   * Configurar formulário de nova receita
-   */
   configurarFormularioNova() {
     const form = document.getElementById("form-nova-receita");
     if (form) {
@@ -267,9 +244,6 @@ window.RaizesAmazonia.ModalManager = {
     }
   },
 
-  /**
-   * Salvar edição da receita
-   */
   async salvarEdicaoReceita(e) {
     e.preventDefault();
 
@@ -278,10 +252,8 @@ window.RaizesAmazonia.ModalManager = {
     const form = e.target;
     const formData = new FormData();
 
-    // Pegar ID da receita
     const receitaId = document.getElementById("edit-receita-id").value;
 
-    // Validar campos obrigatórios
     const nome = form.nome.value.trim();
     const descricao = form.descricao.value.trim();
     const ingredientes = form.ingredientes.value.trim();
@@ -299,14 +271,12 @@ window.RaizesAmazonia.ModalManager = {
       return;
     }
 
-    // Adicionar dados ao FormData
     formData.append("nome", nome);
     formData.append("descricao", descricao);
     formData.append("historia", form.historia.value.trim());
     formData.append("ingredientes", ingredientes);
     formData.append("modo_preparo", modo_preparo);
 
-    // Adicionar imagem se selecionada
     const imagemFile = form.imagem.files[0];
     if (imagemFile) {
       formData.append("imagem", imagemFile);
@@ -337,7 +307,6 @@ window.RaizesAmazonia.ModalManager = {
 
         window.RaizesAmazonia.ModalManager.fecharModal("modal-editar-receita");
 
-        // Recarregar lista de receitas
         if (typeof carregarReceitas === "function") {
           carregarReceitas();
         }
@@ -358,9 +327,6 @@ window.RaizesAmazonia.ModalManager = {
     }
   },
 
-  /**
-   * Adicionar nova receita - Integrado com sistema centralizado
-   */
   async adicionarReceita(e) {
     e.preventDefault();
 
@@ -368,7 +334,6 @@ window.RaizesAmazonia.ModalManager = {
     const submitButton = form.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
 
-    // Validar campos obrigatórios
     const formData = new FormData(form);
     const nome = formData.get("nome").trim();
     const descricao = formData.get("descricao").trim();
@@ -391,14 +356,11 @@ window.RaizesAmazonia.ModalManager = {
     submitButton.disabled = true;
 
     try {
-      // Usar o método centralizado do ReceitaManager
       if (window.RaizesAmazonia?.ReceitaManager?.criarReceita) {
         await window.RaizesAmazonia.ReceitaManager.criarReceita(form);
 
-        // Fechar modal após sucesso
         window.RaizesAmazonia.ModalManager.fecharModal("modal-nova-receita");
 
-        // Recarregar lista de receitas
         if (typeof carregarReceitas === "function") {
           carregarReceitas();
         }
@@ -424,9 +386,6 @@ window.RaizesAmazonia.ModalManager = {
     }
   },
 
-  /**
-   * Abrir modal
-   */
   abrirModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -435,16 +394,12 @@ window.RaizesAmazonia.ModalManager = {
     }
   },
 
-  /**
-   * Fechar modal
-   */
   fecharModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
       modal.style.display = "none";
       document.body.style.overflow = "auto";
 
-      // Se foi criado dinamicamente, remover do DOM
       if (modal.classList.contains("dynamic-modal")) {
         modal.remove();
       }
@@ -461,7 +416,6 @@ window.fecharModal = function (modalId) {
   window.RaizesAmazonia.ModalManager.fecharModal(modalId);
 };
 
-// Fechar modal ao clicar fora dele
 document.addEventListener("click", function (event) {
   if (event.target.classList.contains("modal-overlay")) {
     const modalId = event.target.id;
@@ -471,15 +425,7 @@ document.addEventListener("click", function (event) {
   }
 });
 
-// ==============================================
-// FUNÇÕES GLOBAIS PARA DICAS
-// ==============================================
-
-/**
- * Função global para adicionar dica (compatibilidade com index.html)
- */
 window.adicionarDica = async function () {
-  // Verificar se é admin
   if (!window.RaizesAmazonia?.Admin?.isAdmin) {
     if (!window.RaizesAmazonia?.Admin?.verify()) {
       return;
@@ -495,9 +441,7 @@ window.adicionarDica = async function () {
     );
     return;
   }
-
   try {
-    // Usar o DicaManager se disponível
     if (window.RaizesAmazonia?.DicaManager) {
       await window.RaizesAmazonia.DicaManager.criarDica(conteudo.trim());
       window.RaizesAmazonia?.Admin?.showMessage(
@@ -505,12 +449,10 @@ window.adicionarDica = async function () {
         "success"
       );
 
-      // Recarregar dicas na página
       if (typeof carregarDicas === "function") {
         await carregarDicas();
       }
     } else {
-      // Fallback
       const API_BASE_URL =
         window.RaizesAmazonia?.Config?.API_BASE_URL || "http://localhost:8000";
       const formData = new FormData();
@@ -532,7 +474,6 @@ window.adicionarDica = async function () {
         "success"
       );
 
-      // Recarregar dicas na página
       if (typeof carregarDicas === "function") {
         await carregarDicas();
       }
@@ -546,16 +487,10 @@ window.adicionarDica = async function () {
   }
 };
 
-/**
- * Função para verificar se usuário é admin
- */
 window.verificarAdmin = function () {
   return window.RaizesAmazonia?.Admin?.verify() || false;
 };
 
-/**
- * Função para toggle admin (compatibilidade)
- */
 window.toggleAdmin = function () {
   if (window.RaizesAmazonia?.Admin) {
     window.RaizesAmazonia.Admin.toggle();
