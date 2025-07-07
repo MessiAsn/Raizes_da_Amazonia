@@ -26,6 +26,11 @@ Base = declarative_base()
 PORT = int(os.environ.get("PORT", 8000))
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 
+# Debug: mostrar ambiente detectado
+print(f"🔍 DEBUG: Ambiente detectado = '{ENVIRONMENT}'")
+print(f"🔍 DEBUG: Tipo = {type(ENVIRONMENT)}")
+print(f"🔍 DEBUG: Comparação production = {ENVIRONMENT == 'production'}")
+
 
 class ReceitaDB(Base):
     __tablename__ = "receitas"
