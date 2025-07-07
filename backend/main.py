@@ -97,25 +97,34 @@ app.add_middleware(
 # Servir arquivos estáticos (imagens das receitas)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # Diretório raiz do projeto
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
-# Servir arquivos estáticos do site (HTML, CSS, JS)
-app.mount(
-    "/assets", StaticFiles(directory=os.path.join(BASE_DIR, "assets")), name="assets"
-)
-app.mount(
-    "/pages", StaticFiles(directory=os.path.join(BASE_DIR, "pages")), name="pages"
-)
+# Apenas criar diretório de uploads em produção
+if ENVIRONMENT == "production":
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+else:
+    # Para desenvolvimento local, montar todos os arquivos estáticos
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+    app.mount(
+        "/assets",
+        StaticFiles(directory=os.path.join(BASE_DIR, "assets")),
+        name="assets",
+    )
+    app.mount(
+        "/pages", StaticFiles(directory=os.path.join(BASE_DIR, "pages")), name="pages"
+    )
 
 
-# Servir a página principal (apenas para desenvolvimento local)
+# Endpoint de healthcheck - simples e confiável
 @app.get("/")
-async def root():
+async def healthcheck():
+    """Endpoint de healthcheck para Railway"""
     return {
-        "message": "API Raízes da Amazônia está funcionando!",
         "status": "healthy",
+        "message": "API Raízes da Amazônia está funcionando!",
         "version": "1.0.0",
+        "environment": ENVIRONMENT,
     }
 
 
@@ -524,6 +533,18 @@ Data: {datetime.now().strftime('%d/%m/%Y as %H:%M')}
 if __name__ == "__main__":
     import uvicorn
 
+    print(f"🚀 Iniciando servidor...")
+    print(f"📍 Ambiente: {ENVIRONMENT}")
+    print(f"🔌 Porta: {PORT}")
+
     # Configuração para permitir acesso local e externo
     host = "0.0.0.0" if ENVIRONMENT == "production" else "127.0.0.1"
-    uvicorn.run(app, host=host, port=PORT)
+    print(f"🌐 Host: {host}")
+
+    try:
+        uvicorn.run(app, host=host, port=PORT)
+    except Exception as e:
+        print(f"❌ Erro ao iniciar servidor: {e}")
+        import traceback
+
+        traceback.print_exc()
