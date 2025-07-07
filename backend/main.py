@@ -95,15 +95,15 @@ app.add_middleware(
 )
 
 # Servir arquivos estáticos (imagens das receitas)
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # Diretório raiz do projeto
-UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
-
-# Apenas criar diretório de uploads em produção
+# Em produção, só configurar uploads dentro do backend
 if ENVIRONMENT == "production":
+    UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploads")
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 else:
-    # Para desenvolvimento local, montar todos os arquivos estáticos
+    # Para desenvolvimento local, usar estrutura completa
+    BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # Diretório raiz do projeto
+    UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
     app.mount(
