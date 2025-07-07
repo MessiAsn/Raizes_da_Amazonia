@@ -7,7 +7,7 @@ window.RaizesAmazonia.Config = {
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
       ? "http://127.0.0.1:8000"
-      : "https://SUBSTITUA-PELA-URL-DO-RAILWAY.up.railway.app", // 👈 ATUALIZAR COM URL REAL
+      : "https://raizesdaamazonia-production.up.railway.app", // ✅ URL do Railway configurada
 
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,
