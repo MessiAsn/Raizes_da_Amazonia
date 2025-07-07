@@ -109,12 +109,14 @@ app.mount(
 )
 
 
-# Servir a página principal
+# Servir a página principal (apenas para desenvolvimento local)
 @app.get("/")
-async def serve_index():
-    from fastapi.responses import FileResponse
-
-    return FileResponse(os.path.join(BASE_DIR, "index.html"))
+async def root():
+    return {
+        "message": "API Raízes da Amazônia está funcionando!",
+        "status": "healthy",
+        "version": "1.0.0",
+    }
 
 
 # Modelos Pydantic
