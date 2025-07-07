@@ -492,55 +492,134 @@ async function carregarEstatisticas() {
 }
 
 function calcularEstatisticasDetalhadas(receitas, dicas) {
-  const agora = new Date();
-  const umaSemanaAtras = new Date(agora.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const umMesAtras = new Date(agora.getTime() - 30 * 24 * 60 * 60 * 1000);
+  // Garantir que receitas e dicas são arrays válidos
+  const receitasArray = Array.isArray(receitas) ? receitas : [];
+  const dicasArray = Array.isArray(dicas) ? dicas : [];
 
-  // Estatísticas de receitas
-  const receitasComImagem = receitas.filter((r) => r.imagem).length;
-  const receitasComHistoria = receitas.filter(
-    (r) => r.historia && r.historia.trim().length > 0
+  console.log(
+    "Debug estatísticas - Total receitas:",
+    receitasArray.length,
+    "Total dicas:",
+    dicasArray.length
+  );
+
+  // Configurar datas corretamente
+  const agora = new Date();
+  const umaSemanaAtras = new Date();
+  umaSemanaAtras.setDate(agora.getDate() - 7);
+  umaSemanaAtras.setHours(0, 0, 0, 0); // Início do dia há 7 dias
+
+  console.log("🕰️ Data atual:", agora.toISOString());
+  console.log("🕰️ Uma semana atrás:", umaSemanaAtras.toISOString());
+
+  // Estatísticas de receitas - corrigir o filtro de imagem
+  const receitasComImagem = receitasArray.filter((r) => r && r.imagem).length;
+  const receitasComHistoria = receitasArray.filter(
+    (r) => r && r.historia && r.historia.trim().length > 0
   ).length;
-  const receitasRecentes = receitas.filter((r) => {
+
+  const receitasRecentes = receitasArray.filter((r) => {
+    if (!r || !r.created_at) {
+      console.log("❌ Receita sem data:", r?.nome || "Nome não disponível");
+      return false;
+    }
+
     try {
-      const dataReceita = new Date(r.criado_em || r.data_criacao);
-      return !isNaN(dataReceita.getTime()) && dataReceita >= umaSemanaAtras;
+      const dataReceita = new Date(r.created_at);
+
+      // Verificar se a data é válida
+      if (isNaN(dataReceita.getTime())) {
+        console.log(
+          "❌ Data inválida para receita:",
+          r.nome,
+          "Data original:",
+          r.created_at
+        );
+        return false;
+      }
+
+      const isRecente = dataReceita >= umaSemanaAtras;
+      console.log(
+        `📅 Receita: ${
+          r.nome
+        } | Data: ${dataReceita.toLocaleDateString()} | É recente: ${isRecente}`
+      );
+
+      return isRecente;
     } catch (error) {
+      console.log("❌ Erro ao processar receita:", r.nome, error);
       return false;
     }
   }).length;
+
+  console.log("📊 TOTAL RECEITAS RECENTES:", receitasRecentes);
 
   // Estatísticas de dicas
-  const dicasRecentes = dicas.filter((d) => {
+  const dicasRecentes = dicasArray.filter((d) => {
+    if (!d || !d.created_at) {
+      console.log(
+        "❌ Dica sem data:",
+        d?.texto?.substring(0, 30) || "Texto não disponível"
+      );
+      return false;
+    }
+
     try {
-      const dataDica = new Date(d.criado_em || d.data_criacao);
-      return !isNaN(dataDica.getTime()) && dataDica >= umaSemanaAtras;
+      const dataDica = new Date(d.created_at);
+
+      // Verificar se a data é válida
+      if (isNaN(dataDica.getTime())) {
+        console.log(
+          "❌ Data inválida para dica:",
+          d.texto?.substring(0, 30),
+          "Data original:",
+          d.created_at
+        );
+        return false;
+      }
+
+      const isRecente = dataDica >= umaSemanaAtras;
+      console.log(
+        `📅 Dica: ${d.texto?.substring(
+          0,
+          30
+        )}... | Data: ${dataDica.toLocaleDateString()} | É recente: ${isRecente}`
+      );
+
+      return isRecente;
     } catch (error) {
+      console.log(
+        "❌ Erro ao processar dica:",
+        d.texto?.substring(0, 30),
+        error
+      );
       return false;
     }
   }).length;
 
+  console.log("📊 TOTAL DICAS RECENTES:", dicasRecentes);
+
   const mediaCaracteresDicas =
-    dicas.length > 0
+    dicasArray.length > 0
       ? Math.round(
-          dicas.reduce(
-            (sum, d) => sum + (d.conteudo || d.texto || "").length,
+          dicasArray.reduce(
+            (sum, d) => sum + (d && (d.conteudo || d.texto || "")).length,
             0
-          ) / dicas.length
+          ) / dicasArray.length
         )
       : 0;
 
   // Classificar dicas por tamanho
-  const dicasCurtas = dicas.filter(
-    (d) => (d.conteudo || d.texto || "").length <= 100
+  const dicasCurtas = dicasArray.filter(
+    (d) => d && (d.conteudo || d.texto || "").length <= 100
   ).length;
-  const dicasLongas = dicas.filter(
-    (d) => (d.conteudo || d.texto || "").length > 100
+  const dicasLongas = dicasArray.filter(
+    (d) => d && (d.conteudo || d.texto || "").length > 100
   ).length;
 
   // Estatísticas de ingredientes (se existir no campo ingredientes)
-  const todosIngredientes = receitas.flatMap((r) => {
-    if (r.ingredientes) {
+  const todosIngredientes = receitasArray.flatMap((r) => {
+    if (r && r.ingredientes) {
       return r.ingredientes.split("\n").filter((i) => i.trim().length > 0);
     }
     return [];
@@ -551,185 +630,112 @@ function calcularEstatisticasDetalhadas(receitas, dicas) {
   ];
 
   return {
-    total_receitas: receitas.length,
-    total_dicas: dicas.length,
-    receitas_com_imagem: receitasComImagem,
-    receitas_sem_imagem: receitas.length - receitasComImagem,
-    receitas_com_historia: receitasComHistoria,
-    receitas_recentes: receitasRecentes,
-    dicas_recentes: dicasRecentes,
-    dicas_curtas: dicasCurtas,
-    dicas_longas: dicasLongas,
-    media_caracteres_dicas: mediaCaracteresDicas,
-    total_ingredientes_unicos: ingredientesUnicos.length,
+    total_receitas: Number(receitasArray.length) || 0,
+    total_dicas: Number(dicasArray.length) || 0,
+    receitas_com_imagem: Number(receitasComImagem) || 0,
+    receitas_sem_imagem: Number(receitasArray.length - receitasComImagem) || 0,
+    receitas_com_historia: Number(receitasComHistoria) || 0,
+    receitas_recentes: Number(receitasRecentes) || 0,
+    dicas_recentes: Number(dicasRecentes) || 0,
+    dicas_curtas: Number(dicasCurtas) || 0,
+    dicas_longas: Number(dicasLongas) || 0,
+    media_caracteres_dicas: Number(mediaCaracteresDicas) || 0,
+    total_ingredientes_unicos: Number(ingredientesUnicos.length) || 0,
     percentual_receitas_com_imagem:
-      receitas.length > 0
-        ? Math.round((receitasComImagem / receitas.length) * 100)
+      receitasArray.length > 0
+        ? Math.round((receitasComImagem / receitasArray.length) * 100)
         : 0,
     percentual_receitas_com_historia:
-      receitas.length > 0
-        ? Math.round((receitasComHistoria / receitas.length) * 100)
+      receitasArray.length > 0
+        ? Math.round((receitasComHistoria / receitasArray.length) * 100)
         : 0,
   };
 }
 
 function renderizarEstatisticas(stats) {
+  // Garantir que stats é um objeto válido e todos os valores são números
+  const safeStats = {
+    total_receitas: Number(stats?.total_receitas) || 0,
+    total_dicas: Number(stats?.total_dicas) || 0,
+    receitas_com_imagem: Number(stats?.receitas_com_imagem) || 0,
+    receitas_sem_imagem: Number(stats?.receitas_sem_imagem) || 0,
+    receitas_com_historia: Number(stats?.receitas_com_historia) || 0,
+    receitas_recentes: Number(stats?.receitas_recentes) || 0,
+    dicas_recentes: Number(stats?.dicas_recentes) || 0,
+    dicas_curtas: Number(stats?.dicas_curtas) || 0,
+    dicas_longas: Number(stats?.dicas_longas) || 0,
+    media_caracteres_dicas: Number(stats?.media_caracteres_dicas) || 0,
+    total_ingredientes_unicos: Number(stats?.total_ingredientes_unicos) || 0,
+    percentual_receitas_com_imagem:
+      Number(stats?.percentual_receitas_com_imagem) || 0,
+    percentual_receitas_com_historia:
+      Number(stats?.percentual_receitas_com_historia) || 0,
+  };
+
   const container = document.getElementById("estatisticas-container");
   container.innerHTML = `
-    <!-- Estatísticas Gerais -->
+    <!-- Métricas Principais -->
     <div class="stats-section">
-      <h3>Visão Geral</h3>
+      <h3>Métricas do Sistema</h3>
       <div class="stats-grid">
-        <div class="stat-card highlight pulse-animation">
-          <div class="stat-number">${stats.total_receitas || 0}</div>
-          <div class="stat-label">📖 Total de Receitas</div>
-          <div class="stat-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 100%"></div>
-            </div>
-          </div>
+        <div class="stat-card primary">
+          <div class="stat-number">${safeStats.total_receitas}</div>
+          <div class="stat-label">Receitas Cadastradas</div>
         </div>
-        <div class="stat-card highlight pulse-animation">
-          <div class="stat-number">${stats.total_dicas || 0}</div>
-          <div class="stat-label">Total de Dicas</div>
-          <div class="stat-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: 100%"></div>
-            </div>
-          </div>
+        <div class="stat-card secondary">
+          <div class="stat-number">${safeStats.total_dicas}</div>
+          <div class="stat-label">Dicas Publicadas</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">${stats.total_ingredientes_unicos || 0}</div>
-          <div class="stat-label">🥬 Ingredientes Únicos</div>
-          <div class="stat-badge success">Catálogo</div>
-        </div>
-        <div class="stat-card">
+        <div class="stat-card info">
           <div class="stat-number">${
-            (stats.total_receitas || 0) + (stats.total_dicas || 0)
+            safeStats.total_receitas + safeStats.total_dicas
           }</div>
-          <div class="stat-label">📚 Total de Conteúdo</div>
-          <div class="stat-badge info">Completo</div>
+          <div class="stat-label">Total de Conteúdo</div>
         </div>
       </div>
     </div>
-    
-    <!-- Estatísticas de Receitas -->
+
+    <!-- Análise de Qualidade -->
     <div class="stats-section">
-      <h3>📖 Receitas</h3>
+      <h3>Indicadores de Qualidade</h3>
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">${stats.receitas_com_imagem || 0}</div>
-          <div class="stat-label">Com Imagem</div>
+        <div class="stat-card success">
+          <div class="stat-number">${safeStats.receitas_com_imagem}</div>
+          <div class="stat-label">Receitas com Imagem</div>
           <div class="stat-percentage">${
-            stats.percentual_receitas_com_imagem || 0
+            safeStats.percentual_receitas_com_imagem
           }%</div>
-          <div class="stat-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${
-                stats.percentual_receitas_com_imagem || 0
-              }%"></div>
-            </div>
-          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">${stats.receitas_com_historia || 0}</div>
-          <div class="stat-label">📚 Com História</div>
+        <div class="stat-card accent">
+          <div class="stat-number">${safeStats.receitas_com_historia}</div>
+          <div class="stat-label">Receitas Documentadas</div>
           <div class="stat-percentage">${
-            stats.percentual_receitas_com_historia || 0
+            safeStats.percentual_receitas_com_historia
           }%</div>
-          <div class="stat-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${
-                stats.percentual_receitas_com_historia || 0
-              }%"></div>
-            </div>
-          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">${stats.receitas_recentes || 0}</div>
-          <div class="stat-label">🆕 Últimos 7 dias</div>
-          <div class="stat-badge ${
-            (stats.receitas_recentes || 0) > 0 ? "success" : "warning"
-          }">
-            ${(stats.receitas_recentes || 0) > 0 ? "Ativo" : "Parado"}
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">${stats.receitas_sem_imagem || 0}</div>
-          <div class="stat-label">Sem Imagem</div>
-          <div class="stat-badge ${
-            (stats.receitas_sem_imagem || 0) > 0 ? "warning" : "success"
-          }">
-            ${(stats.receitas_sem_imagem || 0) > 0 ? "Pendente" : "Completo"}
-          </div>
+        <div class="stat-card metric">
+          <div class="stat-number">${safeStats.media_caracteres_dicas}</div>
+          <div class="stat-label">Caracteres por Dica</div>
+          <div class="stat-subtext">Média do conteúdo</div>
         </div>
       </div>
     </div>
-    
-    <!-- Estatísticas de Dicas -->
+
+    <!-- Ações do Sistema -->
     <div class="stats-section">
-      <h3>Dicas</h3>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">${stats.dicas_recentes || 0}</div>
-          <div class="stat-label">🆕 Últimos 7 dias</div>
-          <div class="stat-badge ${
-            (stats.dicas_recentes || 0) > 0 ? "success" : "warning"
-          }">
-            ${(stats.dicas_recentes || 0) > 0 ? "Ativo" : "Parado"}
+      <h3>Gerenciamento</h3>
+      <div class="admin-actions-grid">
+        <button class="admin-action-btn primary" data-action="nova-receita">
+          <div class="action-content">
+            <div class="action-title">Adicionar Receita</div>
+            <div class="action-description">Cadastrar nova tradição culinária</div>
           </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">${stats.media_caracteres_dicas || 0}</div>
-          <div class="stat-label">Média de Caracteres</div>
-          <div class="stat-badge ${
-            (stats.media_caracteres_dicas || 0) >= 100 ? "success" : "info"
-          }">
-            ${
-              (stats.media_caracteres_dicas || 0) >= 100
-                ? "Detalhada"
-                : "Concisa"
-            }
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number tooltip" data-tooltip="Dicas com mais de 200 caracteres">
-            ${stats.dicas_longas || 0}
-          </div>
-          <div class="stat-label">📖 Dicas Longas</div>
-          <div class="stat-badge info">Informativa</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number tooltip" data-tooltip="Dicas com menos de 50 caracteres">
-            ${stats.dicas_curtas || 0}
-          </div>
-          <div class="stat-label">⚡ Dicas Rápidas</div>
-          <div class="stat-badge success">Prática</div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Ações Rápidas -->
-    <div class="stats-section">
-      <h3>⚡ Ações Rápidas</h3>
-      <div class="quick-actions">
-        <button class="quick-action-btn" data-action="navigate" data-tab="receitas">
-          <span class="action-icon">Receitas</span>
-          <span class="action-text">Gerenciar Receitas</span>
-          <span class="action-count">${stats.total_receitas || 0}</span>
         </button>
-        <button class="quick-action-btn" data-action="navigate" data-tab="dicas">
-          <span class="action-icon">Dicas</span>
-          <span class="action-text">Gerenciar Dicas</span>
-          <span class="action-count">${stats.total_dicas || 0}</span>
-        </button>
-        <button class="quick-action-btn primary" data-action="nova-receita">
-          <span class="action-icon">Nova</span>
-          <span class="action-text">Nova Receita</span>
-        </button>
-        <button class="quick-action-btn primary" data-action="nova-dica">
-          <span class="action-icon">Nova</span>
-          <span class="action-text">Nova Dica</span>
+        <button class="admin-action-btn secondary" data-action="nova-dica">
+          <div class="action-content">
+            <div class="action-title">Publicar Dica</div>
+            <div class="action-description">Compartilhar conhecimento</div>
+          </div>
         </button>
       </div>
     </div>
@@ -743,16 +749,12 @@ function renderizarEstatisticas(stats) {
     }, index * 100);
   });
 
-  // Adicionar event listeners para ações rápidas
-  container.querySelectorAll(".quick-action-btn").forEach((btn) => {
+  // Adicionar event listeners para ações administrativas
+  container.querySelectorAll(".admin-action-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const action = e.currentTarget.getAttribute("data-action");
-      const tab = e.currentTarget.getAttribute("data-tab");
 
       switch (action) {
-        case "navigate":
-          navegarPara(tab);
-          break;
         case "nova-receita":
           abrirModalNovaReceitaAdmin();
           break;
@@ -1092,10 +1094,10 @@ function renderizarReceitasAdmin(todasReceitas) {
       <p class="receita-descricao">${receita.descricao}</p>
       <div class="receita-meta">
         <span class="receita-data">${formatarDataSegura(
-          receita.data_criacao || receita.criado_em
+          receita.created_at
         )}</span>
         ${
-          receita.imagem || receita.imagem_url
+          receita.imagem
             ? '<span class="receita-imagem">🖼️ Com imagem</span>'
             : '<span class="receita-sem-imagem">Sem imagem</span>'
         }
@@ -1462,16 +1464,88 @@ function fecharModalConfirm() {
 // Função para atualizar estatísticas de receitas
 function atualizarEstatisticasReceitas(receitas) {
   const totalReceitas = receitas.length;
-  const receitasComImagem = receitas.filter((r) => r.imagem_url).length;
-  const receitasComHistoria = receitas.filter(
-    (r) => r.historia && r.historia.trim()
-  ).length;
+  const receitasComImagem = receitas.filter((r) => r.imagem).length;
 
+  // Calcular percentual de receitas com imagem
+  const percentualComImagem =
+    totalReceitas > 0
+      ? Math.round((receitasComImagem / totalReceitas) * 100)
+      : 0;
+
+  // Receitas recentes (últimos 7 dias) - usar a mesma lógica das estatísticas gerais
+  const agora = new Date();
+  const seteDiasAtras = new Date();
+  seteDiasAtras.setDate(agora.getDate() - 7);
+  seteDiasAtras.setHours(0, 0, 0, 0); // Início do dia há 7 dias
+
+  console.log("🔍 DEBUG RECEITAS - Data atual:", agora.toLocaleDateString());
+  console.log(
+    "🔍 DEBUG RECEITAS - Sete dias atrás:",
+    seteDiasAtras.toLocaleDateString()
+  );
+  console.log("🔍 DEBUG RECEITAS - Total de receitas:", receitas.length);
+
+  const receitasRecentes = receitas.filter((receita) => {
+    if (!receita || !receita.created_at) {
+      console.log(
+        "🔍 DEBUG RECEITAS - Receita sem data:",
+        receita?.nome || "Nome não disponível"
+      );
+      return false;
+    }
+
+    try {
+      const dataReceita = new Date(receita.created_at);
+
+      if (isNaN(dataReceita.getTime())) {
+        console.log(
+          "🔍 DEBUG RECEITAS - Data inválida:",
+          receita.nome,
+          receita.created_at
+        );
+        return false;
+      }
+
+      const isRecente = dataReceita >= seteDiasAtras;
+      console.log(
+        `🔍 DEBUG RECEITAS - ${
+          receita.nome
+        }: ${dataReceita.toLocaleDateString()} >= ${seteDiasAtras.toLocaleDateString()} = ${isRecente}`
+      );
+      return isRecente;
+    } catch (error) {
+      console.log(
+        "🔍 DEBUG RECEITAS - Erro ao processar receita:",
+        receita.nome,
+        error
+      );
+      return false;
+    }
+  }).length;
+
+  console.log(
+    "🔍 DEBUG RECEITAS - TOTAL RECENTES ENCONTRADAS:",
+    receitasRecentes
+  );
+
+  // Atualizar elementos no DOM
   document.getElementById("total-receitas").textContent = totalReceitas;
   document.getElementById("receitas-com-imagem").textContent =
     receitasComImagem;
-  document.getElementById("receitas-com-historia").textContent =
-    receitasComHistoria;
+
+  // Adicionar percentual se o elemento existir
+  const percentualElement = document.getElementById(
+    "percentual-receitas-imagem"
+  );
+  if (percentualElement) {
+    percentualElement.textContent = `${percentualComImagem}%`;
+  }
+
+  // Adicionar receitas recentes se o elemento existir
+  const recentesElement = document.getElementById("receitas-recentes");
+  if (recentesElement) {
+    recentesElement.textContent = receitasRecentes;
+  }
 }
 
 // ========================================
@@ -1565,7 +1639,7 @@ function renderizarDicasAdmin(todasDicas) {
 
   dicasPagina.forEach((dica) => {
     const dataFormatada = formatarDataSegura(
-      dica.created_at || dica.criado_em,
+      dica.created_at,
       true // incluir hora
     );
 
@@ -1855,34 +1929,66 @@ async function deletarDicaAdmin(id) {
 function atualizarEstatisticasDicas(dicas) {
   const totalDicas = dicas.length;
 
-  // Dicas recentes (últimos 7 dias)
+  // Dicas recentes (últimos 7 dias) - usar a mesma lógica das estatísticas gerais
   const agora = new Date();
-  const seteDiasAtras = new Date(agora.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const seteDiasAtras = new Date();
+  seteDiasAtras.setDate(agora.getDate() - 7);
+  seteDiasAtras.setHours(0, 0, 0, 0); // Início do dia há 7 dias
+
+  console.log("🔍 DEBUG DICAS - Data atual:", agora.toLocaleDateString());
+  console.log(
+    "🔍 DEBUG DICAS - Sete dias atrás:",
+    seteDiasAtras.toLocaleDateString()
+  );
+  console.log("🔍 DEBUG DICAS - Total de dicas:", dicas.length);
+
   const dicasRecentes = dicas.filter((dica) => {
+    if (!dica || !dica.created_at) {
+      console.log(
+        "🔍 DEBUG DICAS - Dica sem data:",
+        dica?.texto?.substring(0, 30) || "Texto não disponível"
+      );
+      return false;
+    }
+
     try {
       const dataDica = new Date(dica.created_at);
-      return !isNaN(dataDica.getTime()) && dataDica > seteDiasAtras;
+
+      if (isNaN(dataDica.getTime())) {
+        console.log(
+          "🔍 DEBUG DICAS - Data inválida:",
+          dica.texto?.substring(0, 30),
+          dica.created_at
+        );
+        return false;
+      }
+
+      const isRecente = dataDica >= seteDiasAtras;
+      console.log(
+        `🔍 DEBUG DICAS - ${dica.texto?.substring(
+          0,
+          30
+        )}...: ${dataDica.toLocaleDateString()} >= ${seteDiasAtras.toLocaleDateString()} = ${isRecente}`
+      );
+      return isRecente;
     } catch (error) {
+      console.log(
+        "🔍 DEBUG DICAS - Erro ao processar dica:",
+        dica.texto?.substring(0, 30),
+        error
+      );
       return false;
     }
   }).length;
 
-  // Média de caracteres
-  const mediaCaracteres =
-    totalDicas > 0
-      ? Math.round(
-          dicas.reduce((acc, dica) => acc + dica.texto.length, 0) / totalDicas
-        )
-      : 0;
+  console.log("🔍 DEBUG DICAS - TOTAL RECENTES ENCONTRADAS:", dicasRecentes);
 
   // Atualizar elementos no DOM
   const totalElement = document.getElementById("total-dicas");
   const recentesElement = document.getElementById("dicas-recentes");
-  const mediaElement = document.getElementById("media-caracteres-dicas");
 
   if (totalElement) totalElement.textContent = totalDicas;
   if (recentesElement) recentesElement.textContent = dicasRecentes;
-  if (mediaElement) mediaElement.textContent = mediaCaracteres;
 }
 
 // Função para mostrar loading de dicas

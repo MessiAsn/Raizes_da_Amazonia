@@ -414,13 +414,13 @@ body {
 }
 
 .stat-card {
-  background: white;
+  background: var(--admin-bg-white);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-border-radius);
   padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
+  transition: var(--admin-transition);
+  box-shadow: var(--admin-shadow);
   position: relative;
   overflow: hidden;
 }
@@ -433,78 +433,114 @@ body {
   right: 0;
   height: 4px;
   background: var(--admin-primary);
+  border-radius: var(--admin-border-radius) var(--admin-border-radius) 0 0;
+}
+
+.stat-card.primary::before {
+  background: var(--admin-primary);
+}
+.stat-card.secondary::before {
+  background: var(--admin-secondary);
+}
+.stat-card.success::before {
+  background: var(--admin-success);
+}
+.stat-card.accent::before {
+  background: var(--admin-accent);
+}
+.stat-card.warning::before {
+  background: var(--admin-warning);
+}
+.stat-card.info::before {
+  background: var(--admin-info);
+}
+.stat-card.metric::before {
+  background: linear-gradient(90deg, var(--admin-primary), var(--admin-accent));
 }
 
 .stat-card:hover {
-  border-color: var(--admin-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--admin-shadow-md);
 }
 
 .stat-number {
   font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--admin-primary);
+  font-weight: 700;
+  color: var(--admin-text-primary);
+  line-height: 1;
   margin-bottom: 0.5rem;
 }
 
 .stat-label {
-  color: var(--admin-text-secondary);
   font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--admin-text-secondary);
+  margin-bottom: 0.25rem;
 }
 
-/* ========================================
-   FOOTER
-======================================== */
-.admin-footer {
-  background: var(--admin-primary);
-  color: white;
-  text-align: center;
-  padding: 1rem 0;
-  margin-top: auto;
+.stat-subtext {
+  font-size: 0.8rem;
+  color: var(--admin-text-secondary);
+  opacity: 0.8;
 }
 
-.admin-footer p {
-  margin: 0;
-  font-size: calc(0.9 * var(--font-size, 16px));
-  opacity: 0.9;
+/* Ícones para os cards de estatísticas */
+.stat-icon {
+  font-size: 2rem !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+  text-align: center !important;
+  opacity: 0.8 !important;
 }
 
-/* ========================================
-   RESPONSIVIDADE
-======================================== */
+/* Ajustes para os cards com ícones */
+.stats-section .stat-card {
+  text-align: center !important;
+  padding: 2rem 1.5rem !important;
+}
+
+.stats-section .stat-card .stat-number {
+  font-size: 2.25rem !important;
+  margin: 0.5rem 0 !important;
+}
+
+.stats-section .stat-card .stat-label {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.stats-section .stat-card .stat-subtext {
+  font-size: 0.85rem !important;
+  color: var(--admin-text-secondary) !important;
+  opacity: 0.9 !important;
+}
+
+/* Melhorar o layout da grid de estatísticas */
+.stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 1.5rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* Layout responsivo para estatísticas */
 @media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .header-actions {
-    justify-content: center;
-    width: 100%;
-  }
-
-  .nav-tabs {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .tab-button {
-    flex: 1;
-    min-width: 120px;
-  }
-
-  .section-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  .stats-section .stat-card {
+    padding: 1.5rem 1rem !important;
+  }
+
+  .stat-icon {
+    font-size: 1.5rem !important;
+  }
+
+  .stats-section .stat-card .stat-number {
+    font-size: 1.8rem !important;
   }
 }
 
@@ -915,33 +951,48 @@ body {
 ======================================== */
 
 @media (max-width: 768px) {
-  .fade-in {
-    animation-duration: 0.3s;
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .admin-card:hover {
-    transform: none;
+  .header-actions {
+    justify-content: center;
+    width: 100%;
   }
 
-  .btn-primary:hover,
-  .btn-secondary:hover,
-  .btn-action:hover {
-    transform: none;
+  .nav-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
-  .toast {
-    min-width: calc(100vw - 40px);
-    max-width: calc(100vw - 40px);
+  .tab-button {
+    flex: 1;
+    min-width: 120px;
   }
 
-  .tooltip::before {
-    position: fixed;
-    bottom: auto;
-    top: 10px;
-    left: 10px;
-    transform: none;
-    white-space: normal;
-    max-width: calc(100vw - 20px);
+  .section-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+
+  .admin-main {
+    padding: 1rem 0;
+  }
+
+  .content-area {
+    padding: 1rem;
   }
 }
 
@@ -950,159 +1001,45 @@ body {
 ======================================== */
 
 .stats-section {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: white;
-  border-radius: var(--admin-border-radius);
+  margin-bottom: 2.5rem;
+  background: var(--admin-bg-white);
+  padding: 2rem;
+  border-radius: var(--admin-border-radius-lg);
   box-shadow: var(--admin-shadow);
-  transition: var(--admin-transition);
-}
-
-.stats-section:hover {
-  box-shadow: var(--admin-shadow-hover);
+  border: 1px solid var(--admin-border);
 }
 
 .stats-section h3 {
   margin: 0 0 1.5rem 0;
-  color: var(--admin-primary);
+  color: var(--admin-text-primary);
   font-size: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.stat-card.highlight {
-  background: linear-gradient(
-    135deg,
-    var(--admin-primary),
-    var(--admin-secondary)
-  );
-  color: white;
+  font-weight: 600;
+  text-align: center;
   position: relative;
-  overflow: hidden;
+  padding-bottom: 0.75rem;
 }
 
-.stat-card.highlight::before {
+.stats-section h3::after {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  transform: rotate(45deg);
-  animation: shine 3s ease-in-out infinite;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--admin-primary), var(--admin-accent));
+  border-radius: 2px;
 }
 
-@keyframes shine {
-  0% {
-    transform: translateX(-100%) translateY(-100%) rotate(45deg);
-  }
-  50% {
-    transform: translateX(50%) translateY(50%) rotate(45deg);
-  }
-  100% {
-    transform: translateX(200%) translateY(200%) rotate(45deg);
-  }
-}
-
-.stat-percentage {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--admin-primary);
-  margin-top: 0.5rem;
-}
-
-.stat-progress {
-  margin-top: 0.75rem;
-}
-
-.stat-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 0.5rem;
-}
-
-/* Ações Rápidas */
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.quick-action-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1.5rem;
-  background: white;
-  border: 2px solid var(--admin-border);
-  border-radius: var(--admin-border-radius);
-  cursor: pointer;
-  transition: var(--admin-transition);
-  text-decoration: none;
-  color: var(--admin-primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.quick-action-btn:hover {
-  border-color: var(--admin-primary);
-  transform: translateY(-2px);
-  box-shadow: var(--admin-shadow-hover);
-}
-
-.quick-action-btn.primary {
-  background: var(--admin-primary);
-  color: white;
-  border-color: var(--admin-primary);
-}
-
-.quick-action-btn.primary:hover {
-  background: var(--admin-secondary);
-  border-color: var(--admin-secondary);
-}
-
-.action-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.action-text {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.action-count {
-  font-size: 0.875rem;
-  padding: 0.25rem 0.5rem;
-  background: var(--admin-accent);
-  color: var(--admin-primary);
-  border-radius: 12px;
-  font-weight: 600;
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-}
-
-.quick-action-btn.primary .action-count {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-/* Melhorias nos stat-cards existentes */
+/* Cards de estatísticas melhorados */
 .stat-card {
+  background: var(--admin-bg-white);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-border-radius);
+  padding: 1.5rem;
+  text-align: center;
+  transition: var(--admin-transition);
+  box-shadow: var(--admin-shadow);
   position: relative;
   overflow: hidden;
 }
@@ -1112,565 +1049,398 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
-  height: 100%;
+  right: 0;
+  height: 4px;
+  background: var(--admin-primary);
+  border-radius: var(--admin-border-radius) var(--admin-border-radius) 0 0;
+}
+
+.stat-card.primary::before {
+  background: var(--admin-primary);
+}
+.stat-card.secondary::before {
+  background: var(--admin-secondary);
+}
+.stat-card.success::before {
+  background: var(--admin-success);
+}
+.stat-card.accent::before {
   background: var(--admin-accent);
-  transform: scaleY(0);
-  transition: transform 0.3s ease;
+}
+.stat-card.warning::before {
+  background: var(--admin-warning);
+}
+.stat-card.info::before {
+  background: var(--admin-info);
+}
+.stat-card.metric::before {
+  background: linear-gradient(90deg, var(--admin-primary), var(--admin-accent));
 }
 
-.stat-card:hover::before {
-  transform: scaleY(1);
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--admin-shadow-md);
 }
 
-/* Animação fadeOut para toasts */
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-}
-
-/* Responsividade melhorada */
-@media (max-width: 768px) {
-  .stats-section {
-    padding: 1rem;
-  }
-
-  .quick-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .quick-action-btn {
-    padding: 1rem;
-  }
-
-  .action-icon {
-    font-size: 1.5rem;
-  }
-}
-
-/* ========================================
-   ESTILOS ADICIONAIS
-======================================== */
-
-/* Estilos para modal de confirmação */
-.confirm-modal {
-  max-width: 500px;
-}
-
-.confirm-modal .receita-preview {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: var(--admin-bg-light);
-  border-radius: var(--admin-border-radius);
-}
-
-.confirm-modal .preview-img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--admin-text-primary);
+  line-height: 1;
   margin-bottom: 0.5rem;
 }
 
-.confirm-modal .warning-text {
-  background: #fff3cd;
-  color: #856404;
-  padding: 1rem;
-  border-radius: var(--admin-border-radius);
-  border-left: 4px solid #ffc107;
-}
-
-.confirm-modal .warning-text p {
-  margin: 0.5rem 0;
-}
-
-.btn-danger {
-  background-color: var(--admin-danger);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--admin-border-radius);
-  cursor: pointer;
-  font-weight: 600;
-  transition: var(--admin-transition);
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-}
-
-/* Melhorias nos botões retry */
-.btn-retry-small {
-  background: var(--admin-info);
-  color: white;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  margin-left: 0.5rem;
-  transition: var(--admin-transition);
-}
-
-.btn-retry-small:hover {
-  background: #138496;
-  transform: translateY(-1px);
-}
-
-.erro-dicas {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background: #f8d7da;
-  color: #721c24;
-  border-radius: 4px;
+.stat-label {
   font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--admin-text-secondary);
+  margin-bottom: 0.25rem;
 }
 
-/* ========================================
-   SEPARAÇÃO VISUAL ENTRE SEÇÕES
-======================================== */
+.stat-subtext {
+  font-size: 0.8rem;
+  color: var(--admin-text-secondary);
+  opacity: 0.8;
+}
 
-/* Divisor visual entre estatísticas e conteúdo */
+/* Ícones para os cards de estatísticas */
+.stat-icon {
+  font-size: 2rem !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+  text-align: center !important;
+  opacity: 0.8 !important;
+}
+
+/* Ajustes para os cards com ícones */
+.stats-section .stat-card {
+  text-align: center !important;
+  padding: 2rem 1.5rem !important;
+}
+
+.stats-section .stat-card .stat-number {
+  font-size: 2.25rem !important;
+  margin: 0.5rem 0 !important;
+}
+
+.stats-section .stat-card .stat-label {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.stats-section .stat-card .stat-subtext {
+  font-size: 0.85rem !important;
+  color: var(--admin-text-secondary) !important;
+  opacity: 0.9 !important;
+}
+
+/* Melhorar o layout da grid de estatísticas */
 .stats-grid {
-  position: relative;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 1.5rem !important;
+  margin-bottom: 0 !important;
 }
 
-.stats-grid::after {
-  content: "";
-  position: absolute;
-  bottom: -1rem;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--admin-border) 20%,
-    var(--admin-border) 80%,
-    transparent
-  );
-}
-
-/* Separador visual para diferentes tipos de conteúdo */
-.content-section-divider {
-  margin: 2rem 0;
-  text-align: center;
-  position: relative;
-}
-
-.content-section-divider::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--admin-border);
-}
-
-.content-section-divider span {
-  background: var(--admin-bg-light);
-  padding: 0 1rem;
-  color: var(--admin-text-secondary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
-  z-index: 1;
-}
-
-/* Indicador visual de categoria de conteúdo */
-.content-category-indicator {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 1rem;
-}
-
-.content-category-indicator.receitas {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--admin-primary);
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-.content-category-indicator.dicas {
-  background: rgba(8, 145, 178, 0.1);
-  color: var(--admin-info);
-  border: 1px solid rgba(8, 145, 178, 0.2);
-}
-
-/* Melhoria na transição entre tabs */
-.tab-content {
-  border-top: 3px solid var(--admin-primary);
-}
-
-.tab-content:not(.active) {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.tab-content.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ========================================
-   ESTADOS VAZIOS E PLACEHOLDERS
-======================================== */
-
-.empty-state {
-  text-align: center;
-  padding: 3rem 1.5rem;
-  color: var(--admin-text-secondary);
-}
-
-.empty-state-icon {
-  font-size: 3rem;
-  color: var(--admin-border);
-  margin-bottom: 1rem;
-  display: block;
-}
-
-.empty-state h3 {
-  color: var(--admin-text-primary);
-  margin: 0 0 0.5rem 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.empty-state p {
-  margin: 0 0 1.5rem 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.empty-state .btn-primary {
-  margin-top: 0.5rem;
-}
-
-/* ========================================
-   PAGINAÇÃO
-======================================== */
-
-.pagination-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  clear: both;
-  width: 100%;
-}
-
-.pagination {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.pagination-info {
-  margin-right: 1rem;
-  color: #888;
-  font-size: 0.8rem;
-}
-
-.pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 40px;
-  height: 40px;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  background: transparent;
-  color: #666;
-  text-decoration: none;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.pagination-btn:hover:not(.disabled) {
-  background: rgba(47, 125, 50, 0.1);
-  color: var(--admin-primary);
-  border-color: var(--admin-primary);
-  transform: translateY(-2px);
-}
-
-.pagination-btn.active {
-  background: var(--admin-primary);
-  color: white;
-  border-color: var(--admin-primary);
-  font-weight: 600;
-  transform: scale(1.1);
-}
-
-.pagination-btn.disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  pointer-events: none;
-  background: transparent;
-  color: #ccc;
-}
-
-.pagination-ellipsis {
-  padding: 0.5rem;
-  color: var(--admin-text-secondary);
-  font-weight: 500;
-}
-
-.pagination-prev,
-.pagination-next {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  border-radius: 20px;
-  min-width: auto;
-}
-
-.pagination-prev::before {
-  content: "‹";
-  margin-right: 0.25rem;
-}
-
-.pagination-next::after {
-  content: "›";
-  margin-left: 0.25rem;
-}
-
-/* Items per page selector */
-.items-per-page {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-left: 1rem;
-}
-
-.items-per-page label {
-  color: #888;
-  font-size: 0.8rem;
-  font-weight: 400;
-}
-
-.items-per-page select {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  background: transparent;
-  color: #666;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.items-per-page select:hover {
-  border-color: var(--admin-primary);
-}
-
-.items-per-page select:focus {
-  outline: none;
-  border-color: var(--admin-primary);
-  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.1);
-}
-
-/* Responsividade da paginação */
+/* Layout responsivo para estatísticas */
 @media (max-width: 768px) {
-  .pagination-container {
-    flex-direction: column;
-    gap: 1rem;
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 1rem !important;
   }
 
-  .pagination {
-    flex-wrap: wrap;
-    justify-content: center;
+  .stats-section .stat-card {
+    padding: 1.5rem 1rem !important;
   }
 
-  .pagination-info {
-    margin-right: 0;
-    text-align: center;
+  .stat-icon {
+    font-size: 1.5rem !important;
   }
 
-  .items-per-page {
-    margin-left: 0;
-    padding-left: 0;
-    border-left: none;
-    border-top: 1px solid var(--admin-border);
-    padding-top: 1rem;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .pagination-btn {
-    min-width: 35px;
-    height: 35px;
-    font-size: 0.8rem;
-  }
-
-  .pagination-prev,
-  .pagination-next {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
+  .stats-section .stat-card .stat-number {
+    font-size: 1.8rem !important;
   }
 }
 
 /* ========================================
-   ESTILOS ESPECÍFICOS PARA RECEITAS E DICAS
+   AÇÕES RÁPIDAS
 ======================================== */
 
-.receita-card {
-  border-left-color: var(--admin-primary) !important;
+/* Grid de ações rápidas */
+.quick-actions-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 1.5rem !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
 }
 
-.dica-card {
-  border-left-color: var(--admin-info) !important;
-}
-
-.receita-card:hover {
-  border-left-color: var(--admin-secondary) !important;
-}
-
-.dica-card:hover {
-  border-left-color: var(--admin-info) !important;
-}
-
-.receita-meta,
-.dica-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--admin-border);
-  font-size: 0.8rem;
-  color: var(--admin-text-secondary);
-}
-
-.receita-data,
-.dica-data {
-  font-weight: 500;
-}
-
-.receita-imagem,
-.receita-sem-imagem,
-.dica-tamanho {
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.receita-imagem {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--admin-success);
-}
-
-.receita-sem-imagem {
-  background: rgba(148, 163, 184, 0.1);
-  color: var(--admin-text-secondary);
-}
-
-.dica-tamanho {
-  background: rgba(8, 145, 178, 0.1);
-  color: var(--admin-info);
-}
-
-.dica-texto {
-  line-height: 1.6;
-  color: var(--admin-text-primary);
-  margin: 0.5rem 0;
-}
-
-@media (max-width: 768px) {
-  .lista-items {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .receita-meta,
-  .dica-meta {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
-  }
-}
-
-/* Containers específicos das listas */
-#receitas-lista,
-#dicas-lista {
-  display: block;
-  width: 100%;
-}
-
-/* Garantir que a paginação sempre apareça abaixo */
-#receitas-lista .pagination-container,
-#dicas-lista .pagination-container {
-  margin-top: 2rem;
-  clear: both;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
-}
-
-/* Melhorar espaçamento da paginação em dispositivos móveis */
-@media (max-width: 768px) {
-  .pagination-container {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .pagination-info,
-  .items-per-page {
-    text-align: center;
-  }
-}
-
-/* Debug - garantir visibilidade da paginação */
-.pagination-container {
+/* Cards de ação */
+.action-card {
+  background: var(--admin-bg-white) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: var(--admin-border-radius-lg) !important;
+  padding: 1.5rem !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: var(--admin-transition) !important;
+  box-shadow: var(--admin-shadow) !important;
+  min-height: 120px !important;
   display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.action-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--admin-shadow-lg) !important;
+  text-decoration: none !important;
+}
+
+.action-card.success {
+  border-color: var(--admin-success) !important;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
+}
+
+.action-card.accent {
+  border-color: var(--admin-accent) !important;
+  background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%) !important;
+}
+
+.action-card.success:hover {
+  border-color: var(--admin-success) !important;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f9fafb 100%) !important;
+}
+
+.action-card.accent:hover {
+  border-color: var(--admin-accent) !important;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f9fafb 100%) !important;
+}
+
+.action-icon {
+  font-size: 2rem !important;
+  font-weight: bold !important;
+  color: var(--admin-success) !important;
+  margin: 0 !important;
+}
+
+.action-title {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: var(--admin-text-primary) !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.action-subtitle {
+  font-size: 0.875rem !important;
+  color: var(--admin-text-secondary) !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Responsividade para ações rápidas */
+@media (max-width: 768px) {
+  .quick-actions-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    max-width: 100% !important;
+  }
+
+  .action-card {
+    padding: 1.25rem !important;
+    min-height: 100px !important;
+  }
+
+  .action-icon {
+    font-size: 1.5rem !important;
+  }
+
+  .action-title {
+    font-size: 0.9rem !important;
+  }
+
+  .action-subtitle {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ========================================
+   MELHORIAS PARA SEÇÕES DE ESTATÍSTICAS
+======================================== */
+
+/* Seções de estatísticas */
+.stats-section {
+  margin-bottom: 2rem !important;
+  background: var(--admin-bg-white) !important;
+  padding: 2rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.stats-section h3 {
+  margin: 0 0 2rem 0 !important;
+  color: var(--admin-text-primary) !important;
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 2px solid #f3f4f6 !important;
+  padding-bottom: 0.75rem !important;
+}
+
+/* Override para grid de estatísticas */
+.stats-section .stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 1.5rem !important;
+}
+
+/* Override para cards de estatísticas */
+.stats-section .stat-card {
+  background: #fafafa !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 6px !important;
+  padding: 2rem 1.5rem !important;
+  text-align: center !important;
+  transition: all 0.2s ease !important;
   position: relative !important;
 }
 
-.pagination-container * {
-  visibility: visible !important;
+.stats-section .stat-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.stats-section .stat-card.primary {
+  border-left: 4px solid var(--admin-primary) !important;
+}
+
+.stats-section .stat-card.secondary {
+  border-left: 4px solid var(--admin-secondary) !important;
+}
+
+.stats-section .stat-card.success {
+  border-left: 4px solid var(--admin-success) !important;
+}
+
+.stats-section .stat-card.accent {
+  border-left: 4px solid var(--admin-accent) !important;
+}
+
+.stats-section .stat-card.info {
+  border-left: 4px solid var(--admin-info) !important;
+}
+
+.stats-section .stat-card.metric {
+  border-left: 4px solid var(--admin-warning) !important;
+}
+
+/* Override para números das estatísticas */
+.stats-section .stat-number {
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  color: var(--admin-text-primary) !important;
+  line-height: 1 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Override para labels das estatísticas */
+.stats-section .stat-label {
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  color: var(--admin-text-secondary) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-bottom: 0.25rem !important;
+}
+
+/* Percentuais */
+.stats-section .stat-percentage {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: var(--admin-success) !important;
+  margin-top: 0.25rem !important;
+}
+
+/* Override para subtexto */
+.stats-section .stat-subtext {
+  font-size: 0.8rem !important;
+  color: var(--admin-text-secondary) !important;
+  opacity: 0.8 !important;
+  font-style: italic !important;
 }
 
 /* ========================================
-   LOADING STATES ESPECÍFICOS
+   BOTÕES DE AÇÃO ADMINISTRATIVOS
 ======================================== */
+
+/* Grid de ações administrativas */
+.admin-actions-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 1.5rem !important;
+}
+
+/* Botões de ação administrativos */
+.admin-action-btn {
+  background: var(--admin-bg-white) !important;
+  border: 2px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 2rem !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.admin-action-btn:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+  border-color: var(--admin-primary) !important;
+}
+
+.admin-action-btn.primary {
+  border-color: var(--admin-primary) !important;
+}
+
+.admin-action-btn.primary:hover {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
+  border-color: var(--admin-success) !important;
+}
+
+.admin-action-btn.secondary {
+  border-color: var(--admin-secondary) !important;
+}
+
+.admin-action-btn.secondary:hover {
+  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%) !important;
+  border-color: var(--admin-info) !important;
+}
+
+/* Conteúdo dos botões de ação */
+.action-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+}
+
+.action-content .action-title {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: var(--admin-text-primary) !important;
+  margin: 0 !important;
+}
+
+.action-content .action-description {
+  font-size: 0.9rem !important;
+  color: var(--admin-text-secondary) !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
