@@ -103,7 +103,6 @@ window.RaizesAmazonia.Config = {
     window.location.hostname === "127.0.0.1"
       ? "http://127.0.0.1:8000"
       : "https://raizesdaamazonia-production.up.railway.app",
-
 };
 ```
 
