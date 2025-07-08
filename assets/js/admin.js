@@ -1239,7 +1239,7 @@ async function deletarReceitaAdmin(id) {
     const modalConfirm = document.createElement("div");
     modalConfirm.className = "modal-overlay";
     modalConfirm.innerHTML = `
-      <div class="modal confirm-modal">
+      <div class="modal-content confirm-modal">
         <div class="modal-header">
           <h3>Confirmar Exclusão</h3>
         </div>
@@ -1260,7 +1260,7 @@ async function deletarReceitaAdmin(id) {
             </div>
           </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-actions">
           <button class="btn-secondary" data-action="fechar-confirm">❌ Cancelar</button>
           <button class="btn-danger" data-action="confirmar-exclusao" data-receita-id="${id}">Excluir Receita</button>
         </div>
