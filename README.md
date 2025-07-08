@@ -180,15 +180,6 @@ A API utiliza autenticação baseada em sessão. Rotas protegidas requerem login
 6. **Push** para a branch: `git push origin feature/NovaFuncionalidade`
 7. **Abra um Pull Request** com descrição detalhada
 
-### 📋 Padrões de Commit
-
-- `feat:` Nova funcionalidade
-- `fix:` Correção de bug
-- `docs:` Alterações na documentação
-- `style:` Mudanças de formatação/estilo
-- `refactor:` Refatoração de código
-- `test:` Adição ou modificação de testes
-
 ## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
