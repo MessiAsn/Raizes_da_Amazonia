@@ -1032,7 +1032,7 @@ function renderizarReceitasAdmin(todasReceitas) {
     const btnDelete = receitaCard.querySelector('[data-action="delete"]');
 
     if (btnView) {
-      btnView.addEventListener("click", () => verReceitaDetalhes(receita.id));
+      btnView.addEventListener("click", () => verReceitaDetalhesAdmin(receita.id));
     }
 
     if (btnEdit) {
