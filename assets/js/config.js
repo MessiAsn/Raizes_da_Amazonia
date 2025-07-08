@@ -7,8 +7,7 @@ window.RaizesAmazonia.Config = {
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
       ? "http://127.0.0.1:8000"
-      : "https://raizesdaamazonia-production.up.railway.app", // ✅ URL do Railway configurada
-
+      : "https://raizesdaamazonia-production.up.railway.app",
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,
   CACHE_TIMEOUT: 5 * 60 * 1000,

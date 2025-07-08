@@ -104,7 +104,6 @@ window.RaizesAmazonia.Config = {
       ? "http://127.0.0.1:8000"
       : "https://SUA-URL-RAILWAY.up.railway.app", // 👈 SUBSTITUIR AQUI
 
-  // ...rest of config
 };
 ```
 
