@@ -912,6 +912,17 @@ body {
   border-color: var(--border-color);
 }
 
+.preview-img {
+  max-width: 120px;
+  max-height: 120px;
+  display: block;
+  margin: 0 auto 10px auto;
+  border-radius: 8px;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
 .pagination-prev,
 .pagination-next {
   padding: 0.5rem 1rem;
