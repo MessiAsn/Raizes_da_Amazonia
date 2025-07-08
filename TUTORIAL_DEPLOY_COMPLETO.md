@@ -102,7 +102,7 @@ window.RaizesAmazonia.Config = {
     window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
       ? "http://127.0.0.1:8000"
-      : "https://SUA-URL-RAILWAY.up.railway.app", // 👈 SUBSTITUIR AQUI
+      : "https://raizesdaamazonia-production.up.railway.app",
 
 };
 ```
@@ -160,7 +160,7 @@ Editar `backend/main.py`:
 # Configurar CORS para produção
 if ENVIRONMENT == "production":
     allowed_origins = [
-        "https://SUA-URL-VERCEL.vercel.app",  # 👈 SUBSTITUIR AQUI
+        "https://raizes-da-amazonia-4wzp9mgtc-messiasns-projects.vercel.app",
         "https://*.vercel.app",
     ]
 else:
@@ -190,9 +190,9 @@ Railway fará redeploy automaticamente.
 
 ### URLs para Testar:
 
-- **Frontend**: `https://sua-url.vercel.app`
-- **Backend API**: `https://sua-url.railway.app/api`
-- **Admin**: `https://sua-url.vercel.app/pages/admin.html`
+- **Frontend**: `https://raizes-da-amazonia-4wzp9mgtc-messiasns-projects.vercel.app`
+- **Backend API**: `https://raizesdaamazonia-production.up.railway.app/api`
+- **Admin**: `https://raizes-da-amazonia-4wzp9mgtc-messiasns-projects.vercel.app/pages/admin.html`
 
 ### Checklist de Testes:
 
@@ -229,7 +229,7 @@ Railway fará redeploy automaticamente.
 **Solução:**
 
 1. Verificar se URL do backend está correta no `config.js`
-2. Testar API diretamente: `https://sua-url.railway.app/api`
+2. Testar API diretamente: `https://raizesdaamazonia-production.up.railway.app/api`
 3. Verificar logs no Railway
 
 ### 🚨 Imagens não carregam
@@ -310,11 +310,11 @@ git push origin main
 
 Após o deploy completo, você terá:
 
-- **🏠 Site Principal**: `https://sua-url.vercel.app`
-- **📖 Todas as Receitas**: `https://sua-url.vercel.app/pages/todas-receitas.html`
-- **🔍 Detalhes**: `https://sua-url.vercel.app/pages/receita.html?id=ID`
-- **⚙️ Painel Admin**: `https://sua-url.vercel.app/pages/admin.html`
-- **🔗 API Backend**: `https://sua-url.railway.app/api`
+- **🏠 Site Principal**: `https://raizes-da-amazonia-4wzp9mgtc-messiasns-projects.vercel.app`
+- **📖 Todas as Receitas**: `https://raizes-da-amazonia-4wzp9mgtc-messiasns-projects.vercel.app/pages/todas-receitas.html`
+- **🔍 Detalhes**: `https://raizes-da-amazonia-4wzp9mgtc-messiasns-projects.vercel.app/pages/receita.html?id=ID`
+- **⚙️ Painel Admin**: `https://raizes-da-amazonia-4wzp9mgtc-messiasns-projects.vercel.app/pages/admin.html`
+- **🔗 API Backend**: `https://raizesdaamazonia-production.up.railway.app/api`
 
 ---
 
