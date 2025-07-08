@@ -1329,15 +1329,16 @@ async function confirmarExclusaoReceita(id) {
 }
 
 function fecharModalConfirm() {
-  const modal = document.querySelector(".modal-overlay");
-  if (modal) {
+  // Seleciona todos os modais de confirmação abertos
+  document.querySelectorAll('.modal-overlay').forEach((modal) => {
     modal.style.animation = "fadeOut 0.3s ease-out forwards";
     setTimeout(() => {
       if (modal.parentNode) {
         modal.remove();
+        document.body.style.overflow = "auto";
       }
     }, 300);
-  }
+  });
 }
 
 function atualizarEstatisticasReceitas(receitas) {
@@ -1727,15 +1728,58 @@ async function deletarDicaAdmin(id) {
       return;
     }
 
-    const textoPreview =
-      dica.texto.length > 50 ? dica.texto.substring(0, 50) + "..." : dica.texto;
+    const modalConfirm = document.createElement("div");
+    modalConfirm.className = "modal-overlay";
+    modalConfirm.innerHTML = `
+      <div class="modal-content confirm-modal">
+        <div class="modal-header">
+          <h3>Confirmar Exclusão</h3>
+        </div>
+        <div class="modal-body">
+          <div class="confirm-content">
+            <div class="dica-preview">
+              <h4>Dica #${String(dica.id).substring(0, 8)}</h4>
+              <p>${(dica.texto || dica.conteudo || "").substring(0, 100)}${(dica.texto || dica.conteudo || "").length > 100 ? "..." : ""}</p>
+            </div>
+            <div class="warning-text">
+              <p><strong>Atenção:</strong> Esta ação não pode ser desfeita!</p>
+              <p>Todos os dados da dica serão perdidos permanentemente.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" data-action="fechar-confirm">❌ Cancelar</button>
+          <button class="btn-danger" data-action="confirmar-exclusao" data-dica-id="${id}">Excluir Dica</button>
+        </div>
+      </div>
+    `;
 
-    if (
-      !confirm(`Tem certeza que deseja excluir esta dica?\n\n"${textoPreview}"`)
-    ) {
-      return;
+    document.body.appendChild(modalConfirm);
+    animarElemento(modalConfirm, "fade-in");
+
+    const btnFechar = modalConfirm.querySelector('[data-action="fechar-confirm"]');
+    const btnConfirmar = modalConfirm.querySelector('[data-action="confirmar-exclusao"]');
+
+    if (btnFechar) {
+      btnFechar.addEventListener("click", fecharModalConfirm);
     }
 
+    if (btnConfirmar) {
+      btnConfirmar.addEventListener("click", async () => {
+        const dicaId = btnConfirmar.getAttribute("data-dica-id");
+        await confirmarExclusaoDica(dicaId);
+      });
+    }
+  } catch (error) {
+    console.error("Erro ao deletar dica:", error);
+    mostrarMensagemAdmin("Erro ao deletar dica", "error");
+  }
+}
+
+async function confirmarExclusaoDica(id) {
+  mostrarLoadingOverlay(true);
+
+  try {
     const deleteResponse = await fetch(`${API_BASE_URL}/api/dicas/${id}`, {
       method: "DELETE",
     });
@@ -1745,10 +1789,13 @@ async function deletarDicaAdmin(id) {
     }
 
     mostrarMensagemAdmin("Dica excluída com sucesso!", "success");
-    carregarDicasAdmin();
+    fecharModalConfirm();
+    await carregarDicasAdmin();
   } catch (error) {
     console.error("Erro ao deletar dica:", error);
     mostrarMensagemAdmin("Erro ao deletar dica", "error");
+  } finally {
+    mostrarLoadingOverlay(false);
   }
 }
 
